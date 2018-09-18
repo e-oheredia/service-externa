@@ -1,0 +1,59 @@
+package com.exact.service.externa.entity;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+
+@Entity
+@Table(name="buzon_plazo_distribucion")
+public class BuzonPlazoDistribucion implements Serializable {
+	
+	
+	@Id
+	@Column(name="buzon_id")
+	private Long buzonId;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="plazo_distribucion_id")
+	private PlazoDistribucion plazoDistribucion;
+	@Transient
+	private Map<String, Object> buzon;	
+	
+	
+	public Long getBuzonId() {
+		return buzonId;
+	}
+
+	public void setBuzonId(Long buzonId) {
+		this.buzonId = buzonId;
+	}
+
+	public PlazoDistribucion getPlazoDistribucion() {
+		return plazoDistribucion;
+	}
+
+	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+		this.plazoDistribucion = plazoDistribucion;
+	}
+
+	public Map<String, Object> getBuzon() {
+		return buzon;
+	}
+
+	public void setBuzon(Map<String, Object> buzon) {
+		this.buzon = buzon;
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+}
