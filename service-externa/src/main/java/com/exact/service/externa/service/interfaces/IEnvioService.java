@@ -13,4 +13,5 @@ public interface IEnvioService {
 	Iterable<Envio> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException; 
 	Envio autorizarEnvio(Long idEnvio, Long idUsuario);
 	Envio denegarEnvio(Long idEnvio, Long idUsuario);
+	Iterable<Envio> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException;
 }

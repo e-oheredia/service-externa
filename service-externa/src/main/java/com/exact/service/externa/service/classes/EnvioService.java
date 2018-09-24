@@ -116,7 +116,6 @@ public class EnvioService implements IEnvioService {
 				while(i < buzones.size()) {
 					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
 						envio.setBuzon(buzones.get(i));
-						buzones.remove(i);
 						break;
 					}
 					i++;
@@ -125,7 +124,6 @@ public class EnvioService implements IEnvioService {
 				while(j < tiposDocumento.size()) {
 					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
 						envio.setTipoDocumento(tiposDocumento.get(j));
-						tiposDocumento.remove(j);
 						break;
 					}
 					j++;
@@ -134,6 +132,40 @@ public class EnvioService implements IEnvioService {
 			}
 		}			
 		return enviosNoAutorizadosActivos;		
+	}
+	
+	@Override
+	public Iterable<Envio> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO);
+		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
+		
+		if (enviosCreadosList.size() != 0) {
+			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
+			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+			for (Envio envio: enviosCreadosList) {
+				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
+				int i = 0; 
+				while(i < buzones.size()) {
+					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+						envio.setBuzon(buzones.get(i));
+						break;
+					}
+					i++;
+				}
+				int j = 0;
+				while(j < tiposDocumento.size()) {
+					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+				
+			}
+		}			
+		return enviosCreadosList;		
 	}
 
 	@Override

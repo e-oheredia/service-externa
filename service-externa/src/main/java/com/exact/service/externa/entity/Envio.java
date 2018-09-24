@@ -59,8 +59,7 @@ public class Envio implements Serializable {
 		if (rutaAutorizacion == null || rutaAutorizacion.isEmpty()) {
 			this.autorizado = true;
 		}
-	}
-	
+	}	
 	
 	public Long getId() {
 		return id;

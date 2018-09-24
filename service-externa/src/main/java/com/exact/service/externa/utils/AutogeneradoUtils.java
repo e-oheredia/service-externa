@@ -10,9 +10,9 @@ public class AutogeneradoUtils implements IAutogeneradoUtils {
 		if (autogeneradoAnterior == null) {
 			return "MEX00000001";
 		}
-		String autogeneradoAnteriorSinEx = "9" + autogeneradoAnterior.substring(2);
+		String autogeneradoAnteriorSinEx = "9" + autogeneradoAnterior.substring(3);
 		Long numeroAutogeneradoAnterior = Long.valueOf(autogeneradoAnteriorSinEx);
-		Long numeroAutogenerado = numeroAutogeneradoAnterior + 1;
+		Long numeroAutogenerado = numeroAutogeneradoAnterior + 1L;
 		return "MEX" + numeroAutogenerado.toString().substring(1);
 	}
 
@@ -23,7 +23,7 @@ public class AutogeneradoUtils implements IAutogeneradoUtils {
 		}
 		String autogeneradoAnteriorSinEx = "9" + autogeneradoAnterior.substring(2);
 		Long numeroAutogeneradoAnterior = Long.valueOf(autogeneradoAnteriorSinEx);
-		Long numeroAutogenerado = numeroAutogeneradoAnterior + 1;
+		Long numeroAutogenerado = numeroAutogeneradoAnterior + 1L;
 		return "EX" + numeroAutogenerado.toString().substring(1);
 	}
 	

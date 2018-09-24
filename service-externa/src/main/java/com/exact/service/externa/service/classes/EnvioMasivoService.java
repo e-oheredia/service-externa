@@ -49,6 +49,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		for (Documento documento: envioMasivo.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
 			documento.setDocumentoAutogenerado(autogeneradoNuevo);
+			documento.setEnvio(envioMasivo);
 			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario, new EstadoDocumento(CREADO));
 			seguimientoDocumento.setDocumento(documento);
 			documento.addSeguimientoDocumento(seguimientoDocumento);

@@ -70,6 +70,15 @@ public class EnvioController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/creados")
+	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+	    String dtoMapAsString = mapper.writeValueAsString(envioService.listarEnviosCreados());
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 	
 
 }
