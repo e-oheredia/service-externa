@@ -1,16 +1,13 @@
 package com.exact.service.externa.service.classes;
 
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
@@ -35,27 +32,18 @@ public class DocumentoService implements IDocumentoService {
 
 	@Autowired
 	private IHandleFileEdao handleFileEdao;
-
+	
 	@Override
 	@Transactional
-	public Documento registrarDocumento(Documento documento, Long idUsuario, MultipartFile file)
-			throws IOException, JSONException {
-		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
-		String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
-		
-		if (file != null) {
-			String rutaAutorizacion = autogeneradoNuevo + "." + FilenameUtils.getExtension(file.getOriginalFilename());
-			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
-			if (handleFileEdao.upload(multipartFile) != 1) {
-				return null;
-			}
-		}		
-		documento.setDocumentoAutogenerado(autogeneradoNuevo);
-		SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario, new EstadoDocumento(CREADO));
-		seguimientoDocumento.setDocumento(documento);
-		documentoDao.save(documento);
-		seguimientoDocumentodao.save(seguimientoDocumento);
-		return documento;
+	public int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId) {
+		List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<SeguimientoDocumento>();
+		for (Documento documento : documentos) {
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(usuarioId, new EstadoDocumento(CUSTODIADO));
+			seguimientoDocumento.setDocumento(documento);
+			seguimientosDocumento.add(seguimientoDocumento);
+		}
+		seguimientoDocumentodao.saveAll(seguimientosDocumento);
+		return 1;
 	}
-
+	
 }
