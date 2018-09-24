@@ -65,6 +65,14 @@ public class Documento implements Serializable {
 		return envio;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public void setEnvio(Envio envio) {
 		this.envio = envio;
 	}
