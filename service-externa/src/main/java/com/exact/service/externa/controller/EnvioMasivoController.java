@@ -3,12 +3,14 @@ package com.exact.service.externa.controller;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 @RequestMapping("/enviosmasivos")
@@ -37,6 +40,17 @@ public class EnvioMasivoController {
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
 		
 		return new ResponseEntity<Envio>(
-				envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file), HttpStatus.OK);
+				envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file), HttpStatus.OK);	
+		
+		
+	}
+	
+	@GetMapping("/creados")
+	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+	    String dtoMapAsString = mapper.writeValueAsString(envioMasivoService.listarEnviosMasivosCreados());
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 }
