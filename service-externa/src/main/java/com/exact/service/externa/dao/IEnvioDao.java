@@ -16,7 +16,7 @@ public interface IEnvioDao extends CrudRepository<Envio, Long> {
 	
 	public Iterable<Envio> findByAutorizado(boolean autorizado);
 	
-	@Query("FROM Envio e   WHERE e IN (SELECT d.envio FROM Documento d WHERE d IN (SELECT sd.documento "
+	@Query("FROM Envio e WHERE e.masivoAutogenerado IS NULL AND e IN (SELECT d.envio FROM Documento d WHERE d IN (SELECT sd.documento "
 			+ "FROM SeguimientoDocumento sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 "
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = ?1))")
 	public Iterable<Envio> findByUltimoEstadoId(Long ultimoEstadoId);
