@@ -3,9 +3,16 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.http.client.ClientProtocolException;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,8 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IEnvioMasivoDao;
+import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.SeguimientoDocumento;
@@ -28,6 +38,12 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	IDocumentoDao documentoDao;
 	
 	@Autowired
+	IBuzonEdao buzonEdao;
+	
+	@Autowired
+	ITipoDocumentoEdao tipoDocumentoEdao;
+	
+	@Autowired
 	IEnvioMasivoDao envioMasivoDao;
 	
 	@Autowired
@@ -38,6 +54,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	
 	@Autowired
 	IHandleFileEdao handleFileEdao;
+	
+	@Value("${storage.autorizaciones}")
+	String storageAutorizaciones;
 	
 
 	@Override
@@ -76,6 +95,39 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		EnvioMasivo envioRegistrado =envioMasivoDao.save(envioMasivo);
 		
 		return envioRegistrado;
+	}
+	@Override	
+	public Iterable<EnvioMasivo> listarEnviosMasivosCreados() throws ClientProtocolException, IOException, JSONException {
+		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO);
+		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
+		
+		if (enviosCreadosList.size() != 0) {
+			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
+			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+			for (Envio envio: enviosCreadosList) {
+				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
+				int i = 0; 
+				while(i < buzones.size()) {
+					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+						envio.setBuzon(buzones.get(i));
+						break;
+					}
+					i++;
+				}
+				int j = 0;
+				while(j < tiposDocumento.size()) {
+					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+				
+			}
+		}			
+		return enviosCreadosList;		
 	}
 
 }
