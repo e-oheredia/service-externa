@@ -80,6 +80,7 @@ insert into guia(numero_guia,plazo_distribucion_id,proveedor_id,tipo_seguiridad_
 insert into guia(numero_guia,plazo_distribucion_id,proveedor_id,tipo_seguiridad_id,tipo_servicio_id) values('G0002',2,1,2,1)
 insert into seguimiento_guia(fecha,usuario_id,estado_guia_id,guia_id) values(getdate(),1,1,1)
 insert into seguimiento_guia(fecha,usuario_id,estado_guia_id,guia_id) values(getdate(),1,1,2)
+insert into seguimiento_guia(fecha,usuario_id,estado_guia_id,guia_id) values(getdate(),1,2,2)
 insert into documento_guia(documento_id,guia_id,fecha_asociacion,validado) values(1,1,getdate(),0)
 insert into documento_guia(documento_id,guia_id,fecha_asociacion,validado) values(2,1,getdate(),0)
 insert into documento_guia(documento_id,guia_id,fecha_asociacion,validado) values(3,1,getdate(),0)
