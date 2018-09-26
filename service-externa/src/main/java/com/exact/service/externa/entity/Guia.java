@@ -1,0 +1,138 @@
+package com.exact.service.externa.entity;
+
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name="Guia")
+public class Guia implements Serializable{
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="guia_id")
+	private Long id;
+	
+	@Column(name="numero_guia")
+	private String numeroGuia;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="plazo_distribucion_id")
+	private PlazoDistribucion plazoDistribucion;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="tipo_servicio_id")
+	private TipoServicio tipoServicio;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="tipo_seguiridad_id")
+	private TipoSeguridad tipoSeguridad;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="proveedor_id")
+	private Proveedor proveedor;
+	
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "guia")
+	private Set<SeguimientoGuia> seguimientosGuia;
+	
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "guia")
+	private Set<DocumentoGuia> documentosGuia;
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+	public PlazoDistribucion getPlazoDistribucion() {
+		return plazoDistribucion;
+	}
+
+
+	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+		this.plazoDistribucion = plazoDistribucion;
+	}
+
+
+	public TipoServicio getTipoServicio() {
+		return tipoServicio;
+	}
+
+
+	public void setTipoServicio(TipoServicio tipoServicio) {
+		this.tipoServicio = tipoServicio;
+	}
+
+
+	public TipoSeguridad getTipoSeguridad() {
+		return tipoSeguridad;
+	}
+
+
+	public void setTipoSeguridad(TipoSeguridad tipoSeguridad) {
+		this.tipoSeguridad = tipoSeguridad;
+	}
+
+
+	public Proveedor getProveedor() {
+		return proveedor;
+	}
+
+
+	public void setProveedor(Proveedor proveedor) {
+		this.proveedor = proveedor;
+	}
+
+
+	
+	public String getNumeroGuia() {
+		return numeroGuia;
+	}
+
+
+	public void setNumeroGuia(String numeroGuia) {
+		this.numeroGuia = numeroGuia;
+	}
+
+
+	public Set<SeguimientoGuia> getSeguimientosGuia() {
+		return seguimientosGuia;
+	}
+
+
+	public void setSeguimientosGuia(Set<SeguimientoGuia> seguimientosGuia) {
+		this.seguimientosGuia = seguimientosGuia;
+	}
+
+
+	public Set<DocumentoGuia> getDocumentosGuia() {
+		return documentosGuia;
+	}
+
+
+	public void setDocumentosGuia(Set<DocumentoGuia> documentosGuia) {
+		this.documentosGuia = documentosGuia;
+	}
+
+
+
+	private static final long serialVersionUID = 1L;
+}
