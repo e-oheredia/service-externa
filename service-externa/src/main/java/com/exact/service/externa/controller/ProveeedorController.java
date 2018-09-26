@@ -22,7 +22,7 @@ public class ProveeedorController {
 	@Autowired
 	IProveedorService proveedorService;
 	
-	@GetMapping("/todos")
+	@GetMapping
 	public ResponseEntity<String> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
 		
 		ObjectMapper mapper = new ObjectMapper();
