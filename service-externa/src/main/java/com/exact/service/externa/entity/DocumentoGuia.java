@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -42,7 +43,10 @@ public class DocumentoGuia implements Serializable {
 	@Column(name="fecha_asociacion")
 	private Date fechaAsociacion;
 	
-	
+	@PrePersist
+	public void prePersist() {
+		fechaAsociacion = new Date();
+	}
 	
 	public DocumentoGuiaId getId() {
 		return id;

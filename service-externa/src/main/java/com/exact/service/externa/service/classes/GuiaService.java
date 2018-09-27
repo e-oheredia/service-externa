@@ -1,10 +1,16 @@
 package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -12,9 +18,18 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IGuiaDao;
+import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.DocumentoGuia;
+import com.exact.service.externa.entity.EstadoDocumento;
+import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.SeguimientoGuia;
+import com.exact.service.externa.entity.id.DocumentoGuiaId;
+import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 
 @Service
@@ -23,38 +38,85 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	IGuiaDao guiaDao;
 	
+	@Autowired
+	IDocumentoService documentoService;
+	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
-		Iterable<Guia> guiasCreadas = guiaDao.findByUltimoEstadoId(CREADO);
-		List<Guia> guiasCreadasList = StreamSupport.stream(guiasCreadas.spliterator(), false).collect(Collectors.toList());
 		
-		/*if (guiasCreadasList.size() != 0) {
-			List<Long> buzonIds = guiasCreadasList.stream().map(Guia::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = guiasCreadasList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
-			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-			for (Envio envio: guiasCreadasList) {
-				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
-				int i = 0; 
-				while(i < buzones.size()) {
-					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
-						envio.setBuzon(buzones.get(i));
-						break;
-					}
-					i++;
-				}
-				int j = 0;
-				while(j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
-						break;
-					}
-					j++;
-				}
-				
-			}
-		}			*/
+		Iterable<Guia> guiasCreadas = guiaDao.findByUltimoEstadoId(CREADO);
+		List<Guia> guiasCreadasList = StreamSupport.stream(guiasCreadas.spliterator(), false).collect(Collectors.toList());	
+		
 		return guiasCreadasList;		
 	}
+
+	@Override
+	@Transactional
+	public Guia crearGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia);
+		
+		if (documentos == null) {
+			return null;		
+		}		
+		
+		List<Documento> documentosList = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+			
+		if (documentosList.size() == 0) {
+			return null;
+		}
+		
+		List<DocumentoGuia> documentosGuiaList = new ArrayList<DocumentoGuia>();
+		
+		for (Documento documento : documentosList) {
+			DocumentoGuiaId documentoGuiaId = new DocumentoGuiaId();
+			documentoGuiaId.setGuiaId(guia.getId());
+			documentoGuiaId.setDocumentoId(documento.getId());
+			
+			DocumentoGuia documentoGuia = new DocumentoGuia();
+			documentoGuia.setDocumento(documento);
+			documentoGuia.setGuia(guia);
+			documentoGuia.setValidado(false);
+			documentoGuia.setId(documentoGuiaId);
+			
+			documentosGuiaList.add(documentoGuia);
+		}
+		
+		Set<DocumentoGuia> dg = new HashSet<DocumentoGuia>(documentosGuiaList);
+		guia.setDocumentosGuia(dg);
+		
+		
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_CREADO);
+		
+		seguimientoGuia.setGuia(guia);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+				
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+		guia.setSeguimientosGuia(sg);
+		
+		guiaDao.save(guia);
+		
+		return guia;
+	}
+	
+	/*
+	 * public int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId) {
+	 * 	List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<SeguimientoDocumento>();
+		for (Documento documento : documentos) {
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(usuarioId, new EstadoDocumento(CUSTODIADO));
+			seguimientoDocumento.setDocumento(documento);
+			seguimientosDocumento.add(seguimientoDocumento);
+		}
+		seguimientoDocumentodao.saveAll(seguimientosDocumento);
+		return 1;
+	}
+	 * */
 
 }
