@@ -38,7 +38,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
 		String header = request.getHeader("Authorization");
 		
 		if (!requiresAuthentication(header)) {
-			chain.doFilter(request, response);
+			//chain.doFilter(request, response);
 			return;
 		}
 		

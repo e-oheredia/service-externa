@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
@@ -38,6 +39,9 @@ public class GuiaService implements IGuiaService{
 
 	@Autowired
 	IGuiaDao guiaDao;
+
+	@Autowired
+	IDocumentoGuiaDao documentoGuiaDao;
 	
 	@Autowired
 	IDocumentoService documentoService;
@@ -109,18 +113,28 @@ public class GuiaService implements IGuiaService{
 		
 		return guia;
 	}
-	
-	/*
-	 * public int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId) {
-	 * 	List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<SeguimientoDocumento>();
-		for (Documento documento : documentos) {
-			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(usuarioId, new EstadoDocumento(CUSTODIADO));
-			seguimientoDocumento.setDocumento(documento);
-			seguimientosDocumento.add(seguimientoDocumento);
+
+	@Override
+	public Guia quitarDocumentosGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException {
+
+
+		Guia guia = guiaDao.findById(guiaId).orElse(null);
+		
+		if (guia ==null) {
+			return null;
 		}
-		seguimientoDocumentodao.saveAll(seguimientosDocumento);
-		return 1;
+		
+		guia.getDocumentosGuia().removeIf(dg -> dg.isValidado() == false);
+		
+		if (guia.getDocumentosGuia().size() == 0) {
+			guiaDao.delete(guia);			
+		}
+		else {
+			guiaDao.save(guia);
+		}
+		
+		return guia;
 	}
-	 * */
+		
 
 }

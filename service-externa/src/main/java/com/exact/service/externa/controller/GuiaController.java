@@ -77,4 +77,20 @@ public class GuiaController {
 		return new ResponseEntity<DocumentoGuia>(dg, HttpStatus.OK);
 	}
 	
+	@PutMapping("{guiaId}/eliminanovalidados")
+	public ResponseEntity<?> eliminarDocumentosGuiaNoValidados(@PathVariable Long guiaId, Authentication authentication)  throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		
+		Guia guia = guiaService.quitarDocumentosGuia(guiaId);
+		
+		if (guia == null) {
+			Map<String, Object> respuesta = new HashMap<String, Object>();
+			respuesta.put("mensaje", "No existe la guia ingresada.");	
+			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
+		}
+		
+		return new ResponseEntity<Guia>(guia, HttpStatus.OK);
+	}
+	
 }
