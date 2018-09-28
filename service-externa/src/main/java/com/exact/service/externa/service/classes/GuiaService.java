@@ -29,6 +29,7 @@ import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
+import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 
@@ -40,6 +41,9 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IDocumentoService documentoService;
+	
+	@Autowired
+	IDocumentoGuiaService documentoGuiaService;
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
@@ -68,7 +72,8 @@ public class GuiaService implements IGuiaService{
 		
 		List<DocumentoGuia> documentosGuiaList = new ArrayList<DocumentoGuia>();
 		
-		for (Documento documento : documentosList) {
+		for (Documento documento : documentosList) {			
+			
 			DocumentoGuiaId documentoGuiaId = new DocumentoGuiaId();
 			documentoGuiaId.setGuiaId(guia.getId());
 			documentoGuiaId.setDocumentoId(documento.getId());
@@ -78,7 +83,6 @@ public class GuiaService implements IGuiaService{
 			documentoGuia.setGuia(guia);
 			documentoGuia.setValidado(false);
 			documentoGuia.setId(documentoGuiaId);
-			
 			documentosGuiaList.add(documentoGuia);
 		}
 		
