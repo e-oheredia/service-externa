@@ -117,23 +117,29 @@ public class GuiaService implements IGuiaService{
 	@Override
 	public Guia quitarDocumentosGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException {
 
-
 		Guia guia = guiaDao.findById(guiaId).orElse(null);
 		
 		if (guia ==null) {
 			return null;
 		}
 		
-		guia.getDocumentosGuia().removeIf(dg -> dg.isValidado() == false);
+		List<DocumentoGuia> sg = guia.getDocumentosGuia().stream().filter(dg -> dg.isValidado() == false).collect(Collectors.toList());
+		guiaDao.save(guia);
+		documentoGuiaDao.deleteAll(sg);
+		
+		//guia.getDocumentosGuia().removeIf(dg -> dg.isValidado() == false);
+		
+		guia = guiaDao.findById(guiaId).orElse(null);
 		
 		if (guia.getDocumentosGuia().size() == 0) {
-			guiaDao.delete(guia);			
+			guiaDao.delete(guia);
+			return null;			
 		}
 		else {
-			guiaDao.save(guia);
+			 return guia;
 		}
 		
-		return guia;
+		
 	}
 		
 

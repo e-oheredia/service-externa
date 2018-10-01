@@ -25,8 +25,7 @@ public class DocumentoGuiaService implements IDocumentoGuiaService{
 			
 		DocumentoGuia documentoGuia = documentoGuiaDao.findByGuiaIdAndDocumentoId(guiaId, documentoId);
 		documentoGuia.setValidado(true);		
-		documentoGuiaDao.save(documentoGuia);
-		return documentoGuia;
+		return documentoGuiaDao.save(documentoGuia);
 		
 	}
 

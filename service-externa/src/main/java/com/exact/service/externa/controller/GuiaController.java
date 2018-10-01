@@ -36,12 +36,10 @@ public class GuiaController {
 	IDocumentoGuiaService documentoGuiaService;
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<Iterable<Guia>> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
 		
-		ObjectMapper mapper = new ObjectMapper();
-	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	    String dtoMapAsString = mapper.writeValueAsString(guiaService.listarGuiasCreadas());
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		
+	    return new ResponseEntity<Iterable<Guia>>(guiaService.listarGuiasCreadas(), HttpStatus.OK);
 	}
 	
 	@PostMapping
