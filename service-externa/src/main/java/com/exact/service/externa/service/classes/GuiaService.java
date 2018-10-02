@@ -123,14 +123,10 @@ public class GuiaService implements IGuiaService{
 			return null;
 		}
 		
-		List<DocumentoGuia> sg = guia.getDocumentosGuia().stream().filter(dg -> dg.isValidado() == false).collect(Collectors.toList());
-		guiaDao.save(guia);
-		documentoGuiaDao.deleteAll(sg);
+		Iterable<DocumentoGuia> noValidadosList = documentoGuiaDao.listarNoValidados(guiaId);
 		
-		//guia.getDocumentosGuia().removeIf(dg -> dg.isValidado() == false);
-		
-		guia = guiaDao.findById(guiaId).orElse(null);
-		
+		documentoGuiaDao.deleteAll(noValidadosList);
+				
 		if (guia.getDocumentosGuia().size() == 0) {
 			guiaDao.delete(guia);
 			return null;			

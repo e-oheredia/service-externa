@@ -45,10 +45,10 @@ public class Guia implements Serializable{
 	@JoinColumn(name="proveedor_id")
 	private Proveedor proveedor;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "guia")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "guia")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<DocumentoGuia> documentosGuia;
 	
 	
