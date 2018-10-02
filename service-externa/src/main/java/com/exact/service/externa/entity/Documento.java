@@ -58,7 +58,7 @@ public class Documento implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER, optional=false)	
 	@JoinColumn(name="envio_id")
 	@JsonFilter("envioFilter")
-	@JsonProperty("envios")
+	@JsonProperty("envio")
 	private Envio envio;
 
 	@Transient

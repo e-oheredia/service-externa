@@ -52,7 +52,7 @@ public class EnvioMasivoController {
 		
 		ObjectMapper mapper = new ObjectMapper();		
 		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-		filterProvider.addFilter("documentosFilter", SimpleBeanPropertyFilter.serializeAllExcept("envios")); 		
+		filterProvider.addFilter("documentosFilter", SimpleBeanPropertyFilter.serializeAllExcept("envio")); 		
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.setFilterProvider(filterProvider); 			
 		
