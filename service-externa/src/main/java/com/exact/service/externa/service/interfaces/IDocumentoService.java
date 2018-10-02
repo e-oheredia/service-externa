@@ -11,4 +11,5 @@ public interface IDocumentoService {
 
 	int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId);
 	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
 }

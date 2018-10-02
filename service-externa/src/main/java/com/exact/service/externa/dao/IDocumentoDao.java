@@ -1,13 +1,11 @@
 package com.exact.service.externa.dao;
 
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.exact.service.externa.entity.Documento;
-import com.exact.service.externa.entity.PlazoDistribucion;
-import com.exact.service.externa.entity.TipoSeguridad;
-import com.exact.service.externa.entity.TipoServicio;
 
 @Repository
 public interface IDocumentoDao extends CrudRepository<Documento, Long> {
@@ -23,7 +21,9 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long plazoDistribucionId, Long tipoServicioId, Long tipoSeguridadId);
 	
 	
-	
-	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
+			+ "sd.estadoDocumento.id = ?1)")
+	public Iterable<Documento> listarDocumentosPorEstado(Long estadoDocumentoId);
 	
 }

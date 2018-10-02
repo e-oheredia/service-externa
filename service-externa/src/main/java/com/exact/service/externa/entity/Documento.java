@@ -21,7 +21,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 @Entity
@@ -55,7 +57,8 @@ public class Documento implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional=false)	
 	@JoinColumn(name="envio_id")
-	@JsonIgnore
+	@JsonFilter("envioFilter")
+	@JsonProperty("envios")
 	private Envio envio;
 
 	@Transient

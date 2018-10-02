@@ -25,6 +25,8 @@ import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.classes.DocumentoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @EnableGlobalMethodSecurity(securedEnabled=true)
 @RestController
@@ -50,6 +52,20 @@ public class DocumentoController {
 	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	    String dtoMapAsString = mapper.writeValueAsString(documentoService.listarDocumentosGuiaPorCrear(guia));
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/custodiados")
+	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException {
+		
+		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+		filterProvider.addFilter("envioFilter", SimpleBeanPropertyFilter.serializeAllExcept("documentos")); 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.setFilterProvider(filterProvider); 	
+		
+	    String dtoMapAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(documentoService.listarDocumentosPorEstado());
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	
 	}
 	
 }

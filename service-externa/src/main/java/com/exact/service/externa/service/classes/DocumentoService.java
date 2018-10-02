@@ -60,5 +60,14 @@ public class DocumentoService implements IDocumentoService {
 		
 		return documentosCreadosList;
 	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosPorEstado(){
+
+		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
+		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());			
+		return documentosCustodiadosList;
+	
+	}
 	
 }

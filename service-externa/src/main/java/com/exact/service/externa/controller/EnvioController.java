@@ -24,6 +24,8 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @RestController
 @RequestMapping("/envios")
@@ -65,17 +67,24 @@ public class EnvioController {
 	public ResponseEntity<String> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException {
 		
 		ObjectMapper mapper = new ObjectMapper();
+		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+		filterProvider.addFilter("documentosFilter", SimpleBeanPropertyFilter.serializeAllExcept("envios")); 	
 	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	    String dtoMapAsString = mapper.writeValueAsString(envioService.listarEnviosNoAutorizados());
+	    mapper.setFilterProvider(filterProvider);
+	    String dtoMapAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(envioService.listarEnviosNoAutorizados());
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/creados")
 	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+				
 		
-		ObjectMapper mapper = new ObjectMapper();
-	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	    String dtoMapAsString = mapper.writeValueAsString(envioService.listarEnviosCreados());
+		ObjectMapper mapper = new ObjectMapper();		
+		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+		filterProvider.addFilter("documentosFilter", SimpleBeanPropertyFilter.serializeAllExcept("envios")); 		
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.setFilterProvider(filterProvider); 		
+	    String dtoMapAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(envioService.listarEnviosCreados());
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	

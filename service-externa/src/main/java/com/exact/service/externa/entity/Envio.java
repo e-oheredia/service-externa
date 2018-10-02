@@ -20,6 +20,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name="envio")
 @Inheritance(
@@ -48,6 +51,8 @@ public class Envio implements Serializable {
 	@JoinColumn(name="tipo_seguridad_id")
 	private TipoSeguridad tipoSeguridad;
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="envio", cascade = { CascadeType.PERSIST })
+	@JsonFilter("documentosFilter")
+	@JsonProperty("documentos")
 	private Set<Documento> documentos;
 	@Transient
 	private Map<String, Object> tipoDocumento;			
