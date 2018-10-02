@@ -75,7 +75,7 @@ public class GuiaController {
 	}
 	
 	
-	@PutMapping("{guiaId}/eliminanovalidados")
+	@PutMapping("{guiaId}/retiro")
 	public ResponseEntity<?> eliminarDocumentosGuiaNoValidados(@PathVariable Long guiaId, Authentication authentication)  throws ClientProtocolException, IOException, JSONException{
 		
 		int valor;
@@ -109,8 +109,8 @@ public class GuiaController {
 	}
 	
 	
-	@PostMapping("/enviarguia")
-	public ResponseEntity<?> enviarGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	@PutMapping("{guiaId}/envio")
+	public ResponseEntity<?> enviarGuia(@PathVariable Long guiaId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Map<String, Object> respuesta = new HashMap<String, Object>();
@@ -118,7 +118,7 @@ public class GuiaController {
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
 		
-		valor = guiaService.enviarGuia(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		valor = guiaService.enviarGuia(guiaId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		
 		switch(valor) {
 		case 0: 

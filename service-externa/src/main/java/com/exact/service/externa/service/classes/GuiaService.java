@@ -152,9 +152,9 @@ public class GuiaService implements IGuiaService{
 
 	
 	@Override
-	public int enviarGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+	public int enviarGuia(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
 		
-		Guia guiaEnviada = guiaDao.findById(guia.getId()).orElse(null);
+		Guia guiaEnviada = guiaDao.findById(guiaId).orElse(null);
 		
 		if(guiaEnviada==null) {
 			return 0;
