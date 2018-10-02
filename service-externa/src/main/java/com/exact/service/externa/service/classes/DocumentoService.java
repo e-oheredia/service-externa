@@ -6,6 +6,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIAD
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -17,8 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
+import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
@@ -39,6 +43,14 @@ public class DocumentoService implements IDocumentoService {
 
 	@Autowired
 	private IHandleFileEdao handleFileEdao;
+	
+	@Autowired
+	IBuzonEdao buzonEdao;
+	
+	@Autowired
+	ITipoDocumentoEdao tipoDocumentoEdao;
+	
+	
 	
 	@Override
 	@Transactional
@@ -62,10 +74,44 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosPorEstado(){
+	public Iterable<Documento> listarDocumentosPorEstado() throws ClientProtocolException, IOException, JSONException{
 
 		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
-		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());			
+		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
+		
+		List<Long> buzonIds = new ArrayList();
+		List<Long> tipoDocumentoIds = new ArrayList();
+		
+		for (Documento documento : documentosCustodiadosList) {
+			buzonIds.add(documento.getEnvio().getBuzonId());
+			tipoDocumentoIds.add(documento.getEnvio().getTipoDocumentoId());
+		}
+		
+		
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+		
+		for (Documento documento : documentosCustodiadosList) {
+			
+			int i = 0; 
+			while(i < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+			int j = 0;
+			while(j < tiposDocumento.size()) {
+				if (documento.getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+					documento.getEnvio().setTipoDocumento(tiposDocumento.get(j));
+					break;
+				}
+				j++;
+			}
+		
+		}
+		
 		return documentosCustodiadosList;
 	
 	}

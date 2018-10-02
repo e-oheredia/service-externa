@@ -61,8 +61,7 @@ public class DocumentoController {
 		filterProvider.addFilter("envioFilter", SimpleBeanPropertyFilter.serializeAllExcept("documentos")); 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.setFilterProvider(filterProvider); 	
-		
+		mapper.setFilterProvider(filterProvider); 		
 	    String dtoMapAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(documentoService.listarDocumentosPorEstado());
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
