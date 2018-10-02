@@ -22,8 +22,7 @@ import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 @RestController
 @RequestMapping("/guias")
@@ -51,7 +50,7 @@ public class GuiaController {
 		
 		if (nuevaGuia == null) {
 			Map<String, Object> respuesta = new HashMap<String, Object>();
-			respuesta.put("mensaje", "No existen documentos custodiados para la Guia.");	
+			respuesta.put("mensaje", "No existen documentos custodiados para la Guia");	
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
 		
@@ -75,20 +74,72 @@ public class GuiaController {
 		return new ResponseEntity<DocumentoGuia>(dg, HttpStatus.OK);
 	}
 	
+	
 	@PutMapping("{guiaId}/eliminanovalidados")
 	public ResponseEntity<?> eliminarDocumentosGuiaNoValidados(@PathVariable Long guiaId, Authentication authentication)  throws ClientProtocolException, IOException, JSONException{
-		@SuppressWarnings("unchecked")
-		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
-		Guia guia = guiaService.quitarDocumentosGuia(guiaId);
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		Map<String, Object> respuesta = new HashMap<String, Object>();
 		
-		if (guia == null) {
-			Map<String, Object> respuesta = new HashMap<String, Object>();
-			respuesta.put("mensaje", "No existe la guia ingresada.");	
-			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
+		valor = guiaService.quitarDocumentosGuia(guiaId);
+		
+		switch(valor) {
+		case 0: 
+			rpta="NO EXISTE GUIA";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 
+			rpta="GUIA ELIMINADA";
+				status=HttpStatus.OK;
+				break;
+		case 2:	
+			rpta ="ELEMENTOS RETIRADOS SATISFACTORIAMENTE";
+				status=HttpStatus.OK;
+				break;
+		case 3:
+			rpta="NO EXISTE ELEMENTOS NO VALIDADOS";
+				status=HttpStatus.BAD_REQUEST;
+				break;
 		}
 		
-		return new ResponseEntity<Guia>(guia, HttpStatus.OK);
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+	}
+	
+	
+	@PostMapping("/enviarguia")
+	public ResponseEntity<?> enviarGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		
+		valor = guiaService.enviarGuia(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		
+		switch(valor) {
+		case 0: 
+				rpta="NO EXISTE GUIA";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 
+				rpta="GUIA ENVIADA SATISFACTORIAMENTE ";
+				status=HttpStatus.OK;
+				break;
+		case 2:	
+				rpta ="EXISTEN DOCUMENTOS NO VALIDADOS";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		
+		}
+		
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		
+		//		
 	}
 	
 }

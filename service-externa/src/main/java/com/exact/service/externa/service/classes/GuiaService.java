@@ -150,7 +150,7 @@ public class GuiaService implements IGuiaService{
 		}
 	}
 
-	//
+	
 	@Override
 	public int enviarGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
 		
