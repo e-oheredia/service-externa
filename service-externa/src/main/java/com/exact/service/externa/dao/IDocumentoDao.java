@@ -23,4 +23,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long plazoDistribucionId, Long tipoServicioId, Long tipoSeguridadId);
 	
 	
+	
+	
+	
 }

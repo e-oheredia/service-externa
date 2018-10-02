@@ -2,7 +2,9 @@ package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.entity.Documento;
@@ -48,6 +51,9 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IDocumentoGuiaService documentoGuiaService;
+	
+	@Autowired
+	IDocumentoDao documentoDao;
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
@@ -143,4 +149,54 @@ public class GuiaService implements IGuiaService{
 			return 3;
 		}
 	}
+
+	@Override
+	public int enviarGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+		
+		Guia guiaEnviada = guiaDao.findById(guia.getId()).orElse(null);
+		
+		if(guiaEnviada==null) {
+			return 0;
+		}
+		
+		Iterable<DocumentoGuia> noValidadosList = documentoGuiaDao.listarNoValidados(guiaEnviada.getId());
+		List<DocumentoGuia> dgvalid = StreamSupport.stream(noValidadosList.spliterator(), false).collect(Collectors.toList());
+		
+		if(dgvalid.size()>0) {
+			return 2;
+		}
+		
+		
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_ENVIADO);
+		seguimientoGuia.setGuia(guiaEnviada);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+		guiaEnviada.setSeguimientosGuia(sg);
+		
+		Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
+		List<DocumentoGuia> listDG = new ArrayList<>(lista);
+		for (DocumentoGuia dg : listDG) {
+			List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<SeguimientoDocumento>();
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(usuarioId, new EstadoDocumento(PENDIENTE_ENTREGA));
+			Documento doc = dg.getDocumento();
+			seguimientoDocumento.setDocumento(doc);
+			seguimientosDocumento.add(seguimientoDocumento);
+			Set<SeguimientoDocumento> sd = new HashSet<>(seguimientosDocumento);
+			dg.getDocumento().setSeguimientosDocumento(sd);
+		}
+		
+		 guiaDao.save(guiaEnviada);
+		 
+		 return 1;
+		
+		
+	}
+	
 }
