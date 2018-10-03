@@ -35,7 +35,7 @@ public class EnvioController {
 	@Autowired
 	IEnvioService envioService;
 
-	@Secured("ROLE_CREADOR_DOCUMENTO")
+	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
 	public ResponseEntity<String> registrarEnvio(@RequestParam("envio") String envioJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication) throws IOException, JSONException{
 		
@@ -47,9 +47,7 @@ public class EnvioController {
 		CommonUtils cu = new CommonUtils();
 		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, "documentosFilter", "envio");
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-		//return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(envioRegistrado);
-		//return new ResponseEntity<Envio>(
-				//envioRegistrado, HttpStatus.OK);
+		
 	}
 	
 	@PutMapping("/{id}/autorizacion")
@@ -60,7 +58,6 @@ public class EnvioController {
 		CommonUtils cu = new CommonUtils();
 		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, "documentosFilter", "envio");
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-		//return new ResponseEntity<Envio>(				, HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}/denegacion")
@@ -71,7 +68,6 @@ public class EnvioController {
 		CommonUtils cu = new CommonUtils();
 		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, "documentosFilter", "envio");
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-		//return new ResponseEntity<Envio>(				, HttpStatus.OK);
 	}
 	
 	@GetMapping("/noautorizados")
@@ -85,7 +81,6 @@ public class EnvioController {
 	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
 		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(), "documentosFilter", "envio");
-		//envioService.filterEnvioJson(envioService.listarEnviosCreados());
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
