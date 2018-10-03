@@ -43,27 +43,13 @@ public class TokenController {
 	@GetMapping
 	public ResponseEntity<String> getToken (@RequestHeader("Authorization") String header) throws Exception{
 		
-		
-		//RestTemplate restTemplate = new RestTemplate();
 		HttpGet httpGet = new HttpGet(tokenacceso);
 		httpGet.setHeader("Authorization", header);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		
-		
-		
-		//CommonUtils.jsonArrayToMap(responseJson);
-		
-		
 		return new ResponseEntity<String>(response, HttpStatus.OK);
-		
-		
-		
-		//ResponseEntity<Map<String, Object>> rpta ;
-		
-		
-		
-		
+			
 	}
 
 }
