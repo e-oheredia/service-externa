@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
 
@@ -48,11 +50,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
 			claims = Jwts.parser()
 			.setSigningKey("1234567890.abcdefghi.qwerty.1234567890".getBytes())
 			.parseClaimsJws(header.replace("Bearer ", "")).getBody();
-		} catch (ExpiredJwtException eje) {
-			eje.getStackTrace();
+		}catch (ExpiredJwtException eje) {
+			response.setStatus(894);	
+			response.sendError(894, "EL TOKEN ENVIADO HA EXPIRADO");
 			return;
-		} catch (Exception e) {
-			e.getStackTrace();
+		}catch (MalformedJwtException mje) {
+			response.setStatus(498);
+			response.sendError(498, "EL TOKEN ENVIADO ES INVÁLIDO");
+			return;
+		}catch (SignatureException se) {
+			response.setStatus(498);
+			response.sendError(498, "EL TOKEN ENVIADO ES INVÁLIDO");
 			return;
 		}
 		
