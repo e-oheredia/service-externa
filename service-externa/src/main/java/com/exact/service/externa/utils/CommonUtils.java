@@ -12,6 +12,14 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.exact.service.externa.entity.Envio;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 
 public class CommonUtils {
@@ -84,6 +92,24 @@ public class CommonUtils {
 	    fos.write(multipartFile.getBytes());
 	    fos.close();
 	    return convFile;		
+	}
+	
+	public String filterListaObjetoJson(Iterable<?> lista,String nombreFiltro, String campoFiltro) throws ClientProtocolException, IOException, JSONException{
+		ObjectMapper mapper = new ObjectMapper();		
+		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+		filterProvider.addFilter(nombreFiltro, SimpleBeanPropertyFilter.serializeAllExcept(campoFiltro)); 		
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.setFilterProvider(filterProvider); 		
+	    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lista);
+	}
+	
+	public String filterObjetoJson(Object objeto,String nombreFiltro, String campoFiltro) throws ClientProtocolException, IOException, JSONException{
+		ObjectMapper mapper = new ObjectMapper();		
+		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+		filterProvider.addFilter(nombreFiltro, SimpleBeanPropertyFilter.serializeAllExcept(campoFiltro)); 		
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.setFilterProvider(filterProvider); 		
+	    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objeto);
 	}
 	
 }
