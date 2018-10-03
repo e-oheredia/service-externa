@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.classes.DocumentoService;
+import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -47,23 +48,16 @@ public class DocumentoController {
 	
 	@PostMapping("/porcrearguia")
 	public ResponseEntity<String> listarDocumentosGuiaPorCrear(@RequestBody Guia guia) throws ClientProtocolException, IOException, JSONException {
-		
-		ObjectMapper mapper = new ObjectMapper();
-	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	    String dtoMapAsString = mapper.writeValueAsString(documentoService.listarDocumentosGuiaPorCrear(guia));
+		CommonUtils cu = new CommonUtils();	    
+	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia),"envioFilter","documentos");
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/custodiados")
 	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException {
-		
-		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-		filterProvider.addFilter("envioFilter", SimpleBeanPropertyFilter.serializeAllExcept("documentos")); 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.setFilterProvider(filterProvider); 		
-	    String dtoMapAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(documentoService.listarDocumentosPorEstado());
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		CommonUtils cu = new CommonUtils();
+		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),"envioFilter","documentos");
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
 	}
 	

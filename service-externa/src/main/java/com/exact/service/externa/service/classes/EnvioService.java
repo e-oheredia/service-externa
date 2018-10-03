@@ -33,6 +33,10 @@ import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @Service
 public class EnvioService implements IEnvioService {
@@ -202,5 +206,6 @@ public class EnvioService implements IEnvioService {
 	
 	
 	
+
 
 }
