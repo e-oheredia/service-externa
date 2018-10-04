@@ -12,9 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -39,10 +41,17 @@ public class SeguimientoGuia implements Serializable{
 	private EstadoGuia estadoGuia;
 	
 	@Column(name="fecha")
+	@JsonFormat
+	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fecha;
 	
 	@Transient
 	private Map<String, Object> usuario;	
+	
+	@PrePersist
+	private void prePersist() {
+		fecha = new Date();
+	}
 	
 
 	public Long getId() {

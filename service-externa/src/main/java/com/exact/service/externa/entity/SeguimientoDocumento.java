@@ -31,7 +31,7 @@ public class SeguimientoDocumento implements Serializable {
 	private String linkImagen;
 	@Column(nullable = false)
 	@JsonFormat
-    (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fecha;
 	@Column(nullable = false, name = "usuario_id")
 	private Long usuarioId;

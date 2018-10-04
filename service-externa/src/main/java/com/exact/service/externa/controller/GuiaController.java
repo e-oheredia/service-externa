@@ -22,6 +22,7 @@ import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import com.exact.service.externa.utils.CommonUtils;
 
 
 @RestController
@@ -35,10 +36,14 @@ public class GuiaController {
 	IDocumentoGuiaService documentoGuiaService;
 	
 	@GetMapping("/creados")
-	public ResponseEntity<Iterable<Guia>> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
 		
+		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas();
 		
-	    return new ResponseEntity<Iterable<Guia>>(guiaService.listarGuiasCreadas(), HttpStatus.OK);
+		CommonUtils cu = new CommonUtils();	    
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,"envioFilter","documentos");
+		
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -54,12 +59,15 @@ public class GuiaController {
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
 		
-		return new ResponseEntity<Guia>(nuevaGuia, HttpStatus.OK);
+		CommonUtils cu = new CommonUtils();
+		String dtoMapAsString = cu.filterObjetoJson(nuevaGuia, "envioFilter", "documentos");
+		
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 				
 	}
 	
 	@PutMapping("/{guiaId}/documentos/{documentoId}/validacion")
-	public ResponseEntity<?> validarDocumentoGuia(@PathVariable Long guiaId, @PathVariable Long documentoId, Authentication authentication){
+	public ResponseEntity<?> validarDocumentoGuia(@PathVariable Long guiaId, @PathVariable Long documentoId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
@@ -70,8 +78,11 @@ public class GuiaController {
 			respuesta.put("mensaje", "No existe el documento asociado a la guia.");	
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
+		
+		CommonUtils cu = new CommonUtils();
+		String dtoMapAsString = cu.filterObjetoJson(dg, "envioFilter", "documentos");
 			
-		return new ResponseEntity<DocumentoGuia>(dg, HttpStatus.OK);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	

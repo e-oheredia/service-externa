@@ -45,7 +45,6 @@ public class Documento implements Serializable {
 	private String contactoDestino;
 	@Column(nullable = false)
 	private String direccion;
-	@Column(nullable = false)
 	private String referencia;
 	private String telefono;
 

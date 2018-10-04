@@ -48,7 +48,7 @@ public class Guia implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")	
 	private Set<DocumentoGuia> documentosGuia;
 	
 	
