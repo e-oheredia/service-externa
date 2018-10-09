@@ -30,6 +30,7 @@ import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
@@ -54,6 +55,7 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IDocumentoDao documentoDao;
+	
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
@@ -152,6 +154,7 @@ public class GuiaService implements IGuiaService{
 
 	
 	@Override
+	@Transactional
 	public int enviarGuia(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
 		
 		Guia guiaEnviada = guiaDao.findById(guiaId).orElse(null);
@@ -198,6 +201,67 @@ public class GuiaService implements IGuiaService{
 		 return 1;
 		
 		
+	}
+
+	@Override
+	@Transactional
+	public int modificarGuia(Guia guia) throws ClientProtocolException, IOException, JSONException {
+
+		Guia guiaSeleccionada = guiaDao.findById(guia.getId()).orElse(null);
+		
+		if (guiaSeleccionada == null) {
+			return 0;
+		}				
+		
+		List<SeguimientoGuia> sgList = StreamSupport.stream(guiaSeleccionada.getSeguimientosGuia().spliterator(), false).collect(Collectors.toList());			
+		
+		boolean esCreado = true;		
+		for (SeguimientoGuia sg : sgList) {
+			if (sg.getEstadoGuia().getId() != GUIA_CREADO) {
+				esCreado = false;
+				break;
+			}
+		}
+		
+		if (esCreado == false) {
+			return 2;
+		}			
+		
+		guiaSeleccionada.setProveedor(guia.getProveedor());
+		guiaSeleccionada.setNumeroGuia(guia.getNumeroGuia());
+		
+		guiaDao.save(guiaSeleccionada);
+		
+		return 1;
+	
+	}
+
+	@Override
+	public int eliminarGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException {
+
+		Guia guiaSeleccionada = guiaDao.findById(guiaId).orElse(null);
+		
+		if (guiaSeleccionada == null) {
+			return 0;
+		}
+		
+		List<SeguimientoGuia> sgList = StreamSupport.stream(guiaSeleccionada.getSeguimientosGuia().spliterator(), false).collect(Collectors.toList());			
+		
+		boolean esCreado = true;		
+		for (SeguimientoGuia sg : sgList) {
+			if (sg.getEstadoGuia().getId() != GUIA_CREADO) {
+				esCreado = false;
+				break;
+			}
+		}
+		
+		if (esCreado == false) {
+			return 2;
+		}	
+		
+		guiaDao.delete(guiaSeleccionada);
+		
+		return 1;
 	}
 	
 }

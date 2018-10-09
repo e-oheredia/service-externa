@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -151,6 +152,70 @@ public class GuiaController {
 		return new ResponseEntity<Map<String, Object>>(respuesta,status);
 		
 		//		
+	}
+	
+	@PutMapping("{guiaId}")
+	public ResponseEntity<?> modificarGuia(@PathVariable Long guiaId, @RequestBody Guia guia) throws ClientProtocolException, IOException, JSONException{
+		
+		
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		
+		guia.setId(guiaId);
+		
+		valor = guiaService.modificarGuia(guia);
+		
+		switch(valor) {
+		case 0: 
+				rpta="NO EXISTE GUIA";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 
+				rpta="GUIA ACTUALIZADA SATISFACTORIAMENTE";
+				status=HttpStatus.OK;
+				break;
+		case 2:	
+				rpta ="ESTADO DE GUIA NO VALIDO";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		
+		}
+		
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+	}
+	
+	@DeleteMapping("{guiaId}")
+	public ResponseEntity<?> eliminarGuia(@PathVariable Long guiaId) throws ClientProtocolException, IOException, JSONException{
+		
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		
+		valor = guiaService.eliminarGuia(guiaId);
+		
+		switch(valor) {
+		case 0: 
+				rpta="NO EXISTE GUIA";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 
+				rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
+				status=HttpStatus.OK;
+				break;
+		case 2:	
+				rpta ="ESTADO DE GUIA NO VALIDO";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		
+		}
+		
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		
 	}
 	
 }
