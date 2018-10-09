@@ -263,5 +263,13 @@ public class GuiaService implements IGuiaService{
 		
 		return 1;
 	}
+
+	@Override
+	public Iterable<Guia> listarGuiasParaProveedor() {
+		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasParaProveedor();
+		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
+		
+		return guiasParaProveedorList;	
+	}
 	
 }
