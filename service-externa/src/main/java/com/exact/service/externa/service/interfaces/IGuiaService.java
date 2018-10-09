@@ -13,6 +13,7 @@ public interface IGuiaService {
 	Guia crearGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	int quitarDocumentosGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException;
 	int enviarGuia (Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
-	
+	int modificarGuia(Guia guia) throws  ClientProtocolException, IOException, JSONException;
+	int eliminarGuia(Long guiaId) throws  ClientProtocolException, IOException, JSONException;
 	
 }

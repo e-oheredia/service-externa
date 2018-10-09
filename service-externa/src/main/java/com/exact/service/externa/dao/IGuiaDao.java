@@ -13,7 +13,5 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "FROM SeguimientoGuia sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoGuia sd2 "
 			+ "WHERE sd2.guia.id = d.id) AND sd.estadoGuia.id = ?1)")
 	public Iterable<Guia> findByUltimoEstadoId(Long ultimoEstadoId);
-	
-	
-	
+		
 }
