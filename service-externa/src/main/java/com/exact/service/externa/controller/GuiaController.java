@@ -229,4 +229,15 @@ public class GuiaController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/sincerrar")
+	public ResponseEntity<String> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Guia> guiasSinCerrar = guiaService.listarGuiasSinCerrar();
+		
+		CommonUtils cu = new CommonUtils();	    
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,"envioFilter","documentos");
+		
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }

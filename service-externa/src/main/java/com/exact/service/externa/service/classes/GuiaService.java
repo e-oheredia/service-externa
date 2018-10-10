@@ -311,5 +311,43 @@ public class GuiaService implements IGuiaService{
 		
 		return guiasParaProveedorList;	
 	}
+
+	@Override
+	public Iterable<Guia> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Guia> guiasSinCerrar = guiaDao.findByGuiasSinCerrar();
+		List<Guia> guiasSinCerrarList = StreamSupport.stream(guiasSinCerrar.spliterator(), false).collect(Collectors.toList());	
+		
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		
+		for(Guia guia : guiasSinCerrarList) {
+			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
+			
+			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				
+				int i = 0;
+				while(i < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+						documentoGuia.getDocumento().setDistrito(distritos.get(i));
+						break;
+					}
+					i++;
+				}				
+				
+				int j = 0;
+				while(j < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+				
+			}			
+			
+		}
+		
+		return guiasSinCerrarList;	
+	}
 	
 }
