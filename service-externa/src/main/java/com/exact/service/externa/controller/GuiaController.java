@@ -218,4 +218,15 @@ public class GuiaController {
 		
 	}
 	
+	@GetMapping("/paraproveedor")
+	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
+		
+		CommonUtils cu = new CommonUtils();	    
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,"envioFilter","documentos");
+		
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }
