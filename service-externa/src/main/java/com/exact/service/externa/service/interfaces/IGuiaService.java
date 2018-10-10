@@ -15,5 +15,5 @@ public interface IGuiaService {
 	int enviarGuia (Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	int modificarGuia(Guia guia) throws  ClientProtocolException, IOException, JSONException;
 	int eliminarGuia(Long guiaId) throws  ClientProtocolException, IOException, JSONException;
-	Iterable<Guia> listarGuiasParaProveedor();
+	Iterable<Guia> listarGuiasParaProveedor()throws  ClientProtocolException, IOException, JSONException;
 }
