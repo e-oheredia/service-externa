@@ -2,6 +2,7 @@ package com.exact.service.externa.controller;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,36 @@ public class DocumentoController {
 		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),"envioFilter","documentos");
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
+	}
+	
+	@PutMapping("/cargaresultado")
+	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos){
+		
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		
+		valor = 1;//guiaService.eliminarGuia(guiaId);
+		
+		switch(valor) {
+		case 0: 
+				rpta="NO EXISTE GUIA";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 
+				rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
+				status=HttpStatus.OK;
+				break;
+		case 2:	
+				rpta ="ESTADO DE GUIA NO VALIDO";
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		
+		}
+		
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
 	}
 	
 }

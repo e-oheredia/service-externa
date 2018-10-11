@@ -115,5 +115,32 @@ public class DocumentoService implements IDocumentoService {
 		return documentosCustodiadosList;
 	
 	}
+
+	@Override
+	@Transactional
+	public int cargarResultados(List<Documento> documentosPorCargarResuladoList) throws ClientProtocolException, IOException, JSONException {	
+		
+		List<Long> documentosId = new ArrayList();		
+		
+		for(Documento documento : documentosPorCargarResuladoList) {
+			documentosId.add(documento.getEnvio().getBuzonId());
+		}
+		
+		List<Documento> documentosPorCompararList = StreamSupport.stream(documentoDao.findAllById(documentosId).spliterator(), false).collect(Collectors.toList());	 
+		
+		if (documentosPorCompararList.size()==0) {
+			return 0;
+		}
+		
+		if (documentosPorCompararList.size() != documentosPorCargarResuladoList.size()) {
+			return 2;
+		}
+		
+				
+		//List<Documento> documentosCorrectosList = documentosPorCompararList.removeIf(x => x.id = 0);
+				
+		
+		return 1;
+	}
 	
 }
