@@ -25,11 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
+import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
+import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
@@ -54,6 +58,13 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IDocumentoDao documentoDao;
+	
+	@Autowired
+	ITipoDocumentoEdao tipoDocumentoEdao;
+	
+	@Autowired
+	IDistritoEdao distritoEdao;
+	
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
@@ -152,6 +163,7 @@ public class GuiaService implements IGuiaService{
 
 	
 	@Override
+	@Transactional
 	public int enviarGuia(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
 		
 		Guia guiaEnviada = guiaDao.findById(guiaId).orElse(null);
@@ -198,6 +210,144 @@ public class GuiaService implements IGuiaService{
 		 return 1;
 		
 		
+	}
+
+	@Override
+	@Transactional
+	public int modificarGuia(Guia guia) throws ClientProtocolException, IOException, JSONException {
+
+		Guia guiaSeleccionada = guiaDao.findById(guia.getId()).orElse(null);
+		
+		if (guiaSeleccionada == null) {
+			return 0;
+		}				
+		
+		List<SeguimientoGuia> sgList = StreamSupport.stream(guiaSeleccionada.getSeguimientosGuia().spliterator(), false).collect(Collectors.toList());			
+		
+		boolean esCreado = true;		
+		for (SeguimientoGuia sg : sgList) {
+			if (sg.getEstadoGuia().getId() != GUIA_CREADO) {
+				esCreado = false;
+				break;
+			}
+		}
+		
+		if (esCreado == false) {
+			return 2;
+		}			
+		
+		guiaSeleccionada.setProveedor(guia.getProveedor());
+		guiaSeleccionada.setNumeroGuia(guia.getNumeroGuia());
+		
+		guiaDao.save(guiaSeleccionada);
+		
+		return 1;
+	
+	}
+
+	@Override
+	public int eliminarGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException {
+
+		Guia guiaSeleccionada = guiaDao.findById(guiaId).orElse(null);
+		
+		if (guiaSeleccionada == null) {
+			return 0;
+		}
+		
+		List<SeguimientoGuia> sgList = StreamSupport.stream(guiaSeleccionada.getSeguimientosGuia().spliterator(), false).collect(Collectors.toList());			
+		
+		boolean esCreado = true;		
+		for (SeguimientoGuia sg : sgList) {
+			if (sg.getEstadoGuia().getId() != GUIA_CREADO) {
+				esCreado = false;
+				break;
+			}
+		}
+		
+		if (esCreado == false) {
+			return 2;
+		}	
+		
+		guiaDao.delete(guiaSeleccionada);
+		
+		return 1;
+	}
+
+	@Override
+	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasParaProveedor();
+		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
+		
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		
+		for(Guia guia : guiasParaProveedorList) {
+			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
+			
+			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				
+				int i = 0;
+				while(i < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+						documentoGuia.getDocumento().setDistrito(distritos.get(i));
+						break;
+					}
+					i++;
+				}				
+				
+				int j = 0;
+				while(j < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+				
+			}			
+			
+		}
+		
+		return guiasParaProveedorList;	
+	}
+
+	@Override
+	public Iterable<Guia> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Guia> guiasSinCerrar = guiaDao.findByGuiasSinCerrar();
+		List<Guia> guiasSinCerrarList = StreamSupport.stream(guiasSinCerrar.spliterator(), false).collect(Collectors.toList());	
+		
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		
+		for(Guia guia : guiasSinCerrarList) {
+			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
+			
+			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				
+				int i = 0;
+				while(i < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+						documentoGuia.getDocumento().setDistrito(distritos.get(i));
+						break;
+					}
+					i++;
+				}				
+				
+				int j = 0;
+				while(j < tiposDocumento.size()) {
+					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+				
+			}			
+			
+		}
+		
+		return guiasSinCerrarList;	
 	}
 	
 }
