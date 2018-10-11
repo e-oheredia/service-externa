@@ -1,5 +1,6 @@
 package com.exact.service.externa.service.interfaces;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -12,4 +13,5 @@ public interface IDocumentoService {
 	int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId);
 	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 }
