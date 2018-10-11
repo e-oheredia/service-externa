@@ -5,6 +5,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIAD
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
+import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -50,7 +52,8 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	ITipoDocumentoEdao tipoDocumentoEdao;
 	
-	
+	@Autowired
+	IDistritoEdao distritoEdao;
 	
 	@Override
 	@Transactional
@@ -111,9 +114,34 @@ public class DocumentoService implements IDocumentoService {
 			}
 		
 		}
-		
 		return documentosCustodiadosList;
-	
+	}
+
+	@Override
+	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException
+	{
+		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin);
+		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Long> distritosIds = new ArrayList();
+		
+		for (Documento documento : documentosUbcp) {
+			distritosIds.add(documento.getDistritoId());
+		}
+		
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		
+		for (Documento documento : documentosUbcp) {
+			
+			int i = 0; 
+			while(i < distritos.size()) {
+				if (documento.getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+					documento.setDistrito(distritos.get(i));
+					break;
+				}
+				i++;
+			}
+		}
+		return documentosUbcp;
 	}
 
 	@Override

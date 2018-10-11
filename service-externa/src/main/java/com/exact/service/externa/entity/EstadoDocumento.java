@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,6 +29,12 @@ public class EstadoDocumento implements Serializable {
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="estadoDocumento")
 	private Set<SeguimientoDocumento> seguimientosDocumento;
 	
+	@ManyToOne(optional=false, targetEntity= TipoEstadoDocumento.class)
+	@JoinColumn(name="tipo_estado_documento_id")
+	private TipoEstadoDocumento tipoEstadoDocumento;
+	
+	
+	
 	public EstadoDocumento() {}
 	
 	public EstadoDocumento(Long id) {
@@ -44,7 +52,10 @@ public class EstadoDocumento implements Serializable {
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
+	}	
+
+	
+	
 	/**
 	 * 
 	 */
