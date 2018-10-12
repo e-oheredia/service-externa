@@ -71,28 +71,43 @@ public class DocumentoController {
 	
 	
 	@PutMapping("/cargaresultado")
-	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos){
+	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
 		Map<String, Object> respuesta = new HashMap<String, Object>();
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
 		
-		valor = 1;//guiaService.eliminarGuia(guiaId);
+		Map<Integer,String> resultado = documentoService.cargarResultados(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		int[] resultadoArray = resultado.keySet().stream().mapToInt(Integer::intValue).toArray();
+
+		valor = resultadoArray[0];
+		rpta = resultado.get(valor);
 		
 		switch(valor) {
 		case 0: 
-				rpta="NO EXISTE GUIA";
+				//rpta="NO EXISTE GUIA";
 				status=HttpStatus.BAD_REQUEST;
 				break;
 		case 1: 
-				rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
+				//rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
 				status=HttpStatus.OK;
 				break;
 		case 2:	
-				rpta ="ESTADO DE GUIA NO VALIDO";
+				//rpta ="ESTADO DE GUIA NO VALIDO";
 				status=HttpStatus.BAD_REQUEST;
 				break;
+		case 3:	
+			//rpta ="ESTADO DE GUIA NO VALIDO";
+			status=HttpStatus.BAD_REQUEST;
+			break;
+		case 4:	
+			//rpta ="ESTADO DE GUIA NO VALIDO";
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		
 		}
 		

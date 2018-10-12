@@ -2,12 +2,28 @@ package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DEVUELTO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.EXTRAVIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
+
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -146,29 +162,86 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	@Transactional
-	public int cargarResultados(List<Documento> documentosPorCargarResuladoList) throws ClientProtocolException, IOException, JSONException {	
+	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException {	
 		
-		List<Long> documentosId = new ArrayList();		
+		Map<Integer,String> map = new HashMap<Integer,String>();
 		
-		for(Documento documento : documentosPorCargarResuladoList) {
+		List<Long> documentosId = new ArrayList<Long>();		
+		
+		for(Documento documento : documentosExcelList) {
 			documentosId.add(documento.getEnvio().getBuzonId());
 		}
 		
-		List<Documento> documentosPorCompararList = StreamSupport.stream(documentoDao.findAllById(documentosId).spliterator(), false).collect(Collectors.toList());	 
+		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllById(documentosId).spliterator(), false).collect(Collectors.toList());	 
 		
-		if (documentosPorCompararList.size()==0) {
-			return 0;
+
+		if (documentosBDList.size()==0) {
+			map.put(0, "NO HAY COINCIDENCIAS");
+			return map;
 		}
 		
-		if (documentosPorCompararList.size() != documentosPorCargarResuladoList.size()) {
-			return 2;
+		
+		
+		List<Documento> documentosParaGuardar = new ArrayList<Documento>();
+		
+		for(Documento documento : documentosExcelList) {
+			
+			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado() == documento.getDocumentoAutogenerado()).findFirst();
+			
+			
+			if (!d.isPresent()) {
+				map.put(2, "EL CÓDIGO AUTOGENERADO " + documento.getDocumentoAutogenerado() + " NO EXISTE");
+				return map;
+			}
+			
+			Documento documentoBD = d.get();
+			
+			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
+			// Collections.max(documentoBD.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
+			
+			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != ENTREGADO &&
+				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != REZAGADO &&
+				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != DEVUELTO &&
+				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != EXTRAVIADO) {
+				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
+				return map;
+			}
+						
+			
+			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
+			// Collections.max(documento.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
+			
+			if ( (seguimientoDocumentoExcel.getEstadoDocumento().getId() == ENTREGADO || 
+					seguimientoDocumentoExcel.getEstadoDocumento().getId() == REZAGADO) &&
+					seguimientoDocumentoBDUltimo.getLinkImagen().isEmpty()) {
+				map.put(4, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO CUENTA CON LINK DE IMAGEN");
+				return map;
+			}
+			
+			
+			List<SeguimientoDocumento> seguimientoDocumentoNuevoList = new ArrayList<SeguimientoDocumento>();
+			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
+			seguimientoDocumentoNuevo.setDocumento(documentoBD);
+			seguimientoDocumentoNuevo.setEstadoDocumento(seguimientoDocumentoExcel.getEstadoDocumento());
+			seguimientoDocumentoNuevo.setLinkImagen(seguimientoDocumentoExcel.getLinkImagen());
+			seguimientoDocumentoNuevo.setUsuarioId(usuarioId);
+			
+			seguimientoDocumentoNuevoList.add(seguimientoDocumentoNuevo);
+			
+			
+			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientoDocumentoNuevoList);
+			
+			documentoBD.setSeguimientosDocumento(sd);
+			
+			documentosParaGuardar.add(documentoBD);
 		}
 		
 				
-		//List<Documento> documentosCorrectosList = documentosPorCompararList.removeIf(x => x.id = 0);
-				
 		
-		return 1;
+		documentoDao.saveAll(documentosParaGuardar);		
+		
+		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		return map;
 	}
 	
 }
