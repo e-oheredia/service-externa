@@ -2,12 +2,21 @@ package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DEVUELTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -28,6 +37,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
@@ -134,7 +144,10 @@ public class DocumentoService implements IDocumentoService {
 			
 			int i = 0; 
 			while(i < distritos.size()) {
-				if (documento.getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+				
+				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				
+				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
@@ -143,5 +156,85 @@ public class DocumentoService implements IDocumentoService {
 		}
 		return documentosUbcp;
 	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados();
+		List<Documento> documentosEntregados = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		return documentosEntregados;
+	}
+
+	@Override
+	public Documento recepcionarDocumentoEntregado(Long id, Long idUsuario){
+		Documento documento = documentoDao.findById(id).orElse(null);
+		if(documento==null) {
+			return null;
+		}
+		if (documento.isRecepcionado()) {
+			return null;
+		} 
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+		
+		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO) {
+			return null;
+		}
+		documento.setRecepcionado(true);
+		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Cargo Recibido");
+		
+		seguimientodocumento.setFecha(sdMax.getFecha());
+		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
+		seguimientodocumento.setUsuario(sdMax.getUsuario());
+		seguimientodocumento.setDocumento(documento);
+		
+		seguimientosDocumentolst.add(seguimientodocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		
+		return documentoDao.save(documento);
+	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosDevueltos() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Documento> documentos = documentoDao.listarDocumentosDevueltos();
+		List<Documento> documentosDevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		return documentosDevueltos;
+	}
+	
+	
+	@Override
+	public Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException {
+		Documento documento = documentoDao.findById(id).orElse(null);
+		if(documento==null) {
+			return null;
+		}
+		if (documento.isRecepcionado()) {
+			return null;
+		} 
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+		
+		if(sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=DEVUELTO) {
+			return null;
+		}
+		documento.setRecepcionado(true);
+		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Documento Devuelto");
+		
+		seguimientodocumento.setFecha(sdMax.getFecha());
+		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
+		seguimientodocumento.setUsuario(sdMax.getUsuario());
+		seguimientodocumento.setDocumento(documento);
+		
+		seguimientosDocumentolst.add(seguimientodocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		
+		return documentoDao.save(documento);
+	}
+	
 	
 }
