@@ -10,9 +10,6 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.EXTRAVIAD
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
 
-
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,6 +43,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
@@ -151,7 +150,10 @@ public class DocumentoService implements IDocumentoService {
 			
 			int i = 0; 
 			while(i < distritos.size()) {
-				if (documento.getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+				
+				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				
+				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
@@ -181,9 +183,7 @@ public class DocumentoService implements IDocumentoService {
 			return map;
 		}
 		
-		
-		
-		//List<Documento> documentosParaGuardar = new ArrayList<Documento>();
+				
 		
 		for(Documento documento : documentosExcelList) {					
 			
@@ -198,7 +198,6 @@ public class DocumentoService implements IDocumentoService {
 			Documento documentoBD = d.get();
 			
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
-			// Collections.max(documentoBD.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
 			
 			
 			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA)  {
@@ -208,7 +207,6 @@ public class DocumentoService implements IDocumentoService {
 						
 			
 			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
-			// Collections.max(documento.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
 			
 			
 			if (seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO &&
@@ -232,8 +230,6 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.setLinkImagen("");
 			}
 			
-			
-			//List<SeguimientoDocumento> seguimientoDocumentoNuevoList = new ArrayList<SeguimientoDocumento>();
 			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
 			seguimientoDocumentoNuevo.setDocumento(documentoBD);
 			seguimientoDocumentoNuevo.setObservacion(seguimientoDocumentoExcel.getObservacion());
@@ -242,15 +238,8 @@ public class DocumentoService implements IDocumentoService {
 			seguimientoDocumentoNuevo.setLinkImagen(seguimientoDocumentoExcel.getLinkImagen());
 			seguimientoDocumentoNuevo.setUsuarioId(usuarioId);
 			
-			//seguimientoDocumentoNuevoList.add(seguimientoDocumentoNuevo);
 			
 			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
-			//Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientoDocumentoNuevoList);
-			
-			//documentoBD.setSeguimientosDocumento(sd);
-			
-			//documentosBDList.add(documentoBD);
-			//documentosParaGuardar.add(documentoBD);
 		}
 		
 				
@@ -259,6 +248,84 @@ public class DocumentoService implements IDocumentoService {
 		
 		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
 		return map;
+	}
+
+	public Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados();
+		List<Documento> documentosEntregados = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		return documentosEntregados;
+	}
+
+	@Override
+	public Documento recepcionarDocumentoEntregado(Long id, Long idUsuario){
+		Documento documento = documentoDao.findById(id).orElse(null);
+		if(documento==null) {
+			return null;
+		}
+		if (documento.isRecepcionado()) {
+			return null;
+		} 
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+		
+		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO) {
+			return null;
+		}
+		documento.setRecepcionado(true);
+		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Cargo Recibido");
+		
+		seguimientodocumento.setFecha(sdMax.getFecha());
+		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
+		seguimientodocumento.setUsuario(sdMax.getUsuario());
+		seguimientodocumento.setDocumento(documento);
+		
+		seguimientosDocumentolst.add(seguimientodocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		
+		return documentoDao.save(documento);
+	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosDevueltos() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Documento> documentos = documentoDao.listarDocumentosDevueltos();
+		List<Documento> documentosDevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		return documentosDevueltos;
+	}
+	
+	
+	@Override
+	public Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException {
+		Documento documento = documentoDao.findById(id).orElse(null);
+		if(documento==null) {
+			return null;
+		}
+		if (documento.isRecepcionado()) {
+			return null;
+		} 
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+		
+		if(sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=DEVUELTO) {
+			return null;
+		}
+		documento.setRecepcionado(true);
+		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Documento Devuelto");
+		
+		seguimientodocumento.setFecha(sdMax.getFecha());
+		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
+		seguimientodocumento.setUsuario(sdMax.getUsuario());
+		seguimientodocumento.setDocumento(documento);
+		
+		seguimientosDocumentolst.add(seguimientodocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		
+		return documentoDao.save(documento);
 	}
 	
 }

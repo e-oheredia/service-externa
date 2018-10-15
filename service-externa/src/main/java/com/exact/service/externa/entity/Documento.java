@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -47,6 +48,7 @@ public class Documento implements Serializable {
 	private String direccion;
 	private String referencia;
 	private String telefono;
+	private boolean recepcionado;
 
 	@Column(name = "nro_documento")
 	private String nroDocumento;
@@ -62,6 +64,20 @@ public class Documento implements Serializable {
 
 	@Transient
 	private Map<String, Object> distrito;
+	
+	@PrePersist
+	public void prePersist() {
+		this.recepcionado=false;
+	}
+
+	
+	public boolean isRecepcionado() {
+		return recepcionado;
+	}
+
+	public void setRecepcionado(boolean recepcionado) {
+		this.recepcionado = recepcionado;
+	}
 
 	public Envio getEnvio() {
 		return envio;

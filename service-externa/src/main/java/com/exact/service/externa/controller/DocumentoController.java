@@ -139,4 +139,56 @@ public class DocumentoController {
 		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 	}
 	
+	@GetMapping("/entregados")
+	public ResponseEntity<String> listarDocumentosEntregadosParaCargos() throws ClientProtocolException, IOException, JSONException{
+		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados();
+		List<Documento> documentosParaCargo = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(documentosParaCargo.size()==0) {
+			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosParaCargo,"envioFilter","documentos");
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	
+	}
+	
+	@PutMapping("{id}/recepcioncargo")
+	public ResponseEntity<String> recepcionarEntregados(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		CommonUtils cu = new CommonUtils();
+		Documento documento = documentoService.recepcionarDocumentoEntregado(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		if(documento==null) {
+			return new ResponseEntity<String>("NO ES UN DOCUMENTO ENTREGADO O YA SE ENCUENTRA RECEPCIONADO", HttpStatus.BAD_REQUEST);
+		}
+		String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
+	}
+	
+	@GetMapping("/pordevolver")
+	public ResponseEntity<String> listarDocumentosDevueltosParaCargos() throws ClientProtocolException, IOException, JSONException{
+		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos();
+		List<Documento> documentosdevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(documentosdevueltos.size()==0) {
+			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,"envioFilter","documentos");
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PutMapping("{id}/recepciondevueltos")
+	public ResponseEntity<String> recepcionardevueltos(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		CommonUtils cu = new CommonUtils();
+		Documento documento = documentoService.recepcionarDocumentoDevuelto(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		if(documento==null) {
+			return new ResponseEntity<String>("NO ES UN DOCUMENTO REZAGADO O DEVUELTO ", HttpStatus.BAD_REQUEST);
+		}
+		String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
+	}
+	
+	
 }
