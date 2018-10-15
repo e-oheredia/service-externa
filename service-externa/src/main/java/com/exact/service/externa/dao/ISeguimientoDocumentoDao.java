@@ -8,4 +8,7 @@ import com.exact.service.externa.entity.SeguimientoDocumento;
 @Repository
 public interface ISeguimientoDocumentoDao extends CrudRepository<SeguimientoDocumento, Long> {
 
+	
+	
+	
 }
