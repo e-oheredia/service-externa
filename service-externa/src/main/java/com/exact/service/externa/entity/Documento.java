@@ -51,7 +51,7 @@ public class Documento implements Serializable {
 	@Column(name = "nro_documento")
 	private String nroDocumento;
 
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "documento")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
 	private Set<SeguimientoDocumento> seguimientosDocumento;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional=false)	

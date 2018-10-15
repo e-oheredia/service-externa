@@ -2,6 +2,7 @@ package com.exact.service.externa.dao;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -34,4 +35,5 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1)")
 	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin);
 	
+	public Iterable<Documento> findAllByDocumentoAutogeneradoIn(List<String> autogeneradoList);
 }

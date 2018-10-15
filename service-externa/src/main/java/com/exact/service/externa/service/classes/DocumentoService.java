@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.http.client.ClientProtocolException;
@@ -166,13 +167,13 @@ public class DocumentoService implements IDocumentoService {
 		
 		Map<Integer,String> map = new HashMap<Integer,String>();
 		
-		List<Long> documentosId = new ArrayList<Long>();		
+		List<String> autogeneradoList = new ArrayList<String>();		
 		
 		for(Documento documento : documentosExcelList) {
-			documentosId.add(documento.getEnvio().getBuzonId());
+			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
 		
-		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllById(documentosId).spliterator(), false).collect(Collectors.toList());	 
+		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
 		
 
 		if (documentosBDList.size()==0) {
@@ -182,11 +183,11 @@ public class DocumentoService implements IDocumentoService {
 		
 		
 		
-		List<Documento> documentosParaGuardar = new ArrayList<Documento>();
+		//List<Documento> documentosParaGuardar = new ArrayList<Documento>();
 		
-		for(Documento documento : documentosExcelList) {
+		for(Documento documento : documentosExcelList) {					
 			
-			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado() == documento.getDocumentoAutogenerado()).findFirst();
+			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado().equals(documento.getDocumentoAutogenerado())).findFirst();
 			
 			
 			if (!d.isPresent()) {
@@ -199,11 +200,9 @@ public class DocumentoService implements IDocumentoService {
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
 			// Collections.max(documentoBD.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
 			
-			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != ENTREGADO &&
-				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != REZAGADO &&
-				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != DEVUELTO &&
-				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != EXTRAVIADO) {
-				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
+			
+			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA)  {
+				map.put(5, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO SE ENCUENTRA EN ESTADO PENDIENTE DE ENTREGA");
 				return map;
 			}
 						
@@ -211,34 +210,52 @@ public class DocumentoService implements IDocumentoService {
 			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
 			// Collections.max(documento.getSeguimientosDocumento(), Comparator.comparingLong(s -> s.getId()));
 			
+			
+			if (seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != DEVUELTO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != EXTRAVIADO) {
+				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
+				return map;
+			}
+			
 			if ( (seguimientoDocumentoExcel.getEstadoDocumento().getId() == ENTREGADO || 
 					seguimientoDocumentoExcel.getEstadoDocumento().getId() == REZAGADO) &&
-					seguimientoDocumentoBDUltimo.getLinkImagen().isEmpty()) {
+					seguimientoDocumentoExcel.getLinkImagen().isEmpty()) {
 				map.put(4, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO CUENTA CON LINK DE IMAGEN");
 				return map;
 			}
 			
+			if ( seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO && 
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO) {
+				
+				seguimientoDocumentoExcel.setLinkImagen("");
+			}
 			
-			List<SeguimientoDocumento> seguimientoDocumentoNuevoList = new ArrayList<SeguimientoDocumento>();
+			
+			//List<SeguimientoDocumento> seguimientoDocumentoNuevoList = new ArrayList<SeguimientoDocumento>();
 			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
 			seguimientoDocumentoNuevo.setDocumento(documentoBD);
+			seguimientoDocumentoNuevo.setObservacion(seguimientoDocumentoExcel.getObservacion());
+			seguimientoDocumentoNuevo.setFecha(seguimientoDocumentoExcel.getFecha());
 			seguimientoDocumentoNuevo.setEstadoDocumento(seguimientoDocumentoExcel.getEstadoDocumento());
 			seguimientoDocumentoNuevo.setLinkImagen(seguimientoDocumentoExcel.getLinkImagen());
 			seguimientoDocumentoNuevo.setUsuarioId(usuarioId);
 			
-			seguimientoDocumentoNuevoList.add(seguimientoDocumentoNuevo);
+			//seguimientoDocumentoNuevoList.add(seguimientoDocumentoNuevo);
 			
+			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
+			//Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientoDocumentoNuevoList);
 			
-			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientoDocumentoNuevoList);
+			//documentoBD.setSeguimientosDocumento(sd);
 			
-			documentoBD.setSeguimientosDocumento(sd);
-			
-			documentosParaGuardar.add(documentoBD);
+			//documentosBDList.add(documentoBD);
+			//documentosParaGuardar.add(documentoBD);
 		}
 		
 				
 		
-		documentoDao.saveAll(documentosParaGuardar);		
+		documentoDao.saveAll(documentosBDList);		
 		
 		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
 		return map;

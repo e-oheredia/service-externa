@@ -88,24 +88,19 @@ public class DocumentoController {
 		rpta = resultado.get(valor);
 		
 		switch(valor) {
-		case 0: 
-				//rpta="NO EXISTE GUIA";
+		case 0: 				
 				status=HttpStatus.BAD_REQUEST;
 				break;
-		case 1: 
-				//rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
+		case 1: 				
 				status=HttpStatus.OK;
 				break;
-		case 2:	
-				//rpta ="ESTADO DE GUIA NO VALIDO";
+		case 2:
 				status=HttpStatus.BAD_REQUEST;
 				break;
-		case 3:	
-			//rpta ="ESTADO DE GUIA NO VALIDO";
+		case 3:
 			status=HttpStatus.BAD_REQUEST;
 			break;
 		case 4:	
-			//rpta ="ESTADO DE GUIA NO VALIDO";
 			status=HttpStatus.BAD_REQUEST;
 			break;
 		
