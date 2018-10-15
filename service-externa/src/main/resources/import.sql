@@ -6,8 +6,10 @@ insert into estado_documento values ('PENDIENTE DE ENTREGA',1);
 insert into estado_documento values ('ENTREGADO',2);
 insert into estado_documento values ('REZAGADO',2);
 insert into estado_documento values ('DEVUELTO',2);
+insert into estado_documento values ('EXTRAVIADO',2);
 insert into estado_documento values ('DENEGADO',1);
 insert into estado_documento values ('RETIRADO',1);
+
 insert into tipo_plazo_distribucion(nombre) values('REGULAR');
 insert into tipo_plazo_distribucion(nombre) values('ESPECIAL');
 insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('ESTÁNDAR', 1);

@@ -8,6 +8,8 @@ public class EstadoDocumentoEnum {
 	public static final Long ENTREGADO = 4L; 
 	public static final Long REZAGADO = 5L; 
 	public static final Long DEVUELTO = 6L; 
-	public static final Long DENEGADO = 7L; 
+	public static final Long EXTRAVIADO = 7L;
+	public static final Long DENEGADO = 8L;
+	public static final Long RETIRADO = 9L;
 	
 }

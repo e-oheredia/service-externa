@@ -288,7 +288,7 @@ public class GuiaService implements IGuiaService{
 			for(DocumentoGuia documentoGuia : documentoGuiaList) {
 				
 				int i = 0;
-				while(i < tiposDocumento.size()) {
+				while(i < distritos.size()) {
 					if (documentoGuia.getDocumento().getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
 						documentoGuia.getDocumento().setDistrito(distritos.get(i));
 						break;
