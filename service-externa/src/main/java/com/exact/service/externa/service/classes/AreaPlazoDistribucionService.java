@@ -17,5 +17,13 @@ public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionServi
 	public AreaPlazoDistribucion listarById(Long id) {
 		return areaPlazoDistribucionDao.findById(id).orElse(null);
 	}
+	
+	@Override
+	public AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion) {
+		if (areaPlazoDistribucionDao.existsById(areaPlazoDistribucion.getAreaId())) {
+			return areaPlazoDistribucionDao.save(areaPlazoDistribucion);
+		}
+		return null;
+	}
 
 }

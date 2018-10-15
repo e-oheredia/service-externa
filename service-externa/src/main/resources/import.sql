@@ -17,6 +17,7 @@ insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('24 HO
 insert into tipo_seguridad(nombre) values('SIN GPS');
 insert into tipo_seguridad(nombre) values ('GPS BÁSICO');
 insert into buzon_plazo_distribucion(buzon_id, plazo_distribucion_id) values(1,2);
+insert into area_plazo_distribucion(area_id, plazo_distribucion_id) values(1,2);
 insert into buzon_tipo_seguridad(buzon_id, tipo_seguridad_id) values(1,1);
 insert into tipo_servicio(nombre) values('DISTRIBUCIÓN');
 insert into envio(autorizado,buzon_id,ruta_autorizacion,tipo_documento_id,plazo_distribucion_id,tipo_seguridad_id,tipo_servicio_id) VALUES(1,1,'RUTA_PRUEBA1',1,1,1,1)

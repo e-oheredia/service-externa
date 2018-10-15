@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.AreaPlazoDistribucion;
+import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionService;
 
 @RestController
@@ -22,6 +25,16 @@ public class AreaController {
 	public ResponseEntity<AreaPlazoDistribucion> listarPlazoDistribucionByAreaId(@PathVariable Long id){
 		AreaPlazoDistribucion areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
 		return new ResponseEntity<AreaPlazoDistribucion>(areaPlazoDistribucion, areaPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+	}
+	
+	@PutMapping("/{id}/plazosdistribucion")
+	public ResponseEntity<AreaPlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
+			@RequestBody AreaPlazoDistribucion areaPlazoDistribucion) {
+		areaPlazoDistribucion.setAreaId(id);
+		AreaPlazoDistribucion areaPlazoDistribucionActualizado = areaPlazoDistribucionService
+				.actualizar(areaPlazoDistribucion);
+		return new ResponseEntity<AreaPlazoDistribucion>(areaPlazoDistribucionActualizado,
+				areaPlazoDistribucionActualizado == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 	
 }
