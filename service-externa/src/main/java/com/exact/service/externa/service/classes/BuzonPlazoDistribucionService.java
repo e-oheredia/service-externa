@@ -17,5 +17,14 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	public BuzonPlazoDistribucion listarById(Long id) {
 		return buzonPlazoDistribucionDao.findById(id).orElse(null);
 	}
+	
+	@Override
+	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion) {
+		if (buzonPlazoDistribucionDao.existsById(buzonPlazoDistribucion.getBuzonId())) {
+			return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
+		}
+		return null;
+		
+	}
 
 }
