@@ -111,7 +111,7 @@ public class DocumentoController {
 }
 
 	@GetMapping("/consultabcp")
-	public ResponseEntity<String> listarReporteBCP(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin ) throws ClientProtocolException, IOException, JSONException, ParseException {
+	public ResponseEntity<String> listarReporteBCP(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @RequestParam(name="idbuzon") Long idbuzon ) throws ClientProtocolException, IOException, JSONException, ParseException {
 		if(fechaini=="" || fechafin=="") 
 		{
 			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
@@ -130,7 +130,12 @@ public class DocumentoController {
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 		{
-			Iterable<Documento> documentosUbcp = documentoService.listarReporteBCP(dateI, dateF);
+			Iterable<Documento> documentosUbcp = documentoService.listarReporteBCP(dateI, dateF, idbuzon);
+			
+			if(documentosUbcp==null) {
+				return new ResponseEntity<String>("NO SE ENCONTRARON DOCUMENTOS", HttpStatus.NOT_FOUND);
+			}
+			
 			CommonUtils cu = new CommonUtils();	    
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -188,6 +193,46 @@ public class DocumentoController {
 		}
 		String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
+	}
+	@GetMapping("/consultautd")
+	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	{
+		if(autogenerado!=null) {
+			Documento documento = documentoService.listarDocumentoUTD(autogenerado);
+			if(documento==null) {
+				return new ResponseEntity<String>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
+			}
+			CommonUtils cu = new CommonUtils();
+			String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		}
+		else
+		{
+			if(fechaini=="" || fechafin=="") 
+			{
+				return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+			}
+			
+			SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+			Date dateI= null;
+			Date dateF= null;
+			
+			try {
+				dateI = dt.parse(fechaini);
+				dateF = dt.parse(fechafin); 
+			} catch (Exception e) {
+				return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			}
+			
+			if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
+			{
+				Iterable<Documento> documentosUbcp = documentoService.listarReporteUTD(dateI, dateF);
+				CommonUtils cu = new CommonUtils();	    
+			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
+			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	
