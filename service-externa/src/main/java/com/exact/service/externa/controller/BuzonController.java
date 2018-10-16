@@ -55,5 +55,12 @@ public class BuzonController {
 		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
+	
+	@GetMapping()
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
+			throws IOException, JSONException {
+
+		return new ResponseEntity<Iterable<Map<String, Object>>>(buzonService.listarAll(), HttpStatus.OK);
+	}
 
 }

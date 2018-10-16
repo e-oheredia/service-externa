@@ -1,5 +1,9 @@
 package com.exact.service.externa.controller;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionService;
+import com.exact.service.externa.service.interfaces.IAreaService;
 
 @RestController
 @RequestMapping("/areas")
@@ -20,6 +25,8 @@ public class AreaController {
 
 	@Autowired
 	IAreaPlazoDistribucionService areaPlazoDistribucionService;
+	@Autowired
+	IAreaService areaService;
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
 	public ResponseEntity<AreaPlazoDistribucion> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
@@ -42,4 +49,10 @@ public class AreaController {
 				areaPlazoDistribucionActualizado == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
+	@GetMapping()
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
+			throws IOException, JSONException {
+
+		return new ResponseEntity<Iterable<Map<String, Object>>>(areaService.listarAll(), HttpStatus.OK);
+	}
 }

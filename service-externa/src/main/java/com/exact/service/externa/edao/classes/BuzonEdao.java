@@ -48,6 +48,15 @@ public class BuzonEdao implements IBuzonEdao {
 		JSONArray responseJson = new JSONArray(response);		
 		return CommonUtils.jsonArrayToMap(responseJson);
 	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
+		HttpGet httpGet = new HttpGet(empleadosPath + path);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
 	
 		
 }
