@@ -4,4 +4,5 @@ import com.exact.service.externa.entity.AreaPlazoDistribucion;
 
 public interface IAreaPlazoDistribucionService {
 	AreaPlazoDistribucion listarById(Long id);
+	AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion);
 }

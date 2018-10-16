@@ -2,6 +2,7 @@ package com.exact.service.externa.dao;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -31,9 +32,12 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
-			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1)")
-	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin);
+			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1) AND d.envio.buzonId=?3")
+	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon);
 	
+
+	public Iterable<Documento> findAllByDocumentoAutogeneradoIn(List<String> autogeneradoList);
+
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
 			+ "sd.estadoDocumento.id =4) AND d.recepcionado=0 ")
@@ -43,8 +47,16 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
 			+ "(sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6)) AND d.recepcionado=0 ")
 	public Iterable<Documento> listarDocumentosDevueltos();
+
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
+			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1)")
+	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin);
+	
+	
+	@Query("FROM Documento d WHERE d.documentoAutogenerado=?1")
+	public Documento listarDocumentoUTD(String autogenerado);
 	
 	
 	 
-	
+
 }

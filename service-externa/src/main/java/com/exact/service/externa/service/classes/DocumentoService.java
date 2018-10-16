@@ -2,22 +2,28 @@ package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DEVUELTO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.EXTRAVIADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.http.client.ClientProtocolException;
@@ -127,23 +133,26 @@ public class DocumentoService implements IDocumentoService {
 		return documentosCustodiadosList;
 	}
 
+	
+	
 	@Override
 	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException
 	{
 		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin,idbuzon);
-		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		
-		if(documentosUbcp.size()==0) {
+		if(documentos==null) {
 			return null;
 		}
-		
+		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
+		List<Long> buzonIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
 			distritosIds.add(documento.getDistritoId());
+			buzonIds.add(documento.getEnvio().getBuzonId());
 		}
 		
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		
 		for (Documento documento : documentosUbcp) {
 			
@@ -158,11 +167,107 @@ public class DocumentoService implements IDocumentoService {
 				}
 				i++;
 			}
+			
+			int j = 0; 
+			while(j < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(j));
+					break;
+				}
+				j++;
+			}
 		}
 		return documentosUbcp;
 	}
 
 	@Override
+	@Transactional
+	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException {	
+		
+		Map<Integer,String> map = new HashMap<Integer,String>();
+		
+		List<String> autogeneradoList = new ArrayList<String>();		
+		
+		for(Documento documento : documentosExcelList) {
+			autogeneradoList.add(documento.getDocumentoAutogenerado());
+		}
+		
+		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
+		
+
+		if (documentosBDList.size()==0) {
+			map.put(0, "NO HAY COINCIDENCIAS");
+			return map;
+		}
+		
+				
+		
+		for(Documento documento : documentosExcelList) {					
+			
+			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado().equals(documento.getDocumentoAutogenerado())).findFirst();
+			
+			
+			if (!d.isPresent()) {
+				map.put(2, "EL CÓDIGO AUTOGENERADO " + documento.getDocumentoAutogenerado() + " NO EXISTE");
+				return map;
+			}
+			
+			Documento documentoBD = d.get();
+			
+			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
+			
+			
+			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA)  {
+				map.put(5, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO SE ENCUENTRA EN ESTADO PENDIENTE DE ENTREGA");
+				return map;
+			}
+						
+			
+			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
+			
+			
+			if (seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != DEVUELTO &&
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != EXTRAVIADO) {
+				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
+				return map;
+			}
+			
+			if ( (seguimientoDocumentoExcel.getEstadoDocumento().getId() == ENTREGADO || 
+					seguimientoDocumentoExcel.getEstadoDocumento().getId() == REZAGADO) &&
+					seguimientoDocumentoExcel.getLinkImagen().isEmpty()) {
+				map.put(4, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO CUENTA CON LINK DE IMAGEN");
+				return map;
+			}
+			
+			if ( seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO && 
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO) {
+				
+				seguimientoDocumentoExcel.setLinkImagen("");
+			}
+			
+			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
+			seguimientoDocumentoNuevo.setDocumento(documentoBD);
+			seguimientoDocumentoNuevo.setObservacion(seguimientoDocumentoExcel.getObservacion());
+			seguimientoDocumentoNuevo.setFecha(seguimientoDocumentoExcel.getFecha());
+			seguimientoDocumentoNuevo.setEstadoDocumento(seguimientoDocumentoExcel.getEstadoDocumento());
+			seguimientoDocumentoNuevo.setLinkImagen(seguimientoDocumentoExcel.getLinkImagen());
+			seguimientoDocumentoNuevo.setUsuarioId(usuarioId);
+			
+			
+			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
+		}
+		
+				
+		
+		documentoDao.saveAll(documentosBDList);		
+		
+		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		return map;
+	}
+
+	
 	public Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados();
 		List<Documento> documentosEntregados = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
@@ -273,11 +378,11 @@ public class DocumentoService implements IDocumentoService {
 		return documentoDao.save(documento);
 	}
 
+
 	@Override
 	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin)
 			throws ClientProtocolException, IOException, JSONException {
 		
-
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
 		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
@@ -318,9 +423,9 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Documento listarDocumentoUTD(Long id) throws ClientProtocolException, IOException, JSONException {
+	public Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException {
 		
-		Documento documento = documentoDao.findById(id).orElse(null);
+		Documento documento = documentoDao.listarDocumentoUTD(autogenerado);
 		
 		if(documento==null) {
 			return null;
@@ -337,4 +442,5 @@ public class DocumentoService implements IDocumentoService {
 		}
 		return documento;
 	}
+
 }

@@ -2,6 +2,7 @@ package com.exact.service.externa.controller;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,6 +69,47 @@ public class DocumentoController {
 	
 	}
 	
+	
+	@PutMapping("/cargaresultado")
+	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		int valor;
+		String rpta="";
+		HttpStatus status = HttpStatus.OK;
+		
+		Map<Integer,String> resultado = documentoService.cargarResultados(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		int[] resultadoArray = resultado.keySet().stream().mapToInt(Integer::intValue).toArray();
+
+		valor = resultadoArray[0];
+		rpta = resultado.get(valor);
+		
+		switch(valor) {
+		case 0: 				
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 1: 				
+				status=HttpStatus.OK;
+				break;
+		case 2:
+				status=HttpStatus.BAD_REQUEST;
+				break;
+		case 3:
+			status=HttpStatus.BAD_REQUEST;
+			break;
+		case 4:	
+			status=HttpStatus.BAD_REQUEST;
+			break;
+		
+		}
+		
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+}
+
 	@GetMapping("/consultabcp")
 	public ResponseEntity<String> listarReporteBCP(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @RequestParam(name="idbuzon") Long idbuzon ) throws ClientProtocolException, IOException, JSONException, ParseException {
 		if(fechaini=="" || fechafin=="") 
@@ -153,10 +195,10 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
 	}
 	@GetMapping("/consultautd")
-	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String idDocumento ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws ClientProtocolException, IOException, JSONException, ParseException 
 	{
-		if(idDocumento!=null) {
-			Documento documento = documentoService.listarDocumentoUTD(Long.valueOf(idDocumento));
+		if(autogenerado!=null) {
+			Documento documento = documentoService.listarDocumentoUTD(autogenerado);
 			if(documento==null) {
 				return new ResponseEntity<String>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
 			}
