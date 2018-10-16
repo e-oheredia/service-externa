@@ -128,10 +128,15 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException
+	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException
 	{
-		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin);
+		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin,idbuzon);
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		
+		if(documentosUbcp.size()==0) {
+			return null;
+		}
+		
 		List<Long> distritosIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
@@ -161,6 +166,22 @@ public class DocumentoService implements IDocumentoService {
 	public Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados();
 		List<Documento> documentosEntregados = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		List<Long> buzonIds = new ArrayList();
+		
+		for (Documento documento : documentosEntregados) {
+			buzonIds.add(documento.getEnvio().getBuzonId());
+		}
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		for (Documento documento : documentosEntregados) {
+			int i = 0; 
+			while(i < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+		}
 		return documentosEntregados;
 	}
 
@@ -199,7 +220,23 @@ public class DocumentoService implements IDocumentoService {
 	@Override
 	public Iterable<Documento> listarDocumentosDevueltos() throws ClientProtocolException, IOException, JSONException {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosDevueltos();
-		List<Documento> documentosDevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		List<Documento> documentosDevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Long> buzonIds = new ArrayList();
+		
+		for (Documento documento : documentosDevueltos) {
+			buzonIds.add(documento.getEnvio().getBuzonId());
+		}
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		for (Documento documento : documentosDevueltos) {
+			int i = 0; 
+			while(i < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+		}
 		return documentosDevueltos;
 	}
 	
@@ -235,6 +272,69 @@ public class DocumentoService implements IDocumentoService {
 		
 		return documentoDao.save(documento);
 	}
-	
-	
+
+	@Override
+	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin)
+			throws ClientProtocolException, IOException, JSONException {
+		
+
+		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
+		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Long> distritosIds = new ArrayList();
+		List<Long> buzonIds = new ArrayList();
+		
+		for (Documento documento : documentosUTD) {
+			distritosIds.add(documento.getDistritoId());
+			buzonIds.add(documento.getEnvio().getBuzonId());
+		}
+		
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		
+		for (Documento documento : documentosUTD) {
+			
+			int i = 0; 
+			while(i < distritos.size()) {
+				
+				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				
+				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+					documento.setDistrito(distritos.get(i));
+					break;
+				}
+				i++;
+			}
+			
+			int j = 0; 
+			while(j < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(j));
+					break;
+				}
+				j++;
+			}
+		}
+		return documentosUTD;
+	}
+
+	@Override
+	public Documento listarDocumentoUTD(Long id) throws ClientProtocolException, IOException, JSONException {
+		
+		Documento documento = documentoDao.findById(id).orElse(null);
+		
+		if(documento==null) {
+			return null;
+		}
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
+		documento.getEnvio().setBuzon(buzones);
+		for(int i=0;i < distritos.size();i++) {	
+			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+			if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+				documento.setDistrito(distritos.get(i));
+				break;
+			}
+		}
+		return documento;
+	}
 }

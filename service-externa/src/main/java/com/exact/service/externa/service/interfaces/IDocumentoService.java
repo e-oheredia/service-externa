@@ -14,9 +14,12 @@ public interface IDocumentoService {
 	int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId);
 	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
-	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionarDocumentoEntregado(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosDevueltos() throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
+	Documento listarDocumentoUTD(Long id) throws ClientProtocolException, IOException, JSONException;
+	
 }
