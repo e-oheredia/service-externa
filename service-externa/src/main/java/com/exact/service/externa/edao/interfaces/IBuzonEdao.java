@@ -10,4 +10,5 @@ import org.json.JSONException;
 public interface IBuzonEdao {	
 	public Map<String, Object> listarById(Long id) throws IOException, JSONException;
 	public Iterable<Map<String, Object>> listarByIds(List<Long> buzonIds) throws ClientProtocolException, IOException, JSONException;	
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException;
 }

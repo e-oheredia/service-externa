@@ -21,4 +21,9 @@ public class BuzonService implements IBuzonService {
 		return buzonEdao.listarById(id);
 	}
 
+	@Override
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
+		return buzonEdao.listarAll();
+	}
+
 }

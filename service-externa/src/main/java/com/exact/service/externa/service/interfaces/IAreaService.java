@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.json.JSONException;
 
-public interface IBuzonService {
-	public Map<String, Object> listarById(Long id) throws IOException, JSONException;
+public interface IAreaService {
 	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException;
 }
