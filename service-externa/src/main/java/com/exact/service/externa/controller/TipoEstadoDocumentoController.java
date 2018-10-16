@@ -16,13 +16,13 @@ import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
 
 @RestController
-@RequestMapping("/tipoestadodocumento")
+@RequestMapping("/tiposestadodocumento")
 public class TipoEstadoDocumentoController {
 
 	@Autowired
 	IEstadoDocumentoService estadoDocumentoService;
 	
-	@GetMapping("/{tipoEstadoDocumentoId}/estadodocumento")
+	@GetMapping("/{tipoEstadoDocumentoId}/estadosdocumento")
 	public ResponseEntity<Iterable<EstadoDocumento>> listarPorTipoEstadoDocumento(@PathVariable Long tipoEstadoDocumentoId)throws ClientProtocolException, IOException, JSONException {
 		
 		Iterable<EstadoDocumento> estadoDocumentoList = estadoDocumentoService.listarPorTipoEstadoDocumentoId(tipoEstadoDocumentoId);
