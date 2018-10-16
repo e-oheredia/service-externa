@@ -103,6 +103,9 @@ public class DocumentoController {
 		case 4:	
 			status=HttpStatus.BAD_REQUEST;
 			break;
+		case 5:	
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		
 		}
 		
