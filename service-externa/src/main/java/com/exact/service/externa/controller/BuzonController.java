@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IBuzonPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IBuzonService;
 
@@ -44,12 +45,14 @@ public class BuzonController {
 	}
 
 	@PutMapping("/{id}/plazosdistribucion")
-	public ResponseEntity<BuzonPlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody BuzonPlazoDistribucion buzonPlazoDistribucion) {
+	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
+			@RequestBody PlazoDistribucion plazoDistribucion) {
+		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
+		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		buzonPlazoDistribucion.setBuzonId(id);
 		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
 				.actualizar(buzonPlazoDistribucion);
-		return new ResponseEntity<BuzonPlazoDistribucion>(buzonPlazoDistribucionActualizado,
+		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
