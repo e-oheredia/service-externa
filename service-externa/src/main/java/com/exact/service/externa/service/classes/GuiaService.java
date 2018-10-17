@@ -179,6 +179,10 @@ public class GuiaService implements IGuiaService{
 			return 2;
 		}
 		
+		if(guiaEnviada.getUltimoSeguimientoGuia().getId()!= GUIA_CREADO) {
+			return 3;
+		}
+		
 		
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
 		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		

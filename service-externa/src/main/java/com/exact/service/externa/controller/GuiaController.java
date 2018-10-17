@@ -145,6 +145,10 @@ public class GuiaController {
 				rpta ="EXISTEN DOCUMENTOS NO VALIDADOS";
 				status=HttpStatus.BAD_REQUEST;
 				break;
+		case 3:	
+			rpta ="NO SE PUEDE REALIZAR LA ACCIÓN, LA GUIA YA HA SIDO ENVIADA";
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		
 		}
 		

@@ -217,11 +217,13 @@ public class DocumentoService implements IDocumentoService {
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
 			
 			
-			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA)  {
-				map.put(5, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO SE ENCUENTRA EN ESTADO PENDIENTE DE ENTREGA");
+			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA && 
+				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != REZAGADO)  {
+				map.put(5, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO SE ENCUENTRA EN ESTADO PENDIENTE DE ENTREGA O REZAGADO PARA CARGAR RESULTADO");
 				return map;
 			}
-						
+				
+			
 			
 			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
 			
@@ -245,6 +247,11 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO) {
 				
 				seguimientoDocumentoExcel.setLinkImagen("");
+			}
+			
+			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha())>=0) {
+				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+				return map;
 			}
 			
 			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
