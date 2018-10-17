@@ -1,7 +1,9 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="Guia")
@@ -132,7 +136,11 @@ public class Guia implements Serializable{
 		this.documentosGuia = documentosGuia;
 	}
 
-
+	@JsonIgnore
+	public SeguimientoGuia getUltimoSeguimientoGuia() {
+		return (this.getSeguimientosGuia().stream().max(Comparator.comparing(SeguimientoGuia::getFecha))
+		.orElseThrow(NoSuchElementException::new));		
+	}
 
 	private static final long serialVersionUID = 1L;
 }
