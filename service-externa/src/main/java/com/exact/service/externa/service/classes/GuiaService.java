@@ -179,7 +179,7 @@ public class GuiaService implements IGuiaService{
 			return 2;
 		}
 		
-		if(guiaEnviada.getUltimoSeguimientoGuia().getId()!= GUIA_CREADO) {
+		if(guiaEnviada.getUltimoSeguimientoGuia().getEstadoGuia().getId()!= GUIA_CREADO) {
 			return 3;
 		}
 		
