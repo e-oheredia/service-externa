@@ -23,6 +23,10 @@ public class PlazoDistribucion implements Serializable{
 	private Long id;
 	@Column(nullable=false)
 	private String nombre;
+	
+	@Column(name="tiempo_envio", nullable=false)
+	private int tiempoEnvio;
+	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;

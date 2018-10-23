@@ -12,10 +12,10 @@ insert into estado_documento values ('RETIRADO',1);
 
 insert into tipo_plazo_distribucion(nombre) values('REGULAR');
 insert into tipo_plazo_distribucion(nombre) values('ESPECIAL');
-insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('ESTÁNDAR', 1);
-insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('72 HORAS', 2);
-insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('48 HORAS', 2);
-insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id) values('24 HORAS', 2);
+insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id, tiempo_envio) values('ESTÁNDAR', 1, 96);
+insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id, tiempo_envio) values('72 HORAS', 2, 72);
+insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id, tiempo_envio) values('48 HORAS', 2, 48);
+insert into plazo_distribucion(nombre, tipo_plazo_distribucion_id, tiempo_envio) values('24 HORAS', 2, 24);
 insert into tipo_seguridad(nombre) values('SIN GPS');
 insert into tipo_seguridad(nombre) values ('GPS BÁSICO');
 insert into buzon_plazo_distribucion(buzon_id, plazo_distribucion_id) values(1,2);
