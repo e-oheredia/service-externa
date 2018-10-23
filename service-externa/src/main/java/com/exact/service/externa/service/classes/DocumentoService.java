@@ -459,9 +459,9 @@ public class DocumentoService implements IDocumentoService {
 	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException {
 		
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin);
-		List<Documento> documentosVolumen = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Documento> documentosVol = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		
-		return documentosVolumen;
+		return documentosVol;
 		
 	}
 
