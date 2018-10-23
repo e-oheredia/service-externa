@@ -31,8 +31,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
