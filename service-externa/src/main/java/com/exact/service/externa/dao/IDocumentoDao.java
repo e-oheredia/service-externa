@@ -57,6 +57,11 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public Documento listarDocumentoUTD(String autogenerado);
 	
 	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
+			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=3)")
+	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaini, Date fechafin);
+	
+	
 	 
 
 }

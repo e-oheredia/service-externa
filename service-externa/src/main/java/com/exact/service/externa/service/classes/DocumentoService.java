@@ -202,7 +202,7 @@ public class DocumentoService implements IDocumentoService {
 		
 
 		if (documentosBDList.size()==0) {
-			map.put(0, "NO HAY COINCIDENCIAS");			
+			map.put(0, "NO HAY COINCIDENCIAS");
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return map;
 		}
@@ -277,8 +277,6 @@ public class DocumentoService implements IDocumentoService {
 			
 			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
 		}
-		
-				
 		
 		documentoDao.saveAll(documentosBDList);		
 		
@@ -460,6 +458,16 @@ public class DocumentoService implements IDocumentoService {
 			}
 		}
 		return documento;
+	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin);
+		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		
+		return documentosVolu;
+		
 	}
 
 }
