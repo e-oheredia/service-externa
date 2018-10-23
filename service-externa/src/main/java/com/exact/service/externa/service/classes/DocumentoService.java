@@ -26,11 +26,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
@@ -50,6 +54,7 @@ import com.exact.service.externa.utils.IAutogeneradoUtils;
 @Service
 public class DocumentoService implements IDocumentoService {
 
+	
 	@Autowired
 	private IDocumentoDao documentoDao;
 
@@ -181,8 +186,9 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional()
 	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException {	
+		
 		
 		Map<Integer,String> map = new HashMap<Integer,String>();
 		
@@ -196,7 +202,8 @@ public class DocumentoService implements IDocumentoService {
 		
 
 		if (documentosBDList.size()==0) {
-			map.put(0, "NO HAY COINCIDENCIAS");
+			map.put(0, "NO HAY COINCIDENCIAS");			
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return map;
 		}
 		
@@ -207,8 +214,9 @@ public class DocumentoService implements IDocumentoService {
 			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado().equals(documento.getDocumentoAutogenerado())).findFirst();
 			
 			
-			if (!d.isPresent()) {
+			if (!d.isPresent()) {				
 				map.put(2, "EL CÓDIGO AUTOGENERADO " + documento.getDocumentoAutogenerado() + " NO EXISTE");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
 			
@@ -220,6 +228,7 @@ public class DocumentoService implements IDocumentoService {
 			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA && 
 				seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != REZAGADO)  {
 				map.put(5, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO SE ENCUENTRA EN ESTADO PENDIENTE DE ENTREGA O REZAGADO PARA CARGAR RESULTADO");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
 				
@@ -233,6 +242,7 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.getEstadoDocumento().getId() != DEVUELTO &&
 				seguimientoDocumentoExcel.getEstadoDocumento().getId() != EXTRAVIADO) {
 				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
 			
@@ -240,6 +250,7 @@ public class DocumentoService implements IDocumentoService {
 					seguimientoDocumentoExcel.getEstadoDocumento().getId() == REZAGADO) &&
 					seguimientoDocumentoExcel.getLinkImagen().isEmpty()) {
 				map.put(4, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " NO CUENTA CON LINK DE IMAGEN");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
 			
@@ -251,6 +262,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha())>=0) {
 				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
 			

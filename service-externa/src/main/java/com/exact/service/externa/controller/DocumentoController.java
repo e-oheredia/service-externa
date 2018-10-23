@@ -71,7 +71,7 @@ public class DocumentoController {
 	
 	
 	@PutMapping("/cargaresultado")
-	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws ClientProtocolException, IOException, JSONException {
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
