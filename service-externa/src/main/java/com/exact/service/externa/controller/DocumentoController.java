@@ -242,4 +242,36 @@ public class DocumentoController {
 	}
 	
 	
+	@GetMapping("/documentosvolumen")
+	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	{ 
+		
+		if(fechaini=="" || fechafin=="") 
+		{
+			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+		}
+		
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		
+		try {
+			dateI = dt.parse(fechaini);
+			dateF = dt.parse(fechafin); 
+		} catch (Exception e) {
+			return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+		}
+		
+		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
+		{
+			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF);
+			CommonUtils cu = new CommonUtils();	    
+		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
+		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+		
+		
+	}
+	
 }
