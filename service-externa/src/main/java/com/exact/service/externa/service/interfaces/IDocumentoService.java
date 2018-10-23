@@ -28,5 +28,6 @@ public interface IDocumentoService {
 	Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 	Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 
 }
