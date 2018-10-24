@@ -56,15 +56,23 @@ public class DocumentoController {
 	
 	@PostMapping("/porcrearguia")
 	public ResponseEntity<String> listarDocumentosGuiaPorCrear(@RequestBody Guia guia) throws ClientProtocolException, IOException, JSONException {
-		CommonUtils cu = new CommonUtils();	    
-	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia),"envioFilter","documentos");
+		CommonUtils cu = new CommonUtils();	   
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia),filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("/custodiados")
 	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException{
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),"envioFilter","documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
 	}
@@ -143,7 +151,12 @@ public class DocumentoController {
 			}
 			
 			CommonUtils cu = new CommonUtils();	    
-		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentosGuiaFilter", "documento");
+			filter.put("guiaFilter", "documentosGuia");
+			///////////////////////////////////////////////////////////
+		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		    
 		}
@@ -158,7 +171,11 @@ public class DocumentoController {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterListaObjetoJson(documentosParaCargo,"envioFilter","documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosParaCargo,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
 	}
@@ -172,7 +189,12 @@ public class DocumentoController {
 		if(documento==null) {
 			return new ResponseEntity<String>("NO ES UN DOCUMENTO ENTREGADO O YA SE ENCUENTRA RECEPCIONADO", HttpStatus.BAD_REQUEST);
 		}
-		String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+		
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
 	}
 	
@@ -184,7 +206,12 @@ public class DocumentoController {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,"envioFilter","documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
@@ -197,7 +224,12 @@ public class DocumentoController {
 		if(documento==null) {
 			return new ResponseEntity<String>("NO ES UN DOCUMENTO REZAGADO O DEVUELTO ", HttpStatus.BAD_REQUEST);
 		}
-		String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
 	}
 	@GetMapping("/consultautd")
@@ -209,7 +241,12 @@ public class DocumentoController {
 				return new ResponseEntity<String>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
 			}
 			CommonUtils cu = new CommonUtils();
-			String dtoMapAsString = cu.filterObjetoJson(documento,"envioFilter","documentos");
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentosGuiaFilter", "documento");
+			filter.put("guiaFilter", "documentosGuia");
+			///////////////////////////////////////////////////////////
+			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		}
 		else
@@ -233,8 +270,13 @@ public class DocumentoController {
 			if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 			{
 				Iterable<Documento> documentosUbcp = documentoService.listarReporteUTD(dateI, dateF);
-				CommonUtils cu = new CommonUtils();	    
-			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
+				CommonUtils cu = new CommonUtils();
+				Map<String, String> filter = new HashMap<String, String>();
+				filter.put("envioFilter", "documentos");
+				filter.put("documentosGuiaFilter", "documento");
+				filter.put("guiaFilter", "documentosGuia");
+				///////////////////////////////////////////////////////////
+			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 			}
 			return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
@@ -243,12 +285,16 @@ public class DocumentoController {
 	
 	
 	@GetMapping("/documentosvolumen")
-	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws ClientProtocolException, IOException, JSONException, ParseException 
 	{ 
 		
 		if(fechaini=="" || fechafin=="") 
 		{
 			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+		}
+		
+		if(estado==null) {
+			return new ResponseEntity<String>("NO SE ENCUENTRA ESTADO", HttpStatus.BAD_REQUEST);
 		}
 		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -264,9 +310,14 @@ public class DocumentoController {
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 		{
-			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF);
-			CommonUtils cu = new CommonUtils();	    
-		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,"envioFilter","documentos");
+			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF,estado);
+			CommonUtils cu = new CommonUtils();	
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentosGuiaFilter", "documento");
+			filter.put("guiaFilter", "documentosGuia");
+			///////////////////////////////////////////////////////////
+		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);

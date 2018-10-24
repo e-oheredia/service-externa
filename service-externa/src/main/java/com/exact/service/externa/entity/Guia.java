@@ -19,7 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="Guia")
@@ -52,8 +54,12 @@ public class Guia implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")	
-	private Set<DocumentoGuia> documentosGuia;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
+	@JsonFilter("documentosGuiaFilter")
+	@JsonProperty("documentosGuia")
+	private Set<DocumentoGuia> documentosGuia;	
+	
+	
 	
 	
 	public Long getId() {

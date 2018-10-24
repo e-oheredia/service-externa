@@ -1,6 +1,7 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -43,7 +44,11 @@ public class EnvioMasivoController {
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
 		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file);
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
 		
 	}
@@ -51,7 +56,11 @@ public class EnvioMasivoController {
 	@GetMapping("/creados")
 	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(), "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentoFilter", "documentosGuia");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 }

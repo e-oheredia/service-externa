@@ -94,19 +94,33 @@ public class CommonUtils {
 	    return convFile;		
 	}
 	
-	public String filterListaObjetoJson(Iterable<?> lista,String nombreFiltro, String campoFiltro) throws ClientProtocolException, IOException, JSONException{
+	public String filterListaObjetoJson(Iterable<?> lista,Map<String, String> filtro) throws ClientProtocolException, IOException, JSONException{
 		ObjectMapper mapper = new ObjectMapper();		
 		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-		filterProvider.addFilter(nombreFiltro, SimpleBeanPropertyFilter.serializeAllExcept(campoFiltro)); 		
+		
+		Iterator it = filtro.entrySet().iterator();
+		
+		 while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        filterProvider.addFilter(pair.getKey().toString() , SimpleBeanPropertyFilter.serializeAllExcept(pair.getValue().toString()));
+		     }
+		//filterProvider.addFilter(nombreFiltro, SimpleBeanPropertyFilter.serializeAllExcept(campoFiltro)); 		
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.setFilterProvider(filterProvider); 		
 	    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lista);
 	}
 	
-	public String filterObjetoJson(Object objeto,String nombreFiltro, String campoFiltro) throws ClientProtocolException, IOException, JSONException{
-		ObjectMapper mapper = new ObjectMapper();		
+	public String filterObjetoJson(Object objeto,Map<String, String> filtro) throws ClientProtocolException, IOException, JSONException{
+		ObjectMapper mapper = new ObjectMapper();	
 		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-		filterProvider.addFilter(nombreFiltro, SimpleBeanPropertyFilter.serializeAllExcept(campoFiltro)); 		
+		Iterator it = filtro.entrySet().iterator();
+		
+		 while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        filterProvider.addFilter(pair.getKey().toString() , SimpleBeanPropertyFilter.serializeAllExcept(pair.getValue().toString()));
+		     }
+		//filterProvider.addFilter(filtro.ke , SimpleBeanPropertyFilter.serializeAllExcept(filtro.get("envioFilter"))); 
+		
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.setFilterProvider(filterProvider); 		
 	    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objeto);
