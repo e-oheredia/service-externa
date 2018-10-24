@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,7 @@ import com.exact.service.externa.utils.IAutogeneradoUtils;
 @Service
 public class DocumentoService implements IDocumentoService {
 
+	
 	@Autowired
 	private IDocumentoDao documentoDao;
 
@@ -182,8 +186,9 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional()
 	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException {	
+		
 		
 		Map<Integer,String> map = new HashMap<Integer,String>();
 		
@@ -209,7 +214,7 @@ public class DocumentoService implements IDocumentoService {
 			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado().equals(documento.getDocumentoAutogenerado())).findFirst();
 			
 			
-			if (!d.isPresent()) {
+			if (!d.isPresent()) {				
 				map.put(2, "EL CÓDIGO AUTOGENERADO " + documento.getDocumentoAutogenerado() + " NO EXISTE");
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;

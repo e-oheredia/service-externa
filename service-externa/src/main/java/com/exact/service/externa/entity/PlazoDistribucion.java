@@ -1,13 +1,16 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -20,6 +23,10 @@ public class PlazoDistribucion implements Serializable{
 	private Long id;
 	@Column(nullable=false)
 	private String nombre;
+	
+	@Column(name="tiempo_envio", nullable=false)
+	private int tiempoEnvio;
+	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
