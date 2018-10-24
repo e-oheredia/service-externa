@@ -42,7 +42,11 @@ public class GuiaController {
 		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas();
 		
 		CommonUtils cu = new CommonUtils();	    
-	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,"envioFilter","documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
@@ -61,7 +65,11 @@ public class GuiaController {
 		}
 		
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(nuevaGuia, "envioFilter", "documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+		String dtoMapAsString = cu.filterObjetoJson(nuevaGuia, filter);
 		
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 				
@@ -81,7 +89,11 @@ public class GuiaController {
 		}
 		
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(dg, "envioFilter", "documentos");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
@@ -227,8 +239,12 @@ public class GuiaController {
 		
 		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
 		
-		CommonUtils cu = new CommonUtils();	    
-	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,"envioFilter","documentos");
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
@@ -238,8 +254,12 @@ public class GuiaController {
 		
 		Iterable<Guia> guiasSinCerrar = guiaService.listarGuiasSinCerrar();
 		
-		CommonUtils cu = new CommonUtils();	    
-	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,"envioFilter","documentos");
+		CommonUtils cu = new CommonUtils();	  
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}

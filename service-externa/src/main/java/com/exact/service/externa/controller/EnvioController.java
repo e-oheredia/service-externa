@@ -1,6 +1,7 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -45,7 +46,11 @@ public class EnvioController {
 		Envio envio = mapper.readValue(envioJsonString, Envio.class);		
 		Envio envioRegistrado = envioService.registrarEnvio(envio,Long.valueOf(datosUsuario.get("idUsuario").toString()), file);
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		
 	}
@@ -56,7 +61,11 @@ public class EnvioController {
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
@@ -66,21 +75,33 @@ public class EnvioController {
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		Envio envioDenegado = envioService.denegarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/noautorizados")
 	public ResponseEntity<String> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosNoAutorizados(), "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosNoAutorizados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/creados")
 	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
-		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(), "documentosFilter", "envio");
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	

@@ -53,8 +53,22 @@ public class Documento implements Serializable {
 	@Column(name = "nro_documento")
 	private String nroDocumento;
 
+	public Set<DocumentoGuia> getDocumentosGuia() {
+		return documentosGuia;
+	}
+
+
+	public void setDocumentosGuia(Set<DocumentoGuia> documentosGuia) {
+		this.documentosGuia = documentosGuia;
+	}
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
 	private Set<SeguimientoDocumento> seguimientosDocumento;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+	@JsonFilter("documentosGuiaFilter")
+	@JsonProperty("documentosGuia")
+	private Set<DocumentoGuia> documentosGuia;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional=false)	
 	@JoinColumn(name="envio_id")

@@ -17,7 +17,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="documento_guia")
@@ -29,12 +31,15 @@ public class DocumentoGuia implements Serializable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	@MapsId("documentoId")
 	@JoinColumn(name="documento_id")
+	@JsonFilter("documentoFilter")
+	@JsonProperty("documento")
 	private Documento documento;	
 		
 	@ManyToOne(fetch=FetchType.EAGER)
 	@MapsId("guiaId")
 	@JoinColumn(name="guia_id")
-	@JsonIgnore
+	@JsonFilter("guiaFilter")
+	@JsonProperty("guia")
 	private Guia guia;
 	
 	@Column(name="validado")
