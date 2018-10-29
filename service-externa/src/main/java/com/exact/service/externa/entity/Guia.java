@@ -44,7 +44,7 @@ public class Guia implements Serializable{
 	private TipoServicio tipoServicio;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="tipo_seguiridad_id")
+	@JoinColumn(name="tipo_seguridad_id")
 	private TipoSeguridad tipoSeguridad;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
