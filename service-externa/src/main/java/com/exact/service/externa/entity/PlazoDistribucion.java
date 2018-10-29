@@ -31,6 +31,12 @@ public class PlazoDistribucion implements Serializable{
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
+	public int getTiempoEnvio() {
+		return tiempoEnvio;
+	}
+	public void setTiempoEnvio(int tiempoEnvio) {
+		this.tiempoEnvio = tiempoEnvio;
+	}
 	public TipoPlazoDistribucion getTipoPlazoDistribucion() {
 		return tipoPlazoDistribucion;
 	}
