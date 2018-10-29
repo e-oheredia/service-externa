@@ -21,6 +21,11 @@ public class EstadoDocumentoService implements IEstadoDocumentoService {
 	public Iterable<EstadoDocumento> listarPorTipoEstadoDocumentoId(Long tipoEstadoDocumentoId) throws ClientProtocolException, IOException, JSONException {
 		return estadoDocumentoDao.findByTipoEstadoDocumentoId(tipoEstadoDocumentoId);
 	}
+
+	@Override
+	public Iterable<EstadoDocumento> listarAll() {
+		return estadoDocumentoDao.findAll();
+	}
 	
 	
 	
