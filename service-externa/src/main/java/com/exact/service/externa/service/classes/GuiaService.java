@@ -293,7 +293,7 @@ public class GuiaService implements IGuiaService{
 				
 				int i = 0;
 				while(i < distritos.size()) {
-					if (documentoGuia.getDocumento().getDistritoId() == Long.valueOf(distritos.get(i).get("id").toString())) {
+					if (documentoGuia.getDocumento().getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
 						documentoGuia.getDocumento().setDistrito(distritos.get(i));
 						break;
 					}

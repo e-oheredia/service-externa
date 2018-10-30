@@ -194,6 +194,7 @@ public class DocumentoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter","documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	

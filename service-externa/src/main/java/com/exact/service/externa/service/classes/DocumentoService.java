@@ -465,6 +465,13 @@ public class DocumentoService implements IDocumentoService {
 		
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin,estadoDocumentoId);
 		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+
+		for (Documento documento : documentosVolu) {
+			
+			Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
+			documento.getEnvio().setBuzon(buzones);
+		}
+			
 		
 		return documentosVolu;
 		
