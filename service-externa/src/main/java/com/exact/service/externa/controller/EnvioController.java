@@ -49,6 +49,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -64,6 +65,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -78,6 +80,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -89,6 +92,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosNoAutorizados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -100,6 +104,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
