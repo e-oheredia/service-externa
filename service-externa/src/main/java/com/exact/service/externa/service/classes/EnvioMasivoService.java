@@ -3,6 +3,7 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IEnvioMasivoDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
+import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -39,6 +41,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	
 	@Autowired
 	IBuzonEdao buzonEdao;
+	
+	@Autowired
+	IDistritoEdao distritoEdao;
 	
 	@Autowired
 	ITipoDocumentoEdao tipoDocumentoEdao;
@@ -102,12 +107,30 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
 		
 		if (enviosCreadosList.size() != 0) {
+			List<Long> distritoIds = new ArrayList<Long>();
+			enviosCreadosList.stream().forEach(envioCreado -> {
+				envioCreado.getDocumentos().stream().forEach(documento -> {
+					distritoIds.add(documento.getDistritoId());
+				});
+			});
+
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-			for (Envio envio: enviosCreadosList) {
-				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
+			for (Envio envio: enviosCreadosList) {				
+				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());				
+				for (Documento documento : envio.getDocumentos()) {
+					int h = 0;
+					while (h < buzones.size()) {
+						if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+							documento.setDistrito(distritos.get(h));
+							break;
+						}
+						h++;
+					}
+				}
 				int i = 0; 
 				while(i < buzones.size()) {
 					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {

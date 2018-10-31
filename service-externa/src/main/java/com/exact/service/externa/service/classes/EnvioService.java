@@ -6,6 +6,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
+import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -40,62 +42,66 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @Service
 public class EnvioService implements IEnvioService {
-	
+
 	@Autowired
 	IDocumentoDao documentoDao;
-	
+
 	@Autowired
 	IBuzonEdao buzonEdao;
-	
+
+	@Autowired
+	IDistritoEdao distritoEdao;
+
 	@Autowired
 	ITipoDocumentoEdao tipoDocumentoEdao;
-	
+
 	@Autowired
 	IAutogeneradoUtils autogeneradoUtils;
-	
+
 	@Autowired
 	IHandleFileEdao handleFileEdao;
-	
+
 	@Autowired
 	IEnvioDao envioDao;
-	
+
 	String observacionAutorizacion = "El documento ha sido autorizado";
-	
+
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
-	
-	
 
 	@Override
 	@Transactional
 	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file) throws IOException {
-		
-		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();		
-		
-		for (Documento documento: envio.getDocumentos()) {
+
+		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
+
+		for (Documento documento : envio.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
 			documento.setDocumentoAutogenerado(autogeneradoNuevo);
 			documento.setEnvio(envio);
-			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario, new EstadoDocumento(CREADO));
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
+					new EstadoDocumento(CREADO));
 			seguimientoDocumento.setDocumento(documento);
 			documento.addSeguimientoDocumento(seguimientoDocumento);
 			autogeneradoAnterior = autogeneradoNuevo;
-		}		
-		
-		Long envioIdAnterior = envioDao.getMaxId();		
+		}
+
+		Long envioIdAnterior = envioDao.getMaxId();
 		Long nuevoEnvioId = envioIdAnterior == null ? 1L : envioIdAnterior + 1L;
-		
+
 		if (file != null) {
-			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
+			String rutaAutorizacion = nuevoEnvioId.toString() + "."
+					+ FilenameUtils.getExtension(file.getOriginalFilename());
 			envio.setRutaAutorizacion(rutaAutorizacion);
-			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
+			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
+					file.getContentType(), file.getInputStream());
 			if (handleFileEdao.upload(multipartFile) != 1) {
 				return null;
 			}
-		}		
-		
+		}
+
 		Envio envioRegistrado = envioDao.save(envio);
-		
+
 		return envioRegistrado;
 	}
 
@@ -103,21 +109,24 @@ public class EnvioService implements IEnvioService {
 	public Iterable<Envio> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException {
 		Iterable<Envio> enviosNoAutorizados = envioDao.findByAutorizado(false);
 		List<Envio> enviosNoAutorizadosActivos = StreamSupport.stream(enviosNoAutorizados.spliterator(), false)
-		.filter(envioNoAutorizado -> {
-			Long idUltimoEstado = (new ArrayList<Documento>(envioNoAutorizado.getDocumentos()))
-					.get(0).getUltimoSeguimientoDocumento().getEstadoDocumento().getId();			
-			return idUltimoEstado == CREADO || idUltimoEstado == CUSTODIADO;
-		}).collect(Collectors.toList());
-		
+				.filter(envioNoAutorizado -> {
+					Long idUltimoEstado = (new ArrayList<Documento>(envioNoAutorizado.getDocumentos())).get(0)
+							.getUltimoSeguimientoDocumento().getEstadoDocumento().getId();
+					return idUltimoEstado == CREADO || idUltimoEstado == CUSTODIADO;
+				}).collect(Collectors.toList());
+
 		if (enviosNoAutorizadosActivos.size() != 0) {
-			List<Long> buzonIds = enviosNoAutorizadosActivos.stream().map(Envio::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
+			List<Long> buzonIds = enviosNoAutorizadosActivos.stream().map(Envio::getBuzonId)
+					.collect(Collectors.toList());
+			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoDocumentoId)
+					.collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-			for (Envio envio: enviosNoAutorizadosActivos) {
+			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
+					.listarByIds(tipoDocumentoIds);
+			for (Envio envio : enviosNoAutorizadosActivos) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
-				int i = 0; 
-				while(i < buzones.size()) {
+				int i = 0;
+				while (i < buzones.size()) {
 					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
 						envio.setBuzon(buzones.get(i));
 						break;
@@ -125,68 +134,91 @@ public class EnvioService implements IEnvioService {
 					i++;
 				}
 				int j = 0;
-				while(j < tiposDocumento.size()) {
+				while (j < tiposDocumento.size()) {
 					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
 						envio.setTipoDocumento(tiposDocumento.get(j));
 						break;
 					}
 					j++;
 				}
-				
+
 			}
-		}			
-		return enviosNoAutorizadosActivos;		
-	}
-	
-	@Override
-	public Iterable<Envio> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
-		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO);
-		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
-		
-		if (enviosCreadosList.size() != 0) {
-			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
-			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-			for (Envio envio: enviosCreadosList) {
-				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
-				int i = 0; 
-				while(i < buzones.size()) {
-					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
-						envio.setBuzon(buzones.get(i));
-						break;
-					}
-					i++;
-				}
-				int j = 0;
-				while(j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
-						break;
-					}
-					j++;
-				}
-				
-			}
-		}			
-		return enviosCreadosList;		
+		}
+		return enviosNoAutorizadosActivos;
 	}
 
 	@Override
-	public Envio autorizarEnvio(Long idEnvio, Long idUsuario) {		
-		
+	public Iterable<Envio> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO);
+		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false)
+				.collect(Collectors.toList());
+
+		if (enviosCreadosList.size() != 0) {
+			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId)
+					.collect(Collectors.toList());
+			List<Long> distritoIds = new ArrayList<Long>();
+			enviosCreadosList.stream().forEach(envioCreado -> {
+				envioCreado.getDocumentos().stream().forEach(documento -> {
+					distritoIds.add(documento.getDistritoId());
+				});
+			});
+
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
+			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
+					.listarByIds(tipoDocumentoIds);
+			for (Envio envio : enviosCreadosList) {
+				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
+
+				for (Documento documento : envio.getDocumentos()) {
+					int h = 0;
+					while (h < buzones.size()) {
+						if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+							documento.setDistrito(distritos.get(h));
+							break;
+						}
+						h++;
+					}
+				}
+
+				int i = 0;
+				while (i < buzones.size()) {
+					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+						envio.setBuzon(buzones.get(i));
+						break;
+					}
+					i++;
+				}
+				int j = 0;
+				while (j < tiposDocumento.size()) {
+					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setTipoDocumento(tiposDocumento.get(j));
+						break;
+					}
+					j++;
+				}
+
+			}
+		}
+		return enviosCreadosList;
+	}
+
+	@Override
+	public Envio autorizarEnvio(Long idEnvio, Long idUsuario) {
+
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
-		}		
-		envio.setAutorizado(true);		
+		}
+		envio.setAutorizado(true);
 		envio.getDocumentos().stream().forEach(documento -> {
-			SeguimientoDocumento seguimientoDocumento = 
-					new SeguimientoDocumento(idUsuario, documento.getUltimoSeguimientoDocumento().getEstadoDocumento(), observacionAutorizacion);
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
+					documento.getUltimoSeguimientoDocumento().getEstadoDocumento(), observacionAutorizacion);
 			seguimientoDocumento.setDocumento(documento);
 			documento.addSeguimientoDocumento(seguimientoDocumento);
-		});		
-		return envioDao.save(envio);		
+		});
+		return envioDao.save(envio);
 	}
 
 	@Override
@@ -196,16 +228,13 @@ public class EnvioService implements IEnvioService {
 			return null;
 		}
 		envio.getDocumentos().stream().forEach(documento -> {
-			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario, new EstadoDocumento(DENEGADO));
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
+					new EstadoDocumento(DENEGADO));
 			seguimientoDocumento.setDocumento(documento);
 			documento.addSeguimientoDocumento(seguimientoDocumento);
 		});
-		
+
 		return envioDao.save(envio);
 	}
-	
-	
-	
-
 
 }

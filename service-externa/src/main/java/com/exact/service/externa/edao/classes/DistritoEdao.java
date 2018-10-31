@@ -1,7 +1,9 @@
 package com.exact.service.externa.edao.classes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -41,6 +43,17 @@ public class DistritoEdao implements IDistritoEdao {
 	@Override
 	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + path);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarByIds(List<Long> ids)
+			throws ClientProtocolException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(lugaresPath + path + "?ids=" + String.join(",", ids.stream().map(id -> id.toString())
+				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
