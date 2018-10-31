@@ -123,7 +123,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());				
 				for (Documento documento : envio.getDocumentos()) {
 					int h = 0;
-					while (h < buzones.size()) {
+					while (h < distritos.size()) {
 						if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
 							documento.setDistrito(distritos.get(h));
 							break;
