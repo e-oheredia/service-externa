@@ -124,7 +124,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				for (Documento documento : envio.getDocumentos()) {
 					int h = 0;
 					while (h < distritos.size()) {
-						if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
 							documento.setDistrito(distritos.get(h));
 							break;
 						}
@@ -133,7 +133,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				}
 				int i = 0; 
 				while(i < buzones.size()) {
-					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
 						envio.setBuzon(buzones.get(i));
 						break;
 					}
@@ -141,7 +141,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				}
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+					if (envio.getTipoDocumentoId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
 						envio.setTipoDocumento(tiposDocumento.get(j));
 						break;
 					}
