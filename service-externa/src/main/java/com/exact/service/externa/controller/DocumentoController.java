@@ -60,6 +60,7 @@ public class DocumentoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia),filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -70,7 +71,7 @@ public class DocumentoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
-		
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -211,7 +212,7 @@ public class DocumentoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
-		
+		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
