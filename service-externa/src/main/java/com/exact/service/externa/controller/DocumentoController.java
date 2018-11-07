@@ -66,6 +66,7 @@ public class DocumentoController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/custodiados")
 	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException{
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
