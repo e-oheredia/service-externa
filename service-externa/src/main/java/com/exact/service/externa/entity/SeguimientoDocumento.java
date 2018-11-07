@@ -57,8 +57,11 @@ public class SeguimientoDocumento implements Serializable {
 	
 	@PrePersist
 	public void prePersist() {
-		fecha = new Date();
+		if(fecha == null){
+			fecha = new Date();
+		}
 	}
+	
 	public SeguimientoDocumento() {}
 
 	public SeguimientoDocumento(Long usuarioId, EstadoDocumento estadoDocumento) {
