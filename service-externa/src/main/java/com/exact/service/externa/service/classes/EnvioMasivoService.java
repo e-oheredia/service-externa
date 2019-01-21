@@ -68,7 +68,8 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file)
 			throws IOException {
 		
-		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();		
+		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();	
+		String ruta ="autorizaciones";
 		
 		for (Documento documento: envioMasivo.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
@@ -87,7 +88,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
 			envioMasivo.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
-			if (handleFileEdao.upload(multipartFile) != 1) {
+			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
 		}		

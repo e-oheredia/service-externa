@@ -29,13 +29,14 @@ public class HandleFileEdao implements IHandleFileEdao {
 	private IRequester requester;
 	
 	@Override
-	public int upload(MultipartFile multipartFile) throws IOException {
+	public int upload(MultipartFile multipartFile, String ruta) throws IOException {
 		HttpPost post = new HttpPost(handleFilesPath + "/upload");
 		File file = CommonUtils.multipartFileToFile(multipartFile);
 		FileBody fileBody = new FileBody(file);
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 		builder.addPart("file", fileBody);
+		builder.addTextBody("ruta", ruta);
 		HttpEntity entity = builder.build();
 		post.setEntity(entity);
 		CloseableHttpResponse httpResponse = requester.request(post);

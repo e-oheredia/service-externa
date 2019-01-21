@@ -14,8 +14,8 @@ public class HandleFileService implements IHandleFileService {
 	IHandleFileEdao handleFileEdao;
 	
 	@Override
-	public int upload(MultipartFile file) throws IOException {
-		return handleFileEdao.upload(file);
+	public int upload(MultipartFile file, String ruta) throws IOException {
+		return handleFileEdao.upload(file,ruta);
 	}
 
 }

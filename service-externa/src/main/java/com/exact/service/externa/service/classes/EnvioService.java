@@ -74,6 +74,7 @@ public class EnvioService implements IEnvioService {
 	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file) throws IOException {
 
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
+		String ruta = "autorizaciones";
 
 		for (Documento documento : envio.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
@@ -95,7 +96,7 @@ public class EnvioService implements IEnvioService {
 			envio.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
 					file.getContentType(), file.getInputStream());
-			if (handleFileEdao.upload(multipartFile) != 1) {
+			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
 		}
