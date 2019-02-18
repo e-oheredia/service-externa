@@ -6,6 +6,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +24,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -63,6 +66,9 @@ public class EnvioService implements IEnvioService {
 
 	@Autowired
 	IEnvioDao envioDao;
+	
+	@Autowired
+	ISedeEdao sedeDao;
 
 	String observacionAutorizacion = "El documento ha sido autorizado";
 
@@ -149,7 +155,11 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Iterable<Envio> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Envio> listarEnviosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
+		
+		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
+		Long.valueOf(sede.get("id").toString());
+		
 		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO);
 		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false)
 				.collect(Collectors.toList());

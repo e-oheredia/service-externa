@@ -99,14 +99,16 @@ public class EnvioController {
 	}
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarEnviosCreados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		///////////////////////////////////////////////////////////
-		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(), filter);
+		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	

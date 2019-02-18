@@ -41,6 +41,8 @@ public class Envio implements Serializable {
 	private boolean autorizado;
 	@Column(name="tipo_documento_id")
 	private Long tipoDocumentoId;
+	@Column(name="sede_id")
+	private Long sedeId;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="plazo_distribucion_id")
 	private PlazoDistribucion plazoDistribucion;
@@ -58,7 +60,19 @@ public class Envio implements Serializable {
 	private Map<String, Object> tipoDocumento;			
 	@Transient
 	private Map<String, Object> buzon;
+	@Transient
+	private Map<String, Object> sede;
 	
+		
+	public Map<String, Object> getSede() {
+		return sede;
+	}
+
+	public void setSede(Map<String, Object> sede) {
+		this.sede = sede;
+		this.sedeId = Long.valueOf(sede.get("id").toString());
+	}
+
 	@PrePersist
 	public void prePersist() {
 		if (rutaAutorizacion == null || rutaAutorizacion.isEmpty()) {

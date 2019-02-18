@@ -23,4 +23,9 @@ public class EmpleadoService implements IEmpleadoService {
 		return empleadoEdao.listarByMatricula(matricula);
 	}
 
+	@Override
+	public Long findSede(String matricula) throws ClientProtocolException, IOException, JSONException {
+		return empleadoEdao.findSede(matricula);
+	}
+
 }
