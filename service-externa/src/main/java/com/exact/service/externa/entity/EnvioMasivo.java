@@ -1,8 +1,11 @@
 package com.exact.service.externa.entity;
 
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="envio_masivo")
@@ -11,6 +14,31 @@ public class EnvioMasivo extends Envio {
 	@Column(name="masivo_autogenerado")
 	private String masivoAutogenerado;
 	
+	@Column(name="sede_id")
+	private Long sedeId;
+	
+	@Transient
+	private Map<String, Object> sede;
+	
+	
+	
+	public Long getSedeId() {
+		return sedeId;
+	}
+
+	public void setSedeId(Long sedeId) {
+		this.sedeId = sedeId;
+	}
+
+	public Map<String, Object> getSede() {
+		return sede;
+	}
+
+	public void setSede(Map<String, Object> sede) {
+		this.sede = sede;
+		this.sedeId = Long.valueOf(sede.get("id").toString());
+	}
+
 	public String getMasivoAutogenerado() {
 		return masivoAutogenerado;
 	}
