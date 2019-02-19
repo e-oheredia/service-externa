@@ -59,6 +59,8 @@ public class EnvioMasivoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "documento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
