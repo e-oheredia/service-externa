@@ -14,8 +14,8 @@ public class EnvioMasivo extends Envio {
 	@Column(name="masivo_autogenerado")
 	private String masivoAutogenerado;
 	
-	@Column(name="sede_id")
-	private Long sedeId;
+	@Column(name="sede_id_masivo")
+	private Long sedeIdMasivo;
 	
 	@Transient
 	private Map<String, Object> sede;
@@ -23,11 +23,11 @@ public class EnvioMasivo extends Envio {
 	
 	
 	public Long getSedeId() {
-		return sedeId;
+		return sedeIdMasivo;
 	}
 
 	public void setSedeId(Long sedeId) {
-		this.sedeId = sedeId;
+		this.sedeIdMasivo = sedeId;
 	}
 
 	public Map<String, Object> getSede() {
@@ -36,7 +36,7 @@ public class EnvioMasivo extends Envio {
 
 	public void setSede(Map<String, Object> sede) {
 		this.sede = sede;
-		this.sedeId = Long.valueOf(sede.get("id").toString());
+		this.sedeIdMasivo = Long.valueOf(sede.get("id").toString());
 	}
 
 	public String getMasivoAutogenerado() {
