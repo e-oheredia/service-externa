@@ -63,7 +63,16 @@ public class Envio implements Serializable {
 	@Transient
 	private Map<String, Object> sede;
 	
+	
 		
+	public Long getSedeId() {
+		return sedeId;
+	}
+
+	public void setSedeId(Long sedeId) {
+		this.sedeId = sedeId;
+	}
+
 	public Map<String, Object> getSede() {
 		return sede;
 	}
