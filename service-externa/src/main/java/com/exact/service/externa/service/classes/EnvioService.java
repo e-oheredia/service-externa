@@ -158,9 +158,7 @@ public class EnvioService implements IEnvioService {
 	public Iterable<Envio> listarEnviosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
 		
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
-		Long.valueOf(sede.get("id").toString());
-		
-		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO);
+		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
 		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false)
 				.collect(Collectors.toList());
 
