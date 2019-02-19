@@ -24,6 +24,7 @@ import com.exact.service.externa.dao.IEnvioMasivoDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
@@ -59,6 +60,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	
 	@Autowired
 	IHandleFileEdao handleFileEdao;
+	
+	@Autowired
+	ISedeEdao sedeDao;
 	
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
@@ -103,8 +107,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		return envioRegistrado;
 	}
 	@Override	
-	public Iterable<EnvioMasivo> listarEnviosMasivosCreados() throws ClientProtocolException, IOException, JSONException {
-		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO);
+	public Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
+		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
+		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
 		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
 		
 		if (enviosCreadosList.size() != 0) {

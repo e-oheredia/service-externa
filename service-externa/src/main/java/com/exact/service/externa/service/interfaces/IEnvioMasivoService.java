@@ -10,5 +10,5 @@ import com.exact.service.externa.entity.EnvioMasivo;
 
 public interface IEnvioMasivoService {
 	EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile multipartFile) throws IOException;
-	Iterable<EnvioMasivo> listarEnviosMasivosCreados() throws ClientProtocolException, IOException, JSONException;
+	Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException;
 }
