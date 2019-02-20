@@ -9,8 +9,8 @@ import com.exact.service.externa.entity.Guia;
 
 public interface IGuiaService {
 
-	Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException;
-	Guia crearGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException;
+	Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException;
 	int quitarDocumentosGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException;
 	int enviarGuia (Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	int modificarGuia(Guia guia) throws  ClientProtocolException, IOException, JSONException;
