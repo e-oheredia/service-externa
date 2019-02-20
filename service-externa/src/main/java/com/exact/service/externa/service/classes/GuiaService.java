@@ -85,6 +85,9 @@ public class GuiaService implements IGuiaService{
 	@Transactional
 	public Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
 		
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		guia.setSedeId(Long.valueOf(sede.get("id").toString()));
+		
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		
 		if (documentos == null) {
