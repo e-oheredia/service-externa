@@ -18,7 +18,7 @@ import com.exact.service.externa.entity.Guia;
 public interface IDocumentoService {
 
 	int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId);
-	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
 	Map<Integer,String> cargarResultados(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException;

@@ -59,9 +59,34 @@ public class Guia implements Serializable{
 	@JsonProperty("documentosGuia")
 	private Set<DocumentoGuia> documentosGuia;	
 	
+	@Column(name="sede_id")
+	private Long sedeId;
 	
+	@Transient
+	private Map<String, Object> sede;
 	
-	
+		
+	public Map<String, Object> getSede() {
+		return sede;
+	}
+
+
+	public void setSede(Map<String, Object> sede) {
+		this.sede = sede;
+		this.sedeId = Long.valueOf(sede.get("id").toString());
+	}
+
+
+	public Long getSedeId() {
+		return sedeId;
+	}
+
+
+	public void setSedeId(Long sedeId) {
+		this.sedeId = sedeId;
+	}
+
+
 	public Long getId() {
 		return id;
 	}

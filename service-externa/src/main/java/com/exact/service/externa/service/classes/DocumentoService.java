@@ -41,6 +41,7 @@ import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
@@ -76,6 +77,9 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	IDistritoEdao distritoEdao;
 	
+	@Autowired
+	ISedeEdao sedeEdao;
+	
 	@Override
 	@Transactional
 	public int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId) {
@@ -90,8 +94,11 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia) throws ClientProtocolException, IOException, JSONException {
-		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(guia.getPlazoDistribucion().getId(), guia.getTipoServicio().getId(), guia.getTipoSeguridad().getId());
+	public Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia, String matricula) throws ClientProtocolException, IOException, JSONException {
+		
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		
+		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(guia.getPlazoDistribucion().getId(), guia.getTipoServicio().getId(), guia.getTipoSeguridad().getId(), Long.valueOf(sede.get("id").toString()));
 		List<Documento> documentosCreadosList = StreamSupport.stream(documentosCreados.spliterator(), false).collect(Collectors.toList());	
 		
 		return documentosCreadosList;
@@ -100,6 +107,7 @@ public class DocumentoService implements IDocumentoService {
 	@Override
 	public Iterable<Documento> listarDocumentosPorEstado() throws ClientProtocolException, IOException, JSONException{
 
+				
 		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
 		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
 		

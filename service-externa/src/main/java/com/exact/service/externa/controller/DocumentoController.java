@@ -54,20 +54,23 @@ public class DocumentoController {
 				HttpStatus.OK);
 	}
 	
-	@PostMapping("/porcrearguia")
-	public ResponseEntity<String> listarDocumentosGuiaPorCrear(@RequestBody Guia guia) throws ClientProtocolException, IOException, JSONException {
-		CommonUtils cu = new CommonUtils();	   
-		Map<String, String> filter = new HashMap<String, String>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentosGuiaFilter", "documento");
-		filter.put("guiaFilter", "documentosGuia");
-		///////////////////////////////////////////////////////////
-	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia),filter);
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-	}
+//	@PostMapping("/porcrearguia")
+//	public ResponseEntity<String> listarDocumentosGuiaPorCrear(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+//		@SuppressWarnings("unchecked")
+//		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+//		CommonUtils cu = new CommonUtils();	   
+//		Map<String, String> filter = new HashMap<String, String>();
+//		filter.put("envioFilter", "documentos");
+//		filter.put("documentosGuiaFilter", "documento");
+//		filter.put("guiaFilter", "documentosGuia");
+//		///////////////////////////////////////////////////////////
+//	    String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosGuiaPorCrear(guia,datosUsuario.get("matricula").toString()),filter);
+//	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+//	}
 	
 	@GetMapping("/custodiados")
 	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException{
+		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");

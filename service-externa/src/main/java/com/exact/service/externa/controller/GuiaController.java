@@ -37,10 +37,11 @@ public class GuiaController {
 	IDocumentoGuiaService documentoGuiaService;
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
-		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas();
-		
+		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas(datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
@@ -55,8 +56,7 @@ public class GuiaController {
 	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();		
-		
-		Guia nuevaGuia = guiaService.crearGuia(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Guia nuevaGuia = guiaService.crearGuia(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
 		
 		if (nuevaGuia == null) {
 			Map<String, Object> respuesta = new HashMap<String, Object>();
@@ -167,7 +167,7 @@ public class GuiaController {
 		respuesta.put("mensaje", rpta);	
 		return new ResponseEntity<Map<String, Object>>(respuesta,status);
 		
-		//		
+			
 	}
 	
 	@PutMapping("{guiaId}")

@@ -26,6 +26,7 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
@@ -65,11 +66,16 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	IDistritoEdao distritoEdao;
 	
+	@Autowired
+	ISedeEdao sedeEdao;
+	
 	
 	@Override
-	public Iterable<Guia> listarGuiasCreadas() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException {
 		
-		Iterable<Guia> guiasCreadas = guiaDao.findByUltimoEstadoId(CREADO);
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		
+		Iterable<Guia> guiasCreadas = guiaDao.findByUltimoEstadoId(CREADO, Long.valueOf(sede.get("id").toString()));
 		List<Guia> guiasCreadasList = StreamSupport.stream(guiasCreadas.spliterator(), false).collect(Collectors.toList());	
 		
 		return guiasCreadasList;		
@@ -77,9 +83,9 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	@Transactional
-	public Guia crearGuia(Guia guia, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+	public Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
 		
-		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia);
+		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		
 		if (documentos == null) {
 			return null;		
