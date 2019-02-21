@@ -38,6 +38,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
+import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
@@ -293,8 +294,11 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	
-	public Iterable<Documento> listarDocumentosEntregados() throws ClientProtocolException, IOException, JSONException {
-		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados();
+	public Iterable<Documento> listarDocumentosEntregados(String matricula) throws ClientProtocolException, IOException, JSONException {
+		
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		
+		Iterable<Documento> documentos = documentoDao.listarDocumentosEntregados(Long.valueOf(sede.get("id").toString()));
 		List<Documento> documentosEntregados = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
 		List<Long> buzonIds = new ArrayList();
 		
@@ -333,7 +337,7 @@ public class DocumentoService implements IDocumentoService {
 		documento.setRecepcionado(true);
 		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Cargo Recibido");
 		
-		seguimientodocumento.setFecha(sdMax.getFecha());
+		
 		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
 		seguimientodocumento.setUsuario(sdMax.getUsuario());
 		seguimientodocumento.setDocumento(documento);
@@ -348,8 +352,9 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosDevueltos() throws ClientProtocolException, IOException, JSONException {
-		Iterable<Documento> documentos = documentoDao.listarDocumentosDevueltos();
+	public Iterable<Documento> listarDocumentosDevueltos(String matricula) throws ClientProtocolException, IOException, JSONException {
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		Iterable<Documento> documentos = documentoDao.listarDocumentosDevueltos(Long.valueOf(sede.get("id").toString()));
 		List<Documento> documentosDevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> buzonIds = new ArrayList();
 		
@@ -389,7 +394,7 @@ public class DocumentoService implements IDocumentoService {
 		documento.setRecepcionado(true);
 		SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(idUsuario, sdMax.getEstadoDocumento(),"Documento Devuelto");
 		
-		seguimientodocumento.setFecha(sdMax.getFecha());
+		
 		seguimientodocumento.setLinkImagen(sdMax.getLinkImagen());
 		seguimientodocumento.setUsuario(sdMax.getUsuario());
 		seguimientodocumento.setDocumento(documento);
@@ -474,13 +479,32 @@ public class DocumentoService implements IDocumentoService {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin,estadoDocumentoId);
 		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarAll();
+		
+		
 		for (Documento documento : documentosVolu) {
 			
-			Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
-			documento.getEnvio().setBuzon(buzones);
-		}
+			int i = 0; 
+			while(i < sedes.size()) {
+				
+				if (documento.getEnvio().getSedeId().longValue() == Long.valueOf(sedes.get(i).get("id").toString())) {
+					documento.getEnvio().setSede(sedes.get(i));
+					break;
+				}
+				i++;
+			}
 			
-		
+			int j = 0; 
+			while(j < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(j));
+					break;
+				}
+				j++;
+			}
+		}
+	
 		return documentosVolu;
 		
 	}
