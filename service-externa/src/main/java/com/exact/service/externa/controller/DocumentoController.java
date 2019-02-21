@@ -169,8 +169,10 @@ public class DocumentoController {
 	}
 	
 	@GetMapping("/entregados")
-	public ResponseEntity<String> listarDocumentosEntregadosParaCargos() throws ClientProtocolException, IOException, JSONException{
-		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados();
+	public ResponseEntity<String> listarDocumentosEntregadosParaCargos(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados(datosUsuario.get("matricula").toString());
 		List<Documento> documentosParaCargo = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosParaCargo.size()==0) {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
@@ -206,8 +208,10 @@ public class DocumentoController {
 	}
 	
 	@GetMapping("/pordevolver")
-	public ResponseEntity<String> listarDocumentosDevueltosParaCargos() throws ClientProtocolException, IOException, JSONException{
-		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos();
+	public ResponseEntity<String> listarDocumentosDevueltosParaCargos(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos(datosUsuario.get("matricula").toString());
 		List<Documento> documentosdevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosdevueltos.size()==0) {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);

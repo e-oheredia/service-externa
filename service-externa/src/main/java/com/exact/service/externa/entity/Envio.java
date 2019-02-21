@@ -78,8 +78,8 @@ public class Envio implements Serializable {
 	}
 
 	public void setSede(Map<String, Object> sede) {
-		this.sede = sede;
 		this.sedeId = Long.valueOf(sede.get("id").toString());
+		this.sede = sede;
 	}
 
 	@PrePersist
