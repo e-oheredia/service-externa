@@ -65,15 +65,15 @@ public class Guia implements Serializable{
 	@Transient
 	private Map<String, Object> sede;
 	
-		
+
 	public Map<String, Object> getSede() {
 		return sede;
 	}
 
 
 	public void setSede(Map<String, Object> sede) {
+		this.sedeId= Long.valueOf(sede.get("id").toString());
 		this.sede = sede;
-		this.sedeId = Long.valueOf(sede.get("id").toString());
 	}
 
 

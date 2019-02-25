@@ -86,7 +86,7 @@ public class GuiaService implements IGuiaService{
 	public Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
-		guia.setSedeId(Long.valueOf(sede.get("id").toString()));
+		guia.setSede(sede);
 		
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		
@@ -294,6 +294,7 @@ public class GuiaService implements IGuiaService{
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		
 		for(Guia guia : guiasParaProveedorList) {
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
@@ -318,6 +319,15 @@ public class GuiaService implements IGuiaService{
 					j++;
 				}
 				
+				int k=0;
+				while(k < sedes.size()) {
+					if(documentoGuia.getDocumento().getEnvio().getSedeId() == Long.valueOf(sedes.get(k).get("id").toString())) {
+						documentoGuia.getGuia().setSede(sedes.get(k));
+						break;
+					}
+					k++;
+				}
+				
 			}			
 			
 		}
@@ -332,6 +342,7 @@ public class GuiaService implements IGuiaService{
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		
 		
 		for(Guia guia : guiasSinCerrarList) {
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
@@ -355,6 +366,8 @@ public class GuiaService implements IGuiaService{
 					}
 					j++;
 				}
+				
+				
 				
 			}			
 			
