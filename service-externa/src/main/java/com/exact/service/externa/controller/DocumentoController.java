@@ -169,7 +169,7 @@ public class DocumentoController {
 	}
 	
 	@GetMapping("/entregados")
-	public ResponseEntity<String> listarDocumentosEntregadosParaCargos(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosEntregados(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados(datosUsuario.get("matricula").toString());
@@ -332,8 +332,25 @@ public class DocumentoController {
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+	}
+	
+	@GetMapping("/documentoscargos")
+	public ResponseEntity<String> listarDocumentosEntregadosParaCargos() throws ClientProtocolException, IOException, JSONException{
 		
-		
+		Iterable<Documento> documentos = documentoService.listarCargos();
+		List<Documento> documentosCargos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(documentosCargos.size()==0) {
+			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS PARA CARGOS", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter","documentosGuia");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosCargos,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	
 	}
 	
 }

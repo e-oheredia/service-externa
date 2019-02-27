@@ -509,4 +509,28 @@ public class DocumentoService implements IDocumentoService {
 		
 	}
 
+	@Override
+	public Iterable<Documento> listarCargos() throws ClientProtocolException, IOException, JSONException {
+		
+		Iterable<Documento> documentos = documentoDao.listarCargos();
+		List<Documento> documentosCargos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
+		List<Long> buzonIds = new ArrayList();
+		
+		for (Documento documento : documentosCargos) {
+			buzonIds.add(documento.getEnvio().getBuzonId());
+		}
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		for (Documento documento : documentosCargos) {
+			int i = 0; 
+			while(i < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+		}
+		return documentosCargos;
+	}
+
 }
