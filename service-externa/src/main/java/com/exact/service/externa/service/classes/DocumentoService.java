@@ -510,9 +510,9 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarCargos() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException {
 		
-		Iterable<Documento> documentos = documentoDao.listarCargos();
+		Iterable<Documento> documentos = documentoDao.listarCargos(fechaIni,fechaFin);
 		List<Documento> documentosCargos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());	
 		List<Long> buzonIds = new ArrayList();
 		

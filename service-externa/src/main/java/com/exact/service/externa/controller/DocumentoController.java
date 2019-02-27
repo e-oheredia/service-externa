@@ -335,9 +335,20 @@ public class DocumentoController {
 	}
 	
 	@GetMapping("/documentoscargos")
-	public ResponseEntity<String> listarDocumentosEntregadosParaCargos() throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosEntregadosParaCargos(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin) throws ClientProtocolException, IOException, JSONException{
 		
-		Iterable<Documento> documentos = documentoService.listarCargos();
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		
+		try {
+			dateI = dt.parse(fechaini);
+			dateF = dt.parse(fechafin); 
+		} catch (Exception e) {
+			return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+		}
+		
+		Iterable<Documento> documentos = documentoService.listarCargos(dateI,dateF);
 		List<Documento> documentosCargos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosCargos.size()==0) {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS PARA CARGOS", HttpStatus.NOT_FOUND);
