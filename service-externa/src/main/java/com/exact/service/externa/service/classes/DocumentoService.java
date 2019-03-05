@@ -12,6 +12,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -455,7 +457,7 @@ public class DocumentoService implements IDocumentoService {
 	@Override
 	public Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException {
 		
-		Documento documento = documentoDao.listarDocumentoUTD(autogenerado);
+		Documento documento = documentoDao.listarDocumento(autogenerado);
 		
 		if(documento==null) {
 			return null;
@@ -532,5 +534,36 @@ public class DocumentoService implements IDocumentoService {
 		}
 		return documentosCargos;
 	}
+
+	@Override
+	public Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd , Long idUsuario)
+			throws ClientProtocolException, IOException, JSONException {
+	
+		Optional<Documento> d = documentoDao.findById(id);
+		if(!d.isPresent()) {
+			return null;
+		}
+		Documento documento = d.get();
+		SeguimientoDocumento seguimientoDocumento= null;
+		
+//		SeguimientoDocumento seguimientoDocumento = validarEstadosDocumento(sd, new ArrayList<Long>(Arrays.asList( 
+//													(long) PENDIENTE_ENTREGA.longValue(), 
+//													(long) CUSTODIADO.longValue())));
+		
+		if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==PENDIENTE_ENTREGA && sd.getEstadoDocumento().getId().longValue()==CUSTODIADO) {
+			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+		}else if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==CUSTODIADO && sd.getEstadoDocumento().getId().longValue()==CREADO) {
+			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+		}else {
+			return null;
+		}
+		
+		documento.addSeguimientoDocumento(seguimientoDocumento);
+		seguimientoDocumento.setDocumento(documento);
+		seguimientoDocumentodao.save(seguimientoDocumento);
+		return documento;
+	}
+
+
 
 }

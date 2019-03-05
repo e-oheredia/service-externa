@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.classes.DocumentoService;
 import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -362,6 +363,25 @@ public class DocumentoController {
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosCargos,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	
+	}
+	
+	@PostMapping("/{id}/cambioestado")
+	public ResponseEntity<String> cambiarEstadoDocumento(@PathVariable Long id,@RequestBody SeguimientoDocumento seguimientoDocumento, Authentication authentication ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Documento documento = documentoService.cambiarEstadoDocumento(id, seguimientoDocumento, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		if(documento==null) {
+			return new ResponseEntity<String>("Cambio de estado no permitido ", HttpStatus.BAD_REQUEST);
+		}
+			CommonUtils cu = new CommonUtils();
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentosGuiaFilter", "documento");
+			filter.put("guiaFilter", "documentosGuia");
+			///////////////////////////////////////////////////////////
+			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
+			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

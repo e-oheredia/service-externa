@@ -14,6 +14,7 @@ import org.json.JSONException;
 
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.SeguimientoDocumento;
 
 public interface IDocumentoService {
 
@@ -30,4 +31,5 @@ public interface IDocumentoService {
 	Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin, Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
+	Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 }
