@@ -3,6 +3,7 @@ package com.exact.service.externa.entity;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="estado_documento")
@@ -33,8 +39,22 @@ public class EstadoDocumento implements Serializable {
 	@JoinColumn(name="tipo_estado_documento_id")
 	private TipoEstadoDocumento tipoEstadoDocumento;
 	
+	@ManyToMany(fetch=FetchType.LAZY,  cascade = CascadeType.ALL)
+	@JoinTable(name="estado_documento_permitido", joinColumns = { @JoinColumn(name = "estado_documento_id") },
+	inverseJoinColumns = { @JoinColumn(name = "estado_documento_permitido_id") })
+	@JsonFilter("estadosDocumentoPermitidosFilter")
+	@JsonProperty("estadosDocumentoPermitidos")
+	private Set<EstadoDocumento> estadosDocumentoPermitidos;
 	
 	
+	public Set<EstadoDocumento> getEstadosDocumentoPermitidos() {
+		return estadosDocumentoPermitidos;
+	}
+
+	public void setEstadosDocumentoPermitidos(Set<EstadoDocumento> estadosDocumentoPermitidos) {
+		this.estadosDocumentoPermitidos = estadosDocumentoPermitidos;
+	}
+
 	public EstadoDocumento() {}
 	
 	public EstadoDocumento(Long id) {

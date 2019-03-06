@@ -203,6 +203,12 @@ INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_d
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (8, N'DENEGADO', 1)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (9, N'RETIRADO', 1)
 SET IDENTITY_INSERT [dbo].[estado_documento] OFF
+
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2,1 )
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3,2)
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2,9)
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3,9)
+
 SET IDENTITY_INSERT [dbo].[seguimiento_documento] ON 
 
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id]) VALUES (1, CAST(N'2019-02-25T16:30:28.3660000' AS DateTime2), NULL, NULL, 5, 1, 1)
