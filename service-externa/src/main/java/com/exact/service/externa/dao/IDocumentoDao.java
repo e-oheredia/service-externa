@@ -54,7 +54,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	
 	@Query("FROM Documento d WHERE d.documentoAutogenerado=?1")
-	public Documento listarDocumentoUTD(String autogenerado);
+	public Documento listarDocumento(String autogenerado);
 	
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
