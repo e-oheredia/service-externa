@@ -39,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
+import com.exact.service.externa.dao.IDocumentoGuiaDao;
+import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
@@ -47,11 +49,13 @@ import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
+import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
@@ -82,6 +86,12 @@ public class DocumentoService implements IDocumentoService {
 	
 	@Autowired
 	ISedeEdao sedeEdao;
+	
+	@Autowired
+	IDocumentoGuiaDao documentoGuiadao;
+	
+	@Autowired
+	IGuiaDao guiadao;
 	
 	@Override
 	@Transactional
@@ -535,6 +545,8 @@ public class DocumentoService implements IDocumentoService {
 		return documentosCargos;
 	}
 
+	
+	
 	@Override
 	public Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd , Long idUsuario)
 			throws ClientProtocolException, IOException, JSONException {
@@ -552,16 +564,19 @@ public class DocumentoService implements IDocumentoService {
 		
 		if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==PENDIENTE_ENTREGA && sd.getEstadoDocumento().getId().longValue()==CUSTODIADO) {
 			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+			documentoGuiadao.retirarDocumento(documento.getId());
+		
 		}else if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==CUSTODIADO && sd.getEstadoDocumento().getId().longValue()==CREADO) {
 			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+			
 		}else {
 			return null;
 		}
 		
 		documento.addSeguimientoDocumento(seguimientoDocumento);
 		seguimientoDocumento.setDocumento(documento);
-		seguimientoDocumentodao.save(seguimientoDocumento);
-		return documento;
+		documento.setDocumentosGuia(null);
+		return documentoDao.save(documento);
 	}
 
 
