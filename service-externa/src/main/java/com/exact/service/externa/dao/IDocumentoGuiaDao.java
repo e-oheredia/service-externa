@@ -22,5 +22,8 @@ public interface IDocumentoGuiaDao extends CrudRepository<DocumentoGuia, Long> {
 	@Query("DELETE FROM DocumentoGuia dg WHERE dg.documento.id = ?1")
 	public void retirarDocumento(Long documentoId);
 	
+	@Query("SELECT d FROM DocumentoGuia d WHERE d.documento.id=?1")
+	public DocumentoGuia findByDocumentoId(Long documentoId);
+	
 	
 }

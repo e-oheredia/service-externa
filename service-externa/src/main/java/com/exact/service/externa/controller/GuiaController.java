@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
@@ -267,6 +268,20 @@ public class GuiaController {
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PutMapping("/{documentoId}/desvalidar")
+	public ResponseEntity<?> desvalidarDocumentoGuia(@PathVariable Long documentoId) throws ClientProtocolException, IOException, JSONException{
+		DocumentoGuia dg = documentoGuiaService.desvalidarDocumento(documentoId);
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
+			
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }
