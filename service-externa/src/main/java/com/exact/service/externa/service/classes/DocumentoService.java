@@ -42,6 +42,7 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
+import com.exact.service.externa.dao.ISeguimientoGuiaDao;
 import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
@@ -92,6 +93,9 @@ public class DocumentoService implements IDocumentoService {
 	
 	@Autowired
 	IGuiaDao guiadao;
+	
+	@Autowired
+	ISeguimientoGuiaDao seguimientoGuiadao;
 	
 	@Override
 	@Transactional
@@ -558,14 +562,15 @@ public class DocumentoService implements IDocumentoService {
 		Documento documento = d.get();
 		SeguimientoDocumento seguimientoDocumento= null;
 		
-//		SeguimientoDocumento seguimientoDocumento = validarEstadosDocumento(sd, new ArrayList<Long>(Arrays.asList( 
-//													(long) PENDIENTE_ENTREGA.longValue(), 
-//													(long) CUSTODIADO.longValue())));
-		
 		if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==PENDIENTE_ENTREGA && sd.getEstadoDocumento().getId().longValue()==CUSTODIADO) {
 			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+			DocumentoGuia dg = documentoGuiadao.findByDocumentoId(id);
 			documentoGuiadao.retirarDocumento(documento.getId());
-		
+			if(dg.getGuia().getDocumentosGuia().isEmpty()) {
+				seguimientoGuiadao.retirarSeguimiento(dg.getGuia().getId());
+				guiadao.retirarGuia(dg.getGuia().getId());
+			}
+			
 		}else if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==CUSTODIADO && sd.getEstadoDocumento().getId().longValue()==CREADO) {
 			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
 			
