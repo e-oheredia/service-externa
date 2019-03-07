@@ -1,10 +1,13 @@
 package com.exact.service.externa.dao;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 //import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 
 @Repository
@@ -30,4 +33,9 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = do.id) AND sd.estadoDocumento.id = 3)))"
 			+ "ORDER BY d.id ASC")
 	public Iterable<Guia> findByGuiasSinCerrar();
+	
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM Guia g WHERE g.id = ?1")
+	public void retirarGuia(Long guiaId);
 }
