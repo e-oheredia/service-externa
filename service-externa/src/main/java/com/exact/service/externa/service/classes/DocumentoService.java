@@ -13,6 +13,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -560,24 +561,26 @@ public class DocumentoService implements IDocumentoService {
 			return null;
 		}
 		Documento documento = d.get();
+		DocumentoGuia dg = documentoGuiadao.findByDocumentoId(id);
 		SeguimientoDocumento seguimientoDocumento= null;
+		Iterable<EstadoDocumento> estadosDocumento = documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getEstadosDocumentoPermitidos();
+		List<EstadoDocumento> lstEstadosDocumento = StreamSupport.stream(estadosDocumento.spliterator(), false).collect(Collectors.toList());	
 		
-		if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==PENDIENTE_ENTREGA && sd.getEstadoDocumento().getId().longValue()==CUSTODIADO) {
-			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
-			DocumentoGuia dg = documentoGuiadao.findByDocumentoId(id);
-			documentoGuiadao.retirarDocumento(documento.getId());
-			if(dg.getGuia().getDocumentosGuia().isEmpty()) {
+		for(EstadoDocumento ed : lstEstadosDocumento){
+			int i = 0; 
+			while(i < lstEstadosDocumento.size()) {
+				if (sd.getEstadoDocumento().getId() == lstEstadosDocumento.get(i).getId()) {
+					seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
+					break;
+				}
+				i++;
+			}
+		}
+		documentoGuiadao.retirarDocumento(documento.getId());		
+		if(dg!=null && dg.getGuia().getDocumentosGuia().isEmpty()) {
 				seguimientoGuiadao.retirarSeguimiento(dg.getGuia().getId());
 				guiadao.retirarGuia(dg.getGuia().getId());
-			}
-			
-		}else if(documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getId().longValue()==CUSTODIADO && sd.getEstadoDocumento().getId().longValue()==CREADO) {
-			seguimientoDocumento = new SeguimientoDocumento(idUsuario, sd.getEstadoDocumento(), sd.getObservacion());
-			
-		}else {
-			return null;
-		}
-		
+		}	
 		documento.addSeguimientoDocumento(seguimientoDocumento);
 		seguimientoDocumento.setDocumento(documento);
 		documento.setDocumentosGuia(null);
