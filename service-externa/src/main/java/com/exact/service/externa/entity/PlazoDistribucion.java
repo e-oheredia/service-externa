@@ -31,6 +31,9 @@ public class PlazoDistribucion implements Serializable{
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
+	@Column(nullable=false)
+	private boolean activo;
+	
 	public int getTiempoEnvio() {
 		return tiempoEnvio;
 	}
@@ -55,6 +58,14 @@ public class PlazoDistribucion implements Serializable{
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
+	public boolean isActivo() {
+		return activo;
+	}
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
 	/**
 	 * 
 	 */
