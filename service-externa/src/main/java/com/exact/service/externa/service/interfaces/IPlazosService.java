@@ -8,6 +8,7 @@ import org.json.JSONException;
 
 public interface IPlazosService {
 	
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException;
-	public Map<String, Object> guardar(Map<String, Object> plazo);
+	public Iterable<Map<String, Object>> listarAll() throws  IOException, JSONException;
+	public Map<String, Object> guardar(String plazo) throws  IOException, JSONException;
+	public Map<String, Object> modificar(Long id, String plazo) throws  IOException, JSONException;
 }

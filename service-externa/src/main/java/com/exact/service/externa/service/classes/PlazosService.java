@@ -18,14 +18,18 @@ public class PlazosService implements IPlazosService {
 	IPlazosEdao plazosEdao;
 	
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
 		return plazosEdao.listarAll();
 	}
 
 	@Override
-	public Map<String, Object> guardar(Map<String, Object> plazo) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, Object> guardar(String plazo) throws IOException, JSONException {
+		return plazosEdao.guardar(plazo);
+	}
+
+	@Override
+	public Map<String, Object> modificar(Long id, String plazo) throws IOException, JSONException {
+		return plazosEdao.modificar(id, plazo);
 	}
 
 }

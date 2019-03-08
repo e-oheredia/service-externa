@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -24,5 +26,19 @@ public class Requester implements IRequester {
 		response = httpClient.execute(httpGet);
 		return response;
 	}
+
+	@Override
+	public CloseableHttpResponse requestPost(HttpPost httpPost) throws ClientProtocolException, IOException {
+		response = httpClient.execute(httpPost);
+		return response;
+	}
+
+	@Override
+	public CloseableHttpResponse requestPut(HttpPut httpPut) throws ClientProtocolException, IOException {
+		response = httpClient.execute(httpPut);
+		return response;
+	}
+	
+	
 	
 }
