@@ -29,23 +29,19 @@ public class AreaController {
 	IAreaService areaService;
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
-	public ResponseEntity<AreaPlazoDistribucion> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
-		AreaPlazoDistribucion areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<AreaPlazoDistribucion>(areaPlazoDistribucion,
+	public ResponseEntity<Map<String, Object>> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
+		Map<String, Object> areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
+		return new ResponseEntity<Map<String, Object>>(areaPlazoDistribucion,
 				areaPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
-	@PutMapping("/{id}/plazosdistribucion")
-	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody PlazoDistribucion plazoDistribucion) {
-		AreaPlazoDistribucion areaPlazoDistribucion = new AreaPlazoDistribucion();
-		areaPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
-		areaPlazoDistribucion.setAreaId(id);
+	@PutMapping("/plazosdistribucion")
+	public ResponseEntity<Map<String, Object>> actualizarBuzonPlazoDistribucion(@RequestBody AreaPlazoDistribucion areaplazo) {
 		AreaPlazoDistribucion areaPlazoDistribucionActualizado = areaPlazoDistribucionService
-				.actualizar(areaPlazoDistribucion);
-		return new ResponseEntity<PlazoDistribucion>(
+				.actualizar(areaplazo);
+		return new ResponseEntity<Map<String, Object>>(
 				areaPlazoDistribucionActualizado == null ? null
-						: areaPlazoDistribucionActualizado.getPlazoDistribucion(),
+						: areaPlazoDistribucionActualizado.getPlazos(),
 				areaPlazoDistribucionActualizado == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 

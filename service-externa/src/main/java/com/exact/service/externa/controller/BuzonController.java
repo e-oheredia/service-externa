@@ -38,22 +38,21 @@ public class BuzonController {
 	}
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
-	public ResponseEntity<BuzonPlazoDistribucion> listarPlazoDistribucionByBuzonId(@PathVariable Long id) {
-		BuzonPlazoDistribucion buzonPlazoDistribucion = buzonPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<BuzonPlazoDistribucion>(buzonPlazoDistribucion,
+	public ResponseEntity<Map<String, Object>> listarPlazoDistribucionByBuzonId(@PathVariable Long id) {
+		Map<String, Object> buzonPlazoDistribucion = buzonPlazoDistribucionService.listarById(id);
+		return new ResponseEntity<Map<String, Object>>(buzonPlazoDistribucion,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
-	@PutMapping("/{id}/plazosdistribucion")
-	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody PlazoDistribucion plazoDistribucion) {
-		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
-		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
-		buzonPlazoDistribucion.setBuzonId(id);
+	@PutMapping("/plazodistribucion")
+	public ResponseEntity<Map<String, Object>> actualizarBuzonPlazoDistribucion( @RequestBody BuzonPlazoDistribucion buzonplazo) {
+//		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
+//		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
+//		buzonPlazoDistribucion.setBuzonId(id);
 		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
-				.actualizar(buzonPlazoDistribucion);
-		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
-				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+				.actualizar(buzonplazo);
+		return new ResponseEntity<Map<String, Object>>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazos() ,
+				buzonPlazoDistribucionActualizado == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 	
 	@GetMapping()

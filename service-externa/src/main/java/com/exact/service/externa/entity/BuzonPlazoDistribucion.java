@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,14 +20,22 @@ import javax.persistence.Transient;
 public class BuzonPlazoDistribucion implements Serializable {
 	
 	
+	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="buzon_plazo_distribucion_id")
+	private Long id;
 	@Column(name="buzon_id")
 	private Long buzonId;
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="plazo_distribucion_id")
-	private PlazoDistribucion plazoDistribucion;
+//	@ManyToOne(fetch=FetchType.EAGER)
+//	@JoinColumn(name="plazo_distribucion_id")
+//	private PlazoDistribucion plazoDistribucion;
+	@Column(name="plazo_id")
+	private Long plazoId;
 	@Transient
 	private Map<String, Object> buzon;	
+	@Transient
+	private Map<String, Object> plazos;
 	
 	
 	public Long getBuzonId() {
@@ -36,20 +46,38 @@ public class BuzonPlazoDistribucion implements Serializable {
 		this.buzonId = buzonId;
 	}
 
-	public PlazoDistribucion getPlazoDistribucion() {
-		return plazoDistribucion;
-	}
-
-	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
-		this.plazoDistribucion = plazoDistribucion;
-	}
-
 	public Map<String, Object> getBuzon() {
 		return buzon;
 	}
 
 	public void setBuzon(Map<String, Object> buzon) {
+		this.buzonId=Long.valueOf(buzon.get("id").toString());
 		this.buzon = buzon;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getPlazoId() {
+		return plazoId;
+	}
+
+	public void setPlazoId(Long plazoId) {
+		this.plazoId = plazoId;
+	}
+
+	public Map<String, Object> getPlazos() {
+		return plazos;
+	}
+
+	public void setPlazos(Map<String, Object> plazos) {
+		this.plazoId=Long.valueOf(plazos.get("id").toString());
+		this.plazos = plazos;
 	}
 
 	/**
