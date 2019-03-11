@@ -43,9 +43,11 @@ public class Envio implements Serializable {
 	private Long tipoDocumentoId;
 	@Column(name="sede_id")
 	private Long sedeId;
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="plazo_distribucion_id")
-	private PlazoDistribucion plazoDistribucion;
+	@Column(name="plazo_id")
+	private Long plazoId;
+//	@ManyToOne(fetch=FetchType.EAGER)
+//	@JoinColumn(name="plazo_distribucion_id")
+//	private PlazoDistribucion plazoDistribucion;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_servicio_id")
 	private TipoServicio tipoServicio;
@@ -62,6 +64,8 @@ public class Envio implements Serializable {
 	private Map<String, Object> buzon;
 	@Transient
 	private Map<String, Object> sede;
+	@Transient
+	private Map<String, Object> plazo;
 	
 	
 		
@@ -119,12 +123,12 @@ public class Envio implements Serializable {
 	public void setTipoDocumentoId(Long tipoDocumentoId) {
 		this.tipoDocumentoId = tipoDocumentoId;
 	}
-	public PlazoDistribucion getPlazoDistribucion() {
-		return plazoDistribucion;
-	}
-	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
-		this.plazoDistribucion = plazoDistribucion;
-	}
+//	public PlazoDistribucion getPlazoDistribucion() {
+//		return plazoDistribucion;
+//	}
+//	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+//		this.plazoDistribucion = plazoDistribucion;
+//	}
 	public TipoServicio getTipoServicio() {
 		return tipoServicio;
 	}
@@ -158,6 +162,25 @@ public class Envio implements Serializable {
 		this.buzon = buzon;
 	}	
 	
+	public Long getPlazoId() {
+		return plazoId;
+	}
+
+	public void setPlazoId(Long plazoId) {
+		this.plazoId = plazoId;
+	}
+
+	public Map<String, Object> getPlazo() {
+		return plazo;
+	}
+
+	public void setPlazo(Map<String, Object> plazo) {
+		this.plazoId=Long.valueOf(plazo.get("id").toString());
+		this.plazo = plazo;
+	}
+
+
+
 	/**
 	 * 
 	 */

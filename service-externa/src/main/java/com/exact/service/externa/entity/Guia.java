@@ -35,9 +35,11 @@ public class Guia implements Serializable{
 	@Column(name="numero_guia")
 	private String numeroGuia;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="plazo_distribucion_id")
-	private PlazoDistribucion plazoDistribucion;
+	@Column(name="plazo_id")
+	private Long plazoId;
+	
+	@Transient
+	private Map<String, Object> plazo;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_servicio_id")
@@ -97,14 +99,14 @@ public class Guia implements Serializable{
 	}
 
 
-	public PlazoDistribucion getPlazoDistribucion() {
-		return plazoDistribucion;
-	}
-
-
-	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
-		this.plazoDistribucion = plazoDistribucion;
-	}
+//	public PlazoDistribucion getPlazoDistribucion() {
+//		return plazoDistribucion;
+//	}
+//
+//
+//	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+//		this.plazoDistribucion = plazoDistribucion;
+//	}
 
 
 	public TipoServicio getTipoServicio() {
@@ -172,6 +174,28 @@ public class Guia implements Serializable{
 		return (this.getSeguimientosGuia().stream().max(Comparator.comparing(SeguimientoGuia::getFecha))
 		.orElseThrow(NoSuchElementException::new));		
 	}
+	
+	public Long getPlazoId() {
+		return plazoId;
+	}
+
+
+	public void setPlazoId(Long plazoId) {
+		this.plazoId = plazoId;
+	}
+
+
+	public Map<String, Object> getPlazo() {
+		return plazo;
+	}
+
+
+	public void setPlazo(Map<String, Object> plazo) {
+		this.plazoId = Long.valueOf(plazo.get("id").toString());
+		this.plazo = plazo;
+	}
+
+
 
 	private static final long serialVersionUID = 1L;
 }

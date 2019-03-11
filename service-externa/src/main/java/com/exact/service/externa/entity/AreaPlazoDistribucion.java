@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,16 +18,18 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="area_plazo_distribucion")
 public class AreaPlazoDistribucion implements Serializable {
-	
-	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="area_plazo_distribucion_id")
+	private Long id;
 	@Column(name="area_id")
 	private Long areaId;
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="plazo_distribucion_id")
-	private PlazoDistribucion plazoDistribucion;
+	@Column(name="plazo_id")
+	private Long plazoId;
 	@Transient
 	private Map<String, Object> area;
+	@Transient
+	private Map<String, Object> plazos;
 	
 	public Long getAreaId() {
 		return areaId;
@@ -33,19 +37,35 @@ public class AreaPlazoDistribucion implements Serializable {
 	public void setAreaId(Long areaId) {
 		this.areaId = areaId;
 	}
-	public PlazoDistribucion getPlazoDistribucion() {
-		return plazoDistribucion;
-	}
-	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
-		this.plazoDistribucion = plazoDistribucion;
-	}
 	public Map<String, Object> getArea() {
 		return area;
 	}
 	public void setArea(Map<String, Object> area) {
+		this.areaId=Long.valueOf(area.get("id").toString());
 		this.area = area;
 	}
 	
+	public Long getPlazoId() {
+		return plazoId;
+	}
+	public void setPlazoId(Long plazoId) {
+		this.plazoId = plazoId;
+	}
+	public Map<String, Object> getPlazos() {
+		return plazos;
+	}
+	public void setPlazos(Map<String, Object> plazos) {
+		this.plazoId=Long.valueOf(plazos.get("id").toString());
+		this.plazos = plazos;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	/**
 	 * 
 	 */
