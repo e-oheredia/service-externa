@@ -529,11 +529,11 @@ INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id]) VALUES (303, CAST(N'2019-02-26T16:43:19.2460000' AS DateTime2), N'https://imgix.bustle.com/elite-daily/2017/05/08101715/Facebook-Dislike-1.jpg?w=1020&h=574&fit=crop&crop=faces&auto=format&q=70', N'Documento Devuelto', 4, 64, 5)
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id]) VALUES (304, CAST(N'2019-02-26T16:43:21.0500000' AS DateTime2), N'https://imgix.bustle.com/elite-daily/2017/05/08101715/Facebook-Dislike-1.jpg?w=1020&h=574&fit=crop&crop=faces&auto=format&q=70', N'Documento Devuelto', 4, 73, 5)
 SET IDENTITY_INSERT [dbo].[seguimiento_documento] OFF
-SET IDENTITY_INSERT [dbo].[proveedor] ON 
-
-INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (1, N'DOCFLOW')
-INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (2, N'URBANO')
-SET IDENTITY_INSERT [dbo].[proveedor] OFF
+--SET IDENTITY_INSERT [dbo].[proveedor] ON 
+--
+--INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (1, N'DOCFLOW')
+--INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (2, N'URBANO')
+--SET IDENTITY_INSERT [dbo].[proveedor] OFF
 SET IDENTITY_INSERT [dbo].[guia] ON 
 
 INSERT [dbo].[guia] ([guia_id], [numero_guia], [sede_id], [plazo_id], [proveedor_id], [tipo_seguridad_id], [tipo_servicio_id]) VALUES (2, N'GUIA14789632', 3, 1, 1, 1, 1)
