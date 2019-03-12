@@ -18,10 +18,10 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		return plazoDistribucionDao.findAll();
 	}
 
-	@Override
-	public Iterable<PlazoDistribucion> listarByProveedorId(Long proveedorId) {
-		return plazoDistribucionDao.findByProveedorId(proveedorId);
-	}
+//	@Override
+//	public Iterable<PlazoDistribucion> listarByProveedorId(Long proveedorId) {
+//		return plazoDistribucionDao.findByProveedorId(proveedorId);
+//	}
 
 	@Override
 	public PlazoDistribucion guardar(PlazoDistribucion plazoDistribucion) {

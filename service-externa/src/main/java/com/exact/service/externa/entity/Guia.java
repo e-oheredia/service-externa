@@ -49,9 +49,9 @@ public class Guia implements Serializable{
 	@JoinColumn(name="tipo_seguridad_id")
 	private TipoSeguridad tipoSeguridad;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="proveedor_id")
-	private Proveedor proveedor;
+//	@ManyToOne(fetch=FetchType.EAGER)
+//	@JoinColumn(name="proveedor_id")
+//	private Proveedor proveedor;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
@@ -67,6 +67,32 @@ public class Guia implements Serializable{
 	@Transient
 	private Map<String, Object> sede;
 	
+	@Column(name="proveedor_id")
+	private Long proveedorId;
+	
+	@Transient
+	private Map<String, Object> proveedor;
+	
+	public Long getProveedorId() {
+		return proveedorId;
+	}
+
+
+	public void setProveedorId(Long proveedorId) {
+		this.proveedorId = proveedorId;
+	}
+
+
+	public Map<String, Object> getProveedor() {
+		return proveedor;
+	}
+
+
+	public void setProveedor(Map<String, Object> proveedor) {
+		this.proveedorId=Long.valueOf(proveedor.get("id").toString());
+		this.proveedor = proveedor;
+	}
+
 
 	public Map<String, Object> getSede() {
 		return sede;
@@ -129,14 +155,14 @@ public class Guia implements Serializable{
 	}
 
 
-	public Proveedor getProveedor() {
-		return proveedor;
-	}
-
-
-	public void setProveedor(Proveedor proveedor) {
-		this.proveedor = proveedor;
-	}
+//	public Proveedor getProveedor() {
+//		return proveedor;
+//	}
+//
+//
+//	public void setProveedor(Proveedor proveedor) {
+//		this.proveedor = proveedor;
+//	}
 
 
 	
