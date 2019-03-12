@@ -25,14 +25,7 @@ public class ProveedorPlazoDistribucionService implements IProveedorPlazoDistrib
 		return proveedorPlazoDistribucionDao.getPlazoDistribucionIdByProveedorId(id);
 	}
 
-//	@Override
-//	public ProveedorPlazoDistribucion actualizar(ProveedorPlazoDistribucion proveedorPlazoDistribucion) {
-//		if (proveedorPlazoDistribucionDao.existsById(proveedorPlazoDistribucion.getProveedorId())) {
-//			return proveedorPlazoDistribucionDao.save(proveedorPlazoDistribucion);
-//		}
-//		return null;
-//	}
-	
+
 	@Override
 	public ProveedorPlazoDistribucion guardarProveedorPlazos(Long proveedorId, JSONArray plazos) throws JSONException {
 		for(int i=0;i<plazos.length();i++) {

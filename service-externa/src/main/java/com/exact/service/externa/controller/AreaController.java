@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.AreaPlazoDistribucion;
-import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IAreaService;
 

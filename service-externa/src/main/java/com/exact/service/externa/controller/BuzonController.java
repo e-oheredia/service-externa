@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
-import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IBuzonPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IBuzonService;
 
@@ -46,9 +45,6 @@ public class BuzonController {
 
 	@PutMapping("/plazodistribucion")
 	public ResponseEntity<Map<String, Object>> actualizarBuzonPlazoDistribucion( @RequestBody BuzonPlazoDistribucion buzonplazo) {
-//		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
-//		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
-//		buzonPlazoDistribucion.setBuzonId(id);
 		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
 				.actualizar(buzonplazo);
 		return new ResponseEntity<Map<String, Object>>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazos() ,
@@ -58,7 +54,6 @@ public class BuzonController {
 	@GetMapping()
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
 			throws IOException, JSONException {
-
 		return new ResponseEntity<Iterable<Map<String, Object>>>(buzonService.listarAll(), HttpStatus.OK);
 	}
 
