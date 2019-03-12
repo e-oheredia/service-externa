@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.dao.IProveedorPlazoDistribucionDao;
 import com.exact.service.externa.entity.ProveedorPlazoDistribucion;
-import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IProveedorPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
