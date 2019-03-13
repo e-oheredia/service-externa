@@ -35,7 +35,7 @@ public class BuzonPlazoDistribucion implements Serializable {
 	@Transient
 	private Map<String, Object> buzon;	
 	@Transient
-	private Map<String, Object> plazos;
+	private Map<String, Object> plazo;
 	
 	
 	public Long getBuzonId() {
@@ -71,13 +71,13 @@ public class BuzonPlazoDistribucion implements Serializable {
 		this.plazoId = plazoId;
 	}
 
-	public Map<String, Object> getPlazos() {
-		return plazos;
+	public Map<String, Object> getPlazo() {
+		return plazo;
 	}
 
-	public void setPlazos(Map<String, Object> plazos) {
-		this.plazoId=Long.valueOf(plazos.get("id").toString());
-		this.plazos = plazos;
+	public void setPlazo(Map<String, Object> plazo) {
+		this.plazoId=Long.valueOf(plazo.get("id").toString());
+		this.plazo = plazo;
 	}
 
 	/**

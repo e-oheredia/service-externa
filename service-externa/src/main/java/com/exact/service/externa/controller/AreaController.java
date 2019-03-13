@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +29,21 @@ public class AreaController {
 	IAreaService areaService;
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
-	public ResponseEntity<Map<String, Object>> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
-		Map<String, Object> areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<Map<String, Object>>(areaPlazoDistribucion,
+	public ResponseEntity<AreaPlazoDistribucion> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
+		AreaPlazoDistribucion areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
+		return new ResponseEntity<AreaPlazoDistribucion>(areaPlazoDistribucion,
 				areaPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
-	@PutMapping("/plazosdistribucion")
-	public ResponseEntity<Map<String, Object>> actualizarBuzonPlazoDistribucion(@RequestBody AreaPlazoDistribucion areaplazo) {
+	@PutMapping("/{id}/plazosdistribucion")
+	public ResponseEntity<Map<String, Object>> actualizarBuzonPlazoDistribucion(@PathVariable Long id ,@RequestBody String plazo) throws JSONException {
+		JSONObject requestJson = new JSONObject(plazo);
+		Long plazoId = requestJson.getLong("id");
+		AreaPlazoDistribucion areaPlazoDistribucion = new AreaPlazoDistribucion();
+		areaPlazoDistribucion.setAreaId(id);
+		areaPlazoDistribucion.setPlazoId(plazoId);
 		AreaPlazoDistribucion areaPlazoDistribucionActualizado = areaPlazoDistribucionService
-				.actualizar(areaplazo);
+				.actualizar(areaPlazoDistribucion);
 		return new ResponseEntity<Map<String, Object>>(
 				areaPlazoDistribucionActualizado == null ? null
 						: areaPlazoDistribucionActualizado.getPlazos(),

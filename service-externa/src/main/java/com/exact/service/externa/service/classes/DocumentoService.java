@@ -478,6 +478,7 @@ public class DocumentoService implements IDocumentoService {
 			return null;
 		}
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
@@ -487,6 +488,15 @@ public class DocumentoService implements IDocumentoService {
 				break;
 			}
 		}
+		
+		for(int i=0;i < sedes.size();i++) {	
+			Long sedeId= Long.valueOf(sedes.get(i).get("id").toString());
+			if (documento.getEnvio().getSedeId() == sedeId.longValue()) {
+				documento.getEnvio().setSede(sedes.get(i));
+				break;
+			}
+		}
+		
 		return documento;
 	}
 

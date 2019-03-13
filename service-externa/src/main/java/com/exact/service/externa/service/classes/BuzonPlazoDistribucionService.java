@@ -16,17 +16,15 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	IBuzonPlazoDistribucionDao buzonPlazoDistribucionDao;
 	
 	@Override
-	public Map<String, Object> listarById(Long id) {
-		return buzonPlazoDistribucionDao.getPlazoDistribucionIdByBuzonId(id);
+	public BuzonPlazoDistribucion listarById(Long id) {
+		return buzonPlazoDistribucionDao.findById(id).orElse(null);
+		//return buzonPlazoDistribucionDao.getPlazoDistribucionIdByBuzonId(id);
 	}
 	
 	@Override
 	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion) {
-		if (buzonPlazoDistribucionDao.existsById(buzonPlazoDistribucion.getId())) {
-			return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
-		}
-		return null;
-		
+		buzonPlazoDistribucionDao.eliminarPlazos(buzonPlazoDistribucion.getBuzonId());
+		return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
 	}
 
 }
