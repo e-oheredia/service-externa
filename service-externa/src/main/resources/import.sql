@@ -7,10 +7,10 @@ INSERT [dbo].[tipo_plazo_distribucion] ([tipo_plazo_distribucion_id], [nombre]) 
 SET IDENTITY_INSERT [dbo].[tipo_plazo_distribucion] OFF
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] ON 
 
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (1, N'ESTÁNDAR', 96, 1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (2, N'72 HORAS', 72, 2)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (3, N'48 HORAS', 48, 2)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (4, N'24 HORAS', 24, 2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id], [activo]) VALUES (1, N'ESTÁNDAR', 96, 1, 1)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id], [activo]) VALUES (2, N'72 HORAS', 72, 2, 1)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id], [activo]) VALUES (3, N'48 HORAS', 48, 2, 1)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id], [activo]) VALUES (4, N'24 HORAS', 24, 2, 1)
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] OFF
 SET IDENTITY_INSERT [dbo].[tipo_seguridad] ON 
 
@@ -204,7 +204,8 @@ INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_d
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (9, N'RETIRADO', 1)
 SET IDENTITY_INSERT [dbo].[estado_documento] OFF
 
-INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2,1 )
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (1,9)
+INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2,1)
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3,2)
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2,9)
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3,9)
@@ -531,8 +532,8 @@ INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link
 SET IDENTITY_INSERT [dbo].[seguimiento_documento] OFF
 SET IDENTITY_INSERT [dbo].[proveedor] ON 
 
-INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (1, N'DOCFLOW')
-INSERT [dbo].[proveedor] ([proveedor_id], [nombre]) VALUES (2, N'URBANO')
+INSERT [dbo].[proveedor] ([proveedor_id], [nombre], [activo]) VALUES (1, N'DOCFLOW', 1)
+INSERT [dbo].[proveedor] ([proveedor_id], [nombre], [activo]) VALUES (2, N'URBANO', 1)
 SET IDENTITY_INSERT [dbo].[proveedor] OFF
 SET IDENTITY_INSERT [dbo].[guia] ON 
 

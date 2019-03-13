@@ -14,7 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+//import com.exact.plazos.entity.Plazo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="proveedor")
@@ -28,11 +32,22 @@ public class Proveedor implements Serializable{
 	@Column(name="nombre",nullable=false)
 	private String nombre;
 	
-	@ManyToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(name="proveedor_plazo_distribucion", joinColumns = { @JoinColumn(name = "proveedor_id") },
     inverseJoinColumns = { @JoinColumn(name = "plazo_distribucion_id") })
 	private Set<PlazoDistribucion> plazosDistribucion;
 	
+	@Column(name="activo", nullable=false)
+	private boolean activo;
+	
+	public boolean isActivo() {
+		return activo;
+	}
+
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
 	public Set<PlazoDistribucion> getPlazosDistribucion() {
 		return plazosDistribucion;
 	}

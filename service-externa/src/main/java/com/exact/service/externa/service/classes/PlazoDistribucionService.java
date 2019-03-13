@@ -23,4 +23,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		return plazoDistribucionDao.findByProveedorId(proveedorId);
 	}
 
+	@Override
+	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
+		return plazoDistribucionDao.save(plazodistribucion);
+	}
+
 }

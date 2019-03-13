@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
@@ -30,5 +31,20 @@ public class ProveedorService implements IProveedorService{
 		
 		return proveedoresCreadosList;
 	}
+
+	@Override
+	public Proveedor guardar(Proveedor proveedor) {
+		return proveedorDao.save(proveedor);
+	}
+
+	@Override
+	public Proveedor modificar(Proveedor proveedor) {
+		if(proveedorDao.existsById(proveedor.getId())) {
+			return guardar(proveedor);
+		}else
+			return null;
+	}
+
+
 
 }

@@ -66,6 +66,7 @@ public class EnvioController {
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -81,6 +82,7 @@ public class EnvioController {
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
