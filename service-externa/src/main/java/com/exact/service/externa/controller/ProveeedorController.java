@@ -35,7 +35,7 @@ public class ProveeedorController {
 	IPlazoDistribucionService plazoDistribucionService;
 	
 	@GetMapping
-	public ResponseEntity<String> listarGuiasCreados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarAll() throws ClientProtocolException, IOException, JSONException {
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -55,7 +55,7 @@ public class ProveeedorController {
 	@PostMapping
 	public ResponseEntity<Proveedor> guardar(@RequestBody Proveedor proveedor) {
 		proveedor.setActivo(true);
-		return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
+			return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}")

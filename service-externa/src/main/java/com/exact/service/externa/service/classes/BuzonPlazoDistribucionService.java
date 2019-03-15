@@ -1,5 +1,7 @@
 package com.exact.service.externa.service.classes;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	
 	@Override
 	public BuzonPlazoDistribucion listarById(Long id) {
-		return buzonPlazoDistribucionDao.findById(id).orElse(null);
+		return buzonPlazoDistribucionDao.getPlazoDistribucionIdByBuzonId(id);
 	}
 	
 	@Override

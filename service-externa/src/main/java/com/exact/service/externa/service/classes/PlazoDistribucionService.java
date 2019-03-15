@@ -25,6 +25,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 
 	@Override
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
+		if(plazodistribucion.getNombre()==null) {
+			return null;
+		}
 		return plazoDistribucionDao.save(plazodistribucion);
 	}
 

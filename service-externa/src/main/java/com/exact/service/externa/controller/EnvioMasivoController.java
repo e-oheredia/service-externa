@@ -47,6 +47,7 @@ public class EnvioMasivoController {
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
@@ -62,6 +63,7 @@ public class EnvioMasivoController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "documento");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);

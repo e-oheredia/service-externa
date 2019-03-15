@@ -157,7 +157,8 @@ public class Envio implements Serializable {
 		this.buzonId = Long.valueOf(buzon.get("id").toString());
 		this.buzon = buzon;
 	}	
-	
+
+
 	/**
 	 * 
 	 */

@@ -1,9 +1,10 @@
-package com.exact.service.externa.service.classes;
+																																																											package com.exact.service.externa.service.classes;
 
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -12,14 +13,14 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import com.exact.service.externa.dao.IProveedorDao;
-import com.exact.service.externa.entity.Guia;
-import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
 @Service
 public class ProveedorService implements IProveedorService{
+
 
 	@Autowired
 	IProveedorDao proveedorDao;

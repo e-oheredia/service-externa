@@ -1,5 +1,7 @@
 package com.exact.service.externa.service.classes;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,13 +11,12 @@ import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionServic
 
 @Service
 public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionService {
-	
 	@Autowired
 	IAreaPlazoDistribucionDao areaPlazoDistribucionDao;
 	
 	@Override
 	public AreaPlazoDistribucion listarById(Long id) {
-		return areaPlazoDistribucionDao.findById(id).orElse(null);
+		return areaPlazoDistribucionDao.getPlazoDistribucionIdByAreaId(id);
 	}
 	
 	@Override
