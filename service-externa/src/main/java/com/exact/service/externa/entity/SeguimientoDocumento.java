@@ -15,6 +15,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,6 +38,7 @@ public class SeguimientoDocumento implements Serializable {
 	private Long usuarioId;
 	@ManyToOne(optional=false, targetEntity= EstadoDocumento.class)
 	@JoinColumn(name="estado_documento_id")
+	@JsonFilter("estadoDocumentoFilter")
 	private EstadoDocumento estadoDocumento;
 
 	@ManyToOne(optional = false)

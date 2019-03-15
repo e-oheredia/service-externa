@@ -483,7 +483,7 @@ public class DocumentoService implements IDocumentoService {
 					documento.getEnvio().setSede(sedes.get(k));
 					break;
 				}
-				j++;
+				k++;
 			}
 		}
 		return documentosUTD;

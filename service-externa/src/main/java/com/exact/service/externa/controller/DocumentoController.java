@@ -77,7 +77,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -162,7 +162,7 @@ public class DocumentoController {
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
-			filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -185,7 +185,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosParaCargo,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -206,7 +206,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
@@ -226,7 +226,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -245,7 +245,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
@@ -263,7 +263,7 @@ public class DocumentoController {
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
-			//filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -294,7 +294,7 @@ public class DocumentoController {
 				filter.put("envioFilter", "documentos");
 				filter.put("documentosGuiaFilter", "documento");
 				filter.put("guiaFilter", "documentosGuia");
-			//	filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+				filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 				///////////////////////////////////////////////////////////
 			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -336,7 +336,7 @@ public class DocumentoController {
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
-			filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -368,7 +368,7 @@ public class DocumentoController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
-		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosCargos,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -389,7 +389,7 @@ public class DocumentoController {
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
-			filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);

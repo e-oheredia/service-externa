@@ -32,9 +32,9 @@ public class PlazoDistribucionController {
 		return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
-		plazoDist.setId(id);
+	@PutMapping
+	public ResponseEntity<PlazoDistribucion> modificar( @RequestBody PlazoDistribucion plazoDist) {
+		//plazoDist.setId(id);
 		return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
 	}
 	
