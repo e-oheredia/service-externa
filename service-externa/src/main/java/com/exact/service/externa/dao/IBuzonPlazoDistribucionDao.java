@@ -10,8 +10,8 @@ import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 
 @Repository
 public interface IBuzonPlazoDistribucionDao extends CrudRepository<BuzonPlazoDistribucion, Long> {
-	
-	@Query(value="SELECT plazo_id from buzon_plazo_distribucion where buzon_id = ?1", nativeQuery=true)
-	public Map<String, Object> getPlazoDistribucionIdByBuzonId(Long id);
+	//value="SELECT plazo_distribucion_id from buzon_plazo_distribucion where buzon_id = ?1", nativeQuery=true
+	@Query("FROM BuzonPlazoDistribucion bp WHERE bp.buzonId=?1")
+	public BuzonPlazoDistribucion getPlazoDistribucionIdByBuzonId(Long id);
 	
 }

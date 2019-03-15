@@ -6,7 +6,7 @@ import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 
 public interface IBuzonPlazoDistribucionService {
 	
-	Map<String, Object> listarById(Long id);
+	BuzonPlazoDistribucion listarById(Long id);
 
 	BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion);
 }

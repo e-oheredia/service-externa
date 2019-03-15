@@ -24,13 +24,19 @@ public class AreaPlazoDistribucion implements Serializable {
 	private Long id;
 	@Column(name="area_id")
 	private Long areaId;
-	@Column(name="plazo_id")
-	private Long plazoId;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="plazo_distribucion_id")
+	private PlazoDistribucion plazoDistribucion;
 	@Transient
 	private Map<String, Object> area;
-	@Transient
-	private Map<String, Object> plazos;
 	
+	
+	public PlazoDistribucion getPlazoDistribucion() {
+		return plazoDistribucion;
+	}
+	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+		this.plazoDistribucion = plazoDistribucion;
+	}
 	public Long getAreaId() {
 		return areaId;
 	}
@@ -43,20 +49,6 @@ public class AreaPlazoDistribucion implements Serializable {
 	public void setArea(Map<String, Object> area) {
 		this.areaId=Long.valueOf(area.get("id").toString());
 		this.area = area;
-	}
-	
-	public Long getPlazoId() {
-		return plazoId;
-	}
-	public void setPlazoId(Long plazoId) {
-		this.plazoId = plazoId;
-	}
-	public Map<String, Object> getPlazos() {
-		return plazos;
-	}
-	public void setPlazos(Map<String, Object> plazos) {
-		this.plazoId=Long.valueOf(plazos.get("id").toString());
-		this.plazos = plazos;
 	}
 	
 	public Long getId() {

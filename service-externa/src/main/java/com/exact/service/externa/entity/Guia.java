@@ -35,8 +35,9 @@ public class Guia implements Serializable{
 	@Column(name="numero_guia")
 	private String numeroGuia;
 	
-	@Column(name="plazo_id")
-	private Long plazoId;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="plazo_distribucion_id")
+	private PlazoDistribucion plazoDistribucion;
 	
 	@Transient
 	private Map<String, Object> plazo;
@@ -49,9 +50,9 @@ public class Guia implements Serializable{
 	@JoinColumn(name="tipo_seguridad_id")
 	private TipoSeguridad tipoSeguridad;
 	
-//	@ManyToOne(fetch=FetchType.EAGER)
-//	@JoinColumn(name="proveedor_id")
-//	private Proveedor proveedor;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="proveedor_id")
+	private Proveedor proveedor;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
@@ -67,32 +68,6 @@ public class Guia implements Serializable{
 	@Transient
 	private Map<String, Object> sede;
 	
-	@Column(name="proveedor_id")
-	private Long proveedorId;
-	
-	@Transient
-	private Map<String, Object> proveedor;
-	
-	public Long getProveedorId() {
-		return proveedorId;
-	}
-
-
-	public void setProveedorId(Long proveedorId) {
-		this.proveedorId = proveedorId;
-	}
-
-
-	public Map<String, Object> getProveedor() {
-		return proveedor;
-	}
-
-
-	public void setProveedor(Map<String, Object> proveedor) {
-		this.proveedorId=Long.valueOf(proveedor.get("id").toString());
-		this.proveedor = proveedor;
-	}
-
 
 	public Map<String, Object> getSede() {
 		return sede;
@@ -125,14 +100,14 @@ public class Guia implements Serializable{
 	}
 
 
-//	public PlazoDistribucion getPlazoDistribucion() {
-//		return plazoDistribucion;
-//	}
-//
-//
-//	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
-//		this.plazoDistribucion = plazoDistribucion;
-//	}
+	public PlazoDistribucion getPlazoDistribucion() {
+		return plazoDistribucion;
+	}
+
+
+	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
+		this.plazoDistribucion = plazoDistribucion;
+	}
 
 
 	public TipoServicio getTipoServicio() {
@@ -155,14 +130,14 @@ public class Guia implements Serializable{
 	}
 
 
-//	public Proveedor getProveedor() {
-//		return proveedor;
-//	}
-//
-//
-//	public void setProveedor(Proveedor proveedor) {
-//		this.proveedor = proveedor;
-//	}
+	public Proveedor getProveedor() {
+		return proveedor;
+	}
+
+
+	public void setProveedor(Proveedor proveedor) {
+		this.proveedor = proveedor;
+	}
 
 
 	
@@ -201,24 +176,9 @@ public class Guia implements Serializable{
 		.orElseThrow(NoSuchElementException::new));		
 	}
 	
-	public Long getPlazoId() {
-		return plazoId;
-	}
-
-
-	public void setPlazoId(Long plazoId) {
-		this.plazoId = plazoId;
-	}
-
 
 	public Map<String, Object> getPlazo() {
 		return plazo;
-	}
-
-
-	public void setPlazo(Map<String, Object> plazo) {
-		this.plazoId = Long.valueOf(plazo.get("id").toString());
-		this.plazo = plazo;
 	}
 
 

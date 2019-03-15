@@ -11,13 +11,11 @@ import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionServic
 
 @Service
 public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionService {
-	
 	@Autowired
 	IAreaPlazoDistribucionDao areaPlazoDistribucionDao;
 	
 	@Override
-	public Map<String, Object> listarById(Long id) {
-//		return areaPlazoDistribucionDao.findById(id).orElse(null);
+	public AreaPlazoDistribucion listarById(Long id) {
 		return areaPlazoDistribucionDao.getPlazoDistribucionIdByAreaId(id);
 	}
 	

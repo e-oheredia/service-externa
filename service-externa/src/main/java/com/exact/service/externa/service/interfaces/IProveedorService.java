@@ -6,12 +6,16 @@ import java.util.Map;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import com.exact.service.externa.entity.Proveedor;
+
 
 
 public interface IProveedorService {
 
-	public Iterable<Map<String, Object>> listarAll() throws  IOException, JSONException;
-	public Map<String, Object> guardarProveedor(String proveedor) throws  IOException, JSONException;
-	public Map<String, Object> modificar(Long id, String proveedor) throws  IOException, JSONException;
+
+	Iterable<Proveedor> listarProveedores() throws ClientProtocolException, IOException, JSONException;
+	Proveedor guardar(Proveedor proveedor);
+	Proveedor modificar(Proveedor proveedor);
+
 	
 }

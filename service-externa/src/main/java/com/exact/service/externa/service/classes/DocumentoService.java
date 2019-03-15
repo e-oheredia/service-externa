@@ -116,7 +116,7 @@ public class DocumentoService implements IDocumentoService {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		
-		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long.valueOf(guia.getPlazo().get("id").toString()), guia.getTipoServicio().getId(), guia.getTipoSeguridad().getId(), Long.valueOf(sede.get("id").toString()));
+		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(guia.getPlazoDistribucion().getId(), guia.getTipoServicio().getId(), guia.getTipoSeguridad().getId(), Long.valueOf(sede.get("id").toString()));
 		List<Documento> documentosCreadosList = StreamSupport.stream(documentosCreados.spliterator(), false).collect(Collectors.toList());	
 		
 		return documentosCreadosList;
@@ -184,6 +184,7 @@ public class DocumentoService implements IDocumentoService {
 		
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		
 		for (Documento documento : documentosUbcp) {
 			
@@ -206,6 +207,15 @@ public class DocumentoService implements IDocumentoService {
 					break;
 				}
 				j++;
+			}
+			
+			int k = 0; 
+			while(k < sedes.size()) {
+				if (documento.getEnvio().getSedeId() == Long.valueOf(sedes.get(k).get("id").toString())) {
+					documento.getEnvio().setSede(sedes.get(k));
+					break;
+				}
+				k++;
 			}
 		}
 		return documentosUbcp;
@@ -442,6 +452,7 @@ public class DocumentoService implements IDocumentoService {
 		
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		
 		for (Documento documento : documentosUTD) {
 			
@@ -465,6 +476,15 @@ public class DocumentoService implements IDocumentoService {
 				}
 				j++;
 			}
+			
+			int k = 0; 
+			while(k < sedes.size()) {
+				if (documento.getEnvio().getSedeId() == Long.valueOf(sedes.get(k).get("id").toString())) {
+					documento.getEnvio().setSede(sedes.get(k));
+					break;
+				}
+				k++;
+			}
 		}
 		return documentosUTD;
 	}
@@ -479,11 +499,20 @@ public class DocumentoService implements IDocumentoService {
 		}
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
 			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
 			if (documento.getDistritoId().longValue() == distritoId.longValue()) {
 				documento.setDistrito(distritos.get(i));
+				break;
+			}
+		}
+		
+		for(int j=0;j < sedes.size();j++) {	
+			Long sedeId= Long.valueOf(sedes.get(j).get("id").toString());
+			if (documento.getEnvio().getSedeId() == sedeId.longValue()) {
+				documento.getEnvio().setSede(sedes.get(j));
 				break;
 			}
 		}
