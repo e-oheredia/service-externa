@@ -39,9 +39,6 @@ public class Guia implements Serializable{
 	@JoinColumn(name="plazo_distribucion_id")
 	private PlazoDistribucion plazoDistribucion;
 	
-	@Transient
-	private Map<String, Object> plazo;
-	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_servicio_id")
 	private TipoServicio tipoServicio;
@@ -176,11 +173,6 @@ public class Guia implements Serializable{
 		.orElseThrow(NoSuchElementException::new));		
 	}
 	
-
-	public Map<String, Object> getPlazo() {
-		return plazo;
-	}
-
 
 
 	private static final long serialVersionUID = 1L;
