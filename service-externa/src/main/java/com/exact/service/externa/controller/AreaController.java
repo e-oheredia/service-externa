@@ -52,4 +52,13 @@ public class AreaController {@Autowired
 			throws IOException, JSONException {
 
 		return new ResponseEntity<Iterable<Map<String, Object>>>(areaService.listarAll(), HttpStatus.OK);
-	}}
+	}
+	
+	@GetMapping("/areasplazo")
+	public ResponseEntity<Iterable<AreaPlazoDistribucion>> listarAreaPlazos()
+			throws IOException, JSONException {
+
+		return new ResponseEntity<Iterable<AreaPlazoDistribucion>>(areaPlazoDistribucionService.listarAreaPlazos(), HttpStatus.OK);
+	}
+	
+}

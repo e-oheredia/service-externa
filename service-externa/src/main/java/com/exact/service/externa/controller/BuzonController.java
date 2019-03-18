@@ -22,7 +22,9 @@ import com.exact.service.externa.service.interfaces.IBuzonService;
 
 @RestController
 @RequestMapping("/buzones")
-public class BuzonController {@Autowired
+public class BuzonController {
+	
+	@Autowired
 	IBuzonService buzonService;
 
 	@Autowired
@@ -59,4 +61,13 @@ public class BuzonController {@Autowired
 			throws IOException, JSONException {
 
 		return new ResponseEntity<Iterable<Map<String, Object>>>(buzonService.listarAll(), HttpStatus.OK);
-	}}
+	}
+	
+	@GetMapping("/buzonesplazo")
+	public ResponseEntity<Iterable<BuzonPlazoDistribucion>> listarAllBuzonPlazo()
+			throws IOException, JSONException {
+
+		return new ResponseEntity<Iterable<BuzonPlazoDistribucion>>(buzonPlazoDistribucionService.listarBuzonPlazo(), HttpStatus.OK);
+	}
+	
+}

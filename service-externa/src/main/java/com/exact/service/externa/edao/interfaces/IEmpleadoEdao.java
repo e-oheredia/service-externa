@@ -10,4 +10,6 @@ public interface IEmpleadoEdao {
 	public Map<String, Object> listarByMatricula(String matricula) throws ClientProtocolException, IOException, JSONException;
 	
 	public Long findSede(String matricula) throws ClientProtocolException, IOException, JSONException;
+	
+	Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException;
 }

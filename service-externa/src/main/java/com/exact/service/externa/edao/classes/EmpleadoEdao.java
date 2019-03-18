@@ -7,6 +7,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,15 @@ public class EmpleadoEdao implements IEmpleadoEdao{
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		
 		return Long.valueOf(response);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(empleadosPath + path + "/empleados");
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
 	}
 	
 	

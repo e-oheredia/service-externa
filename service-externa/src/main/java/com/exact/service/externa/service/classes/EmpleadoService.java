@@ -28,4 +28,9 @@ public class EmpleadoService implements IEmpleadoService {
 		return empleadoEdao.findSede(matricula);
 	}
 
+	@Override
+	public Iterable<Map<String, Object>> listarEmpleados() throws ClientProtocolException, IOException, JSONException {
+		return empleadoEdao.listarAll();
+	}
+
 }
