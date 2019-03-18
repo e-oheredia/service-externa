@@ -10,4 +10,6 @@ public interface IEmpleadoService {
 	public Map<String, Object> listarByMatricula(String matricula) throws ClientProtocolException, IOException, JSONException;
 	
 	public Long findSede(String matricula) throws ClientProtocolException, IOException, JSONException;
+	
+	Iterable<Map<String, Object>> listarEmpleados() throws ClientProtocolException, IOException, JSONException;
 }
