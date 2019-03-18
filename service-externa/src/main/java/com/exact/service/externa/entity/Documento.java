@@ -52,6 +52,9 @@ public class Documento implements Serializable {
 
 	@Column(name = "nro_documento")
 	private String nroDocumento;
+	
+	@Column(name = "codigo_devolucion")
+	private String codigoDevolucion;
 
 	public Set<DocumentoGuia> getDocumentosGuia() {
 		return documentosGuia;
@@ -85,6 +88,16 @@ public class Documento implements Serializable {
 	}
 
 	
+	public String getCodigoDevolucion() {
+		return codigoDevolucion;
+	}
+
+
+	public void setCodigoDevolucion(String codigoDevolucion) {
+		this.codigoDevolucion = codigoDevolucion;
+	}
+
+
 	public boolean isRecepcionado() {
 		return recepcionado;
 	}
