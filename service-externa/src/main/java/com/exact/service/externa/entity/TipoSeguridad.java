@@ -16,6 +16,15 @@ public class TipoSeguridad {
 	private Long id;	
 	@Column(nullable=false)
 	private String nombre;
+	@Column(nullable=false)
+	private boolean activo;
+		
+	public boolean isActivo() {
+		return activo;
+	}
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
 	public Long getId() {
 		return id;
 	}
