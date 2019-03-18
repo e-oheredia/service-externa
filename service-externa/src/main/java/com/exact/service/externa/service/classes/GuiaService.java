@@ -366,14 +366,48 @@ public class GuiaService implements IGuiaService{
 					}
 					j++;
 				}
-				
-				
-				
 			}			
-			
+		}
+		return guiasSinCerrarList;	
+	}
+
+	@Override
+	public Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException {
+		Guia guia = guiaDao.findBynumeroGuia(numeroguia);
+		if(guia==null) {
+			return null;
+		}
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		for(int i=0;i<sedes.size();i++) {
+			if(guia.getSedeId()==Long.valueOf(sedes.get(i).get("id").toString())) {
+				guia.setSede(sedes.get(i));
+				break;
+			}
+		}
+		return guia;
+	}
+
+	@Override
+	public Iterable<Guia> listarGuiasPorFechas(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException {
+		Iterable<Guia> guiasBD = guiaDao.listarGuiasPorFechas(fechaIni, fechaFin);
+		if(guiasBD==null) {
+			return null;
+		}
+		List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		
+		for(Guia guia : guias) {
+			int i=0;
+			while(i < sedes.size()) {
+				if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+					guia.setSede(sedes.get(i));
+					break;
+				}
+				i++;
+			}
 		}
 		
-		return guiasSinCerrarList;	
+		return guias;
 	}
 	
 }

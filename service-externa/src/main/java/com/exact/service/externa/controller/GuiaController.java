@@ -1,6 +1,9 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.Documento;
@@ -282,6 +286,63 @@ public class GuiaController {
 		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/reporteguias")
+	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	{
+		if(numeroGuia!=null) {
+			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia);
+			if(guia==null) {
+				return new ResponseEntity<String>("No existe Guia con ese numero", HttpStatus.BAD_REQUEST);
+			}
+			CommonUtils cu = new CommonUtils();
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentoFilter", "documentosGuia");
+			filter.put("documentosGuiaFilter", "guia");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			///////////////////////////////////////////////////////////
+			String dtoMapAsString = cu.filterObjetoJson(guia,filter);
+			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		}
+		else
+		{
+			if(fechaini=="" || fechafin=="") 
+			{
+				return new ResponseEntity<String>("Valores de fecha incorrecto", HttpStatus.BAD_REQUEST);
+			}
+			
+			SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+			Date dateI= null;
+			Date dateF= null;
+			
+			try {
+				dateI = dt.parse(fechaini);
+				dateF = dt.parse(fechafin); 
+			} catch (Exception e) {
+				return new ResponseEntity<String>("Formato de fechas no válido", HttpStatus.BAD_REQUEST);
+			}
+			
+			if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
+			{
+				Iterable<Guia> guias = guiaService.listarGuiasPorFechas(dateI, dateF);
+				if(guias==null) {
+					return null;
+				}
+				CommonUtils cu = new CommonUtils();
+				Map<String, String> filter = new HashMap<String, String>();
+				filter.put("envioFilter", "documentos");
+				filter.put("documentoFilter", "documentosGuia");
+				filter.put("documentosGuiaFilter", "guia");
+				filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+				///////////////////////////////////////////////////////////
+			    String dtoMapAsString = cu.filterListaObjetoJson(guias,filter);
+			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			}
+			return new ResponseEntity<String>("Rango de fecha no válido", HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 }
