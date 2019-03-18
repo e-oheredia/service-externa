@@ -18,4 +18,12 @@ public class TipoSeguridadService implements ITipoSeguridadService {
 		return tipoSeguridadDao.findAll();
 	}
 
+	@Override
+	public TipoSeguridad guardar(TipoSeguridad tiposeguridad) {
+		if(tiposeguridad.getNombre()==null) {
+			return null;
+		}
+		return tipoSeguridadDao.save(tiposeguridad);
+	}
+
 }

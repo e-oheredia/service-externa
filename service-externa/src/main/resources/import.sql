@@ -14,8 +14,8 @@ INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [nombre], [tiempo_en
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] OFF
 SET IDENTITY_INSERT [dbo].[tipo_seguridad] ON 
 
-INSERT [dbo].[tipo_seguridad] ([tipo_seguridad_id], [nombre]) VALUES (1, N'SIN GPS')
-INSERT [dbo].[tipo_seguridad] ([tipo_seguridad_id], [nombre]) VALUES (2, N'GPS BÁSICO')
+INSERT [dbo].[tipo_seguridad] ([tipo_seguridad_id], [nombre], [activo]) VALUES (1, N'SIN GPS', 1)
+INSERT [dbo].[tipo_seguridad] ([tipo_seguridad_id], [nombre], [activo]) VALUES (2, N'GPS BÁSICO', 1)
 SET IDENTITY_INSERT [dbo].[tipo_seguridad] OFF
 SET IDENTITY_INSERT [dbo].[tipo_servicio] ON 
 
