@@ -395,4 +395,21 @@ public class DocumentoController {
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@PostMapping("/{id}/codigodevolucion")
+	public ResponseEntity<String> guardarCodigoDevolucion(@PathVariable Long id, @RequestParam String codigoDevolucion) throws ClientProtocolException, IOException, JSONException{
+		Documento documento = documentoService.guardarCodigoDevolucion(id, codigoDevolucion);
+		if(documento==null) {
+			return new ResponseEntity<String>("No se pudo guardar el codigo devolución", HttpStatus.BAD_REQUEST);
+		}
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }

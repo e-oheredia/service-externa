@@ -616,6 +616,18 @@ public class DocumentoService implements IDocumentoService {
 		return documentoDao.save(documento);
 	}
 
-
+	@Override
+	public Documento guardarCodigoDevolucion(Long documentoId, String codigoDev) throws ClientProtocolException, IOException, JSONException {
+		if(codigoDev==null) {
+			return null;
+		}
+		Optional<Documento> documentoBD = documentoDao.findById(documentoId);
+		if(!documentoBD.isPresent()) {
+			return null;
+		}
+		Documento documento = documentoBD.get();
+		documento.setCodigoDevolucion(codigoDev);
+		return documentoDao.save(documento);
+	}
 
 }
