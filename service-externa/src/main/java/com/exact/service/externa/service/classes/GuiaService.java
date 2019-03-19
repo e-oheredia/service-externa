@@ -7,6 +7,7 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,6 +20,8 @@ import java.util.stream.StreamSupport;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -388,26 +391,36 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasPorFechas(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException {
-		Iterable<Guia> guiasBD = guiaDao.listarGuiasPorFechas(fechaIni, fechaFin);
-		if(guiasBD==null) {
+	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin) throws ClientProtocolException, IOException, JSONException {
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
 			return null;
 		}
-		List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
-		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
-		
-		for(Guia guia : guias) {
-			int i=0;
-			while(i < sedes.size()) {
-				if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
-					guia.setSede(sedes.get(i));
-					break;
-				}
-				i++;
+		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
+			Iterable<Guia> guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF);
+			if(guiasBD==null) {
+				return null;
 			}
+			List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
+			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+			for(Guia guia : guias) {
+				int i=0;
+				while(i < sedes.size()) {
+					if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+						guia.setSede(sedes.get(i));
+						break;
+					}
+					i++;
+				}
+			}
+			return guias;
 		}
-		
-		return guias;
+		return null;
 	}
 	
 }
