@@ -396,7 +396,7 @@ public class DocumentoController {
 	}
 	
 	@PostMapping("/{id}/codigodevolucion")
-	public ResponseEntity<String> guardarCodigoDevolucion(@PathVariable Long id, @RequestParam String codigoDevolucion) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> guardarCodigoDevolucion(@PathVariable Long id, @RequestBody String codigoDevolucion) throws ClientProtocolException, IOException, JSONException{
 		Documento documento = documentoService.guardarCodigoDevolucion(id, codigoDevolucion);
 		if(documento==null) {
 			return new ResponseEntity<String>("No se pudo guardar el codigo devolución", HttpStatus.BAD_REQUEST);
