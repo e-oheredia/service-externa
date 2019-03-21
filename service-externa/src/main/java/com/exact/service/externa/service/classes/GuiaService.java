@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -417,10 +418,21 @@ public class GuiaService implements IGuiaService{
 					}
 					i++;
 				}
+				
 			}
+			for(int j=0;j<guias.size();j++) {
+				
+			}
+			
 			return guias;
 		}
 		return null;
 	}
-	
+
+	@Override
+	public int getCantidadDocumentos(Long guiaId) throws ClientProtocolException, IOException, JSONException {
+		return documentoGuiaDao.getCantidadDocumentos(guiaId);
+	}
+
+		
 }
