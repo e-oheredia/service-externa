@@ -8,7 +8,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DEVUELTO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.EXTRAVIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RETIRADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 
 import java.io.IOException;
 import java.util.ArrayList;

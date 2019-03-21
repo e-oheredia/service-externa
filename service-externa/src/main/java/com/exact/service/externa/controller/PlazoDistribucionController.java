@@ -21,9 +21,9 @@ public class PlazoDistribucionController {
 	@Autowired
 	IPlazoDistribucionService plazoDistribucionService;
 	
-	@GetMapping
-	public ResponseEntity<Iterable<PlazoDistribucion>> listarAll() {
-		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarAll(), HttpStatus.OK);
+	@GetMapping("/activos")
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazosActivos() {
+		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarPlazosActivos(), HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -36,6 +36,11 @@ public class PlazoDistribucionController {
 	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setId(id);
 		return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+	}
+	
+	@GetMapping()
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() {
+		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarAll(), HttpStatus.OK);
 	}
 	
 }
