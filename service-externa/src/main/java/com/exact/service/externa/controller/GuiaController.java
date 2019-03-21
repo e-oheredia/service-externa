@@ -326,8 +326,4 @@ public class GuiaController {
 		}
 	}
 	
-	@GetMapping("/{guiaId}/documentos")
-	public int cantidadDocumentos(@PathVariable Long guiaId) throws ClientProtocolException, IOException, JSONException {
-		return guiaService.getCantidadDocumentos(guiaId);
-	}
 }
