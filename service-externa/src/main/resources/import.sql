@@ -201,7 +201,7 @@ INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_d
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (6, N'DEVUELTO', 2)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (7, N'EXTRAVIADO', 2)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (8, N'DENEGADO', 1)
-INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (9, N'RETIRADO', 1)
+INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (9, N'ELIMINADO', 1)
 SET IDENTITY_INSERT [dbo].[estado_documento] OFF
 
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (1,9)

@@ -16,6 +16,7 @@ public interface IProveedorService {
 	Iterable<Proveedor> listarProveedores() throws ClientProtocolException, IOException, JSONException;
 	Proveedor guardar(Proveedor proveedor);
 	Proveedor modificar(Proveedor proveedor);
+	Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException;
 
 	
 }

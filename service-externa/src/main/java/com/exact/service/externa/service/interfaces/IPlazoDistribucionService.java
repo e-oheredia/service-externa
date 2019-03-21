@@ -4,7 +4,8 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 
 public interface IPlazoDistribucionService {
 	
-	public Iterable<PlazoDistribucion> listarAll();
+	public Iterable<PlazoDistribucion> listarPlazosActivos();
 	public Iterable<PlazoDistribucion> listarByProveedorId(Long proveedorId);
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion);
+	public Iterable<PlazoDistribucion> listarAll();
 }

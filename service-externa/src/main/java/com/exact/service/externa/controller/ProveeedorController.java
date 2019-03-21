@@ -34,13 +34,9 @@ public class ProveeedorController {
 	@Autowired
 	IPlazoDistribucionService plazoDistribucionService;
 	
-	@GetMapping
-	public ResponseEntity<String> listarAll() throws ClientProtocolException, IOException, JSONException {
-		
-		ObjectMapper mapper = new ObjectMapper();
-	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	    String dtoMapAsString = mapper.writeValueAsString(proveedorService.listarProveedores());
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	@GetMapping("/activos")
+	public ResponseEntity<Iterable<Proveedor>> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException {
+		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.listarProveedoresActivos(),HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}/plazosdistribucion")
@@ -62,6 +58,11 @@ public class ProveeedorController {
 	public ResponseEntity<Proveedor> modificar(@PathVariable Long id, @RequestBody Proveedor proveedor) {
 		proveedor.setId(id);
 		return new ResponseEntity<Proveedor>(proveedorService.modificar(proveedor), HttpStatus.OK);
+	}
+	
+	@GetMapping
+	public ResponseEntity<Iterable<Proveedor>> listarAll() throws ClientProtocolException, IOException, JSONException {
+		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.listarProveedores(),HttpStatus.OK);
 	}
 	
 }

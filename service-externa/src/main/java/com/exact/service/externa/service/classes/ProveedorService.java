@@ -5,6 +5,7 @@
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -44,6 +45,14 @@ public class ProveedorService implements IProveedorService{
 			return guardar(proveedor);
 		}else
 			return null;
+	}
+
+	@Override
+	public Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Proveedor> proveedoresBD = proveedorDao.findAll();
+		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedoresBD.spliterator(), false).collect(Collectors.toList());
+		proveedoreslst.removeIf(proveedor -> !proveedor.isActivo());
+		return proveedoreslst;
 	}
 
 

@@ -6,4 +6,5 @@ public interface ITipoSeguridadService {
 	
 	public Iterable<TipoSeguridad> listarAll();
 	TipoSeguridad guardar(TipoSeguridad tiposeguridad);
+	Iterable<TipoSeguridad> listarTipoSeguridadActivos();
 }
