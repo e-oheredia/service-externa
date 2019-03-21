@@ -419,9 +419,6 @@ public class GuiaService implements IGuiaService{
 					i++;
 				}
 			}
-			for(int j=0;j<guias.size();j++) {
-				guias.get(j).setCantidadDocumentos(documentoGuiaDao.getCantidadDocumentos(guias.get(j).getId()));
-			}
 			return guias;
 		}
 		return null;
