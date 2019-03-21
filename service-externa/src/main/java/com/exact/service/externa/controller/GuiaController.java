@@ -325,4 +325,9 @@ public class GuiaController {
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		}
 	}
+	
+	@GetMapping("/{guiaId}/documentos")
+	public int cantidadDocumentos(@PathVariable Long guiaId) throws ClientProtocolException, IOException, JSONException {
+		return guiaService.getCantidadDocumentos(guiaId);
+	}
 }

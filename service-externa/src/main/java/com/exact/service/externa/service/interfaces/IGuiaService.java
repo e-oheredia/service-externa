@@ -20,4 +20,5 @@ public interface IGuiaService {
 	Iterable<Guia> listarGuiasSinCerrar()throws  ClientProtocolException, IOException, JSONException;
 	Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin)throws  ClientProtocolException, IOException, JSONException;
+	int getCantidadDocumentos(Long guiaId) throws  ClientProtocolException, IOException, JSONException;
 }
