@@ -418,21 +418,13 @@ public class GuiaService implements IGuiaService{
 					}
 					i++;
 				}
-				
 			}
-			for(int j=0;j<guias.size();j++) {
-				
-			}
-			
 			return guias;
 		}
 		return null;
 	}
 
-	@Override
-	public int getCantidadDocumentos(Long guiaId) throws ClientProtocolException, IOException, JSONException {
-		return documentoGuiaDao.getCantidadDocumentos(guiaId);
-	}
+	
 
 		
 }
