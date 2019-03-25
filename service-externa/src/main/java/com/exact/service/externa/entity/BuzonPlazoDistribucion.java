@@ -22,9 +22,6 @@ public class BuzonPlazoDistribucion implements Serializable {
 	
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="buzon_plazo_distribucion_id")
-	private Long id;
 	@Column(name="buzon_id")
 	private Long buzonId;
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -59,13 +56,7 @@ public class BuzonPlazoDistribucion implements Serializable {
 		this.buzon = buzon;
 	}
 
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	/**
 	 * 
