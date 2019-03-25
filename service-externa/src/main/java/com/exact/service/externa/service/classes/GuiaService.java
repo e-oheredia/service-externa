@@ -293,7 +293,7 @@ public class GuiaService implements IGuiaService{
 	@Override
 	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
 		
-		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaDao.findAll();
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
