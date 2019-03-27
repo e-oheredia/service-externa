@@ -1,9 +1,14 @@
 package com.exact.service.externa.controller;
 
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +43,13 @@ public class EnvioController {
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
-	public ResponseEntity<String> registrarEnvio(@RequestParam("envio") String envioJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication) throws IOException, JSONException{
-		
+	public ResponseEntity<String> registrarEnvio(@RequestParam("envio") String envioJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		ObjectMapper mapper = new ObjectMapper();
 		Envio envio = mapper.readValue(envioJsonString, Envio.class);		
-		Envio envioRegistrado = envioService.registrarEnvio(envio,Long.valueOf(datosUsuario.get("idUsuario").toString()), file);
+		String header = req.getHeader("Authorization");
+		Envio envioRegistrado = envioService.registrarEnvio(envio,Long.valueOf(datosUsuario.get("idUsuario").toString()), file, header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");

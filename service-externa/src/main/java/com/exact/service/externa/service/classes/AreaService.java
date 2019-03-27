@@ -44,7 +44,14 @@ public class AreaService implements IAreaService{
 				area.put("plazoDistribucionPermitido", areasEncontradas.get(0).getPlazoDistribucion());
 			}
 		});
-		
+		int j=0;
+		while(j<areas.size()) {
+			if(areas.get(j).get("plazoDistribucionPermitido")==null) {
+				areas.remove(j);
+			}else {
+				j++;
+			}
+		}
 		return areas;
 	}
 }

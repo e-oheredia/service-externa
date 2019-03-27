@@ -50,7 +50,14 @@ public class BuzonService implements IBuzonService {
 				buzon.put("plazoDistribucionPermitido", buzonesEncontrados.get(0).getPlazoDistribucion());
 			}
 		});
-		
+		int j=0;
+		while(j<buzones.size()) {
+			if(buzones.get(j).get("plazoDistribucionPermitido")==null) {
+				buzones.remove(j);
+			}else {
+				j++;
+			}
+		}
 		return buzones;
 	}
 
