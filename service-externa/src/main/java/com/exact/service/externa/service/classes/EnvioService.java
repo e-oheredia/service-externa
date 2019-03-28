@@ -131,7 +131,7 @@ public class EnvioService implements IEnvioService {
 			if(correoslst!=null) {
 				Documento documentoCreado = envio.getDocumentos().iterator().next();
 				String nombre = envio.getBuzon().get("nombre").toString();
-				String texto="Se ha creado un envio de documento con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
+				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
 				mailDao.enviarMensaje(correoslst, mailSubject, texto);
 			}
 		}
