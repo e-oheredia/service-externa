@@ -5,4 +5,6 @@ import com.exact.service.externa.entity.TipoServicio;
 public interface ITipoServicioService {
 	
 	public Iterable<TipoServicio> listarAll();
+	TipoServicio guardar(TipoServicio tipoServicio);
+	Iterable<TipoServicio> listarTipoServicioActivos();
 }

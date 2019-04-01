@@ -46,6 +46,8 @@ public class EstadoDocumento implements Serializable {
 	@JsonProperty("estadosDocumentoPermitidos")
 	private Set<EstadoDocumento> estadosDocumentoPermitidos;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "estadoDocumento")
+	private Set<MotivoEstado> motivos;
 	
 	public Set<EstadoDocumento> getEstadosDocumentoPermitidos() {
 		return estadosDocumentoPermitidos;
@@ -76,6 +78,16 @@ public class EstadoDocumento implements Serializable {
 
 	
 	
+	public Set<MotivoEstado> getMotivos() {
+		return motivos;
+	}
+
+	public void setMotivos(Set<MotivoEstado> motivos) {
+		this.motivos = motivos;
+	}
+
+
+
 	/**
 	 * 
 	 */
