@@ -5,10 +5,9 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIAD
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DEVUELTO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.EXTRAVIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
+import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoGuiaDao;
@@ -60,6 +60,7 @@ import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
+import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 @Service
@@ -100,7 +101,11 @@ public class DocumentoService implements IDocumentoService {
 	ISeguimientoGuiaDao seguimientoGuiadao;
 	
 	@Autowired
+
 	IProductoEdao productoEdao;
+
+	IEstadoDocumentoDao estadoDocumentodao;
+
 	
 	@Override
 	@Transactional
@@ -289,8 +294,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			if (seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO &&
 				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO &&
-				seguimientoDocumentoExcel.getEstadoDocumento().getId() != DEVUELTO &&
-				seguimientoDocumentoExcel.getEstadoDocumento().getId() != EXTRAVIADO) {
+				seguimientoDocumentoExcel.getEstadoDocumento().getId() != NO_DISTRIBUIBLE ) {
 				map.put(3, "EL DOCUMENTO " + documento.getDocumentoAutogenerado() + " TIENE UN ESTADO NO VÁLIDO PARA ESTE PROCESO");
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
@@ -316,12 +320,21 @@ public class DocumentoService implements IDocumentoService {
 				return map;
 			}
 			
+			Optional<EstadoDocumento> estadoDocumentoBD = estadoDocumentodao.findById(seguimientoDocumentoExcel.getEstadoDocumento().getId());
+			if(estadoDocumentoBD.isPresent()) {
+				EstadoDocumento estado = estadoDocumentoBD.get();
+				boolean rpta = estado.getMotivos().stream().anyMatch(motivo -> motivo.getId().longValue()==seguimientoDocumentoExcel.getMotivoEstado().getId().longValue());
+				if(!rpta) {
+					map.put(7, "EL MOTIVO NO CORRESPONDE A EL ESTADO INGRESADO");
+				}
+			}
 			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
 			seguimientoDocumentoNuevo.setDocumento(documentoBD);
 			seguimientoDocumentoNuevo.setObservacion(seguimientoDocumentoExcel.getObservacion());
 			seguimientoDocumentoNuevo.setFecha(seguimientoDocumentoExcel.getFecha());
 			seguimientoDocumentoNuevo.setEstadoDocumento(seguimientoDocumentoExcel.getEstadoDocumento());
 			seguimientoDocumentoNuevo.setLinkImagen(seguimientoDocumentoExcel.getLinkImagen());
+			seguimientoDocumentoNuevo.setMotivoEstado(seguimientoDocumentoExcel.getMotivoEstado());
 			seguimientoDocumentoNuevo.setUsuarioId(usuarioId);
 			
 			
@@ -429,7 +442,7 @@ public class DocumentoService implements IDocumentoService {
 		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
 		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
 		
-		if(sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=DEVUELTO) {
+		if(sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=NO_DISTRIBUIBLE) {
 			return null;
 		}
 		documento.setRecepcionado(true);
