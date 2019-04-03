@@ -22,13 +22,13 @@ public interface IDocumentoService {
 	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
 	Map<Integer,String> cargarResultados(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
-	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws IOException, Exception;
 	Iterable<Documento> listarDocumentosEntregados(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionarDocumentoEntregado(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosDevueltos(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
-	Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
-	Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws IOException, Exception;
+	Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException, Exception;
 	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin, Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 	Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd, Long idUsuario) throws ClientProtocolException, IOException, JSONException;

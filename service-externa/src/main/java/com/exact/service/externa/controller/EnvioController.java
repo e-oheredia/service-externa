@@ -108,7 +108,7 @@ public class EnvioController {
 	}
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		CommonUtils cu = new CommonUtils();

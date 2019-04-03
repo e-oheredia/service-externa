@@ -1,5 +1,9 @@
 package com.exact.service.externa.service.classes;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,22 @@ public class TipoServicioService implements ITipoServicioService {
 	@Override
 	public Iterable<TipoServicio> listarAll() {
 		return tipoServicioDao.findAll();
+	}
+
+	@Override
+	public TipoServicio guardar(TipoServicio tipoServicio) {
+		if(tipoServicio.getNombre()==null) {
+			return null;
+		}
+		return tipoServicioDao.save(tipoServicio);
+	}
+
+	@Override
+	public Iterable<TipoServicio> listarTipoServicioActivos() {
+		Iterable<TipoServicio> tipoServicioBD = tipoServicioDao.findAll();
+		List<TipoServicio> tipoServiciolst = StreamSupport.stream(tipoServicioBD.spliterator(), false).collect(Collectors.toList());
+		tipoServiciolst.removeIf(tiposervicio -> !tiposervicio.isActivo());
+		return tipoServiciolst;
 	}
 
 }

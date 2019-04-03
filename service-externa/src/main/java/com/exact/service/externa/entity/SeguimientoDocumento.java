@@ -46,6 +46,9 @@ public class SeguimientoDocumento implements Serializable {
 	@JsonIgnore
 	private Documento documento;
 	
+	@ManyToOne(optional=true)
+	@JoinColumn(name="motivo_estado_id")
+	private MotivoEstado motivoEstado;
 	
 	public Documento getDocumento() {
 		return documento;
@@ -78,6 +81,12 @@ public class SeguimientoDocumento implements Serializable {
 	}
 	
 	
+	public MotivoEstado getMotivoEstado() {
+		return motivoEstado;
+	}
+	public void setMotivoEstado(MotivoEstado motivoEstado) {
+		this.motivoEstado = motivoEstado;
+	}
 	public EstadoDocumento getEstadoDocumento() {
 		return estadoDocumento;
 	}

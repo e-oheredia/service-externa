@@ -43,6 +43,8 @@ public class Envio implements Serializable {
 	private Long tipoDocumentoId;
 	@Column(name="sede_id")
 	private Long sedeId;
+	@Column(name="producto_id")
+	private Long productoId;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="plazo_distribucion_id")
 	private PlazoDistribucion plazoDistribucion;
@@ -62,9 +64,28 @@ public class Envio implements Serializable {
 	private Map<String, Object> buzon;
 	@Transient
 	private Map<String, Object> sede;
-	
+	@Transient
+	private Map<String, Object> producto;
 	
 		
+	
+	public Long getProductoId() {
+		return productoId;
+	}
+
+	public void setProductoId(Long productoId) {
+		this.productoId = productoId;
+	}
+
+	public Map<String, Object> getProducto() {
+		return producto;
+	}
+
+	public void setProducto(Map<String, Object> producto) {
+		this.productoId=Long.valueOf(producto.get("id").toString());
+		this.producto = producto;
+	}
+
 	public Long getSedeId() {
 		return sedeId;
 	}
