@@ -48,6 +48,7 @@ import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -97,6 +98,9 @@ public class DocumentoService implements IDocumentoService {
 	
 	@Autowired
 	ISeguimientoGuiaDao seguimientoGuiadao;
+	
+	@Autowired
+	IProductoEdao productoEdao;
 	
 	@Override
 	@Transactional
@@ -167,7 +171,7 @@ public class DocumentoService implements IDocumentoService {
 	
 	
 	@Override
-	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws ClientProtocolException, IOException, JSONException
+	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws IOException, Exception
 	{
 		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin,idbuzon);
 		if(documentos==null) {
@@ -185,6 +189,7 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		for (Documento documento : documentosUbcp) {
 			
@@ -216,6 +221,15 @@ public class DocumentoService implements IDocumentoService {
 					break;
 				}
 				k++;
+			}
+			
+			int m = 0; 
+			while(m < productos.size()) {
+				if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+					documento.getEnvio().setProducto(productos.get(m));
+					break;
+				}
+				m++;
 			}
 		}
 		return documentosUbcp;
@@ -438,7 +452,7 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin)
-			throws ClientProtocolException, IOException, JSONException {
+			throws IOException, Exception {
 		
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
 		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
@@ -453,6 +467,7 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		for (Documento documento : documentosUTD) {
 			
@@ -485,12 +500,21 @@ public class DocumentoService implements IDocumentoService {
 				}
 				k++;
 			}
+			
+			int m = 0; 
+			while(m < productos.size()) {
+				if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+					documento.getEnvio().setProducto(productos.get(m));
+					break;
+				}
+				m++;
+			}
 		}
 		return documentosUTD;
 	}
 
 	@Override
-	public Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException {
+	public Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException, Exception {
 		
 		Documento documento = documentoDao.listarDocumento(autogenerado);
 		
@@ -500,6 +524,8 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
 			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());

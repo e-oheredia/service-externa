@@ -41,6 +41,7 @@ import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.IServiceMailEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
@@ -96,6 +97,9 @@ public class EnvioService implements IEnvioService {
 	
 	@Autowired
 	IGestionUsuariosEdao gestionUsuarioEdao;
+	
+	@Autowired
+	IProductoEdao productoEdao;
 
 	@Override
 	@Transactional
@@ -182,7 +186,7 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Iterable<Envio> listarEnviosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception {
 		
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
@@ -204,6 +208,7 @@ public class EnvioService implements IEnvioService {
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
+			List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 			for (Envio envio : enviosCreadosList) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 
@@ -233,6 +238,15 @@ public class EnvioService implements IEnvioService {
 						break;
 					}
 					j++;
+				}
+				
+				int k = 0;
+				while (k < productos.size()) {
+					if (envio.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+						envio.setProducto(productos.get(k));
+						break;
+					}
+					k++;
 				}
 
 			}
