@@ -30,6 +30,7 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -72,6 +73,9 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	ISedeEdao sedeEdao;
+	
+	@Autowired
+	IProductoEdao productoEdao;
 	
 	
 	@Override
@@ -291,7 +295,7 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
 		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar();
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
@@ -299,6 +303,7 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		for(Guia guia : guiasParaProveedorList) {
 			
@@ -331,6 +336,15 @@ public class GuiaService implements IGuiaService{
 						break;
 					}
 					k++;
+				}
+				
+				int m = 0; 
+				while(m < productos.size()) {
+					if (documentoGuia.getDocumento().getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setProducto(productos.get(m));
+						break;
+					}
+					m++;
 				}
 				
 			}			

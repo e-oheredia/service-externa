@@ -242,8 +242,8 @@ public class GuiaController {
 		
 	}
 	
-	@GetMapping("/paraproveedor")
-	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+	@GetMapping("/procesarguias")
+	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
 		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
 		
