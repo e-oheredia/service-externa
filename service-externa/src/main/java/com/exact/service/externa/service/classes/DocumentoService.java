@@ -322,7 +322,6 @@ public class DocumentoService implements IDocumentoService {
 			
 			EstadoDocumento estadoDocumentoBD = estadoDocumentodao.findById(seguimientoDocumentoExcel.getEstadoDocumento().getId()).orElse(null);
 			if(estadoDocumentoBD!=null) {
-				//EstadoDocumento estado = estadoDocumentoBD.get();
 				boolean rpta = estadoDocumentoBD.getMotivos().stream().anyMatch(motivo -> motivo.getId().longValue()==seguimientoDocumentoExcel.getMotivoEstado().getId().longValue());
 				if(!rpta) {
 					map.put(7, "EL MOTIVO NO CORRESPONDE A EL ESTADO INGRESADO");
@@ -537,7 +536,7 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
-		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
@@ -555,6 +554,15 @@ public class DocumentoService implements IDocumentoService {
 				break;
 			}
 		}
+		
+		for(int k=0;k < productosBD.size();k++) {	
+			Long productoId= Long.valueOf(productosBD.get(k).get("id").toString());
+			if (documento.getEnvio().getProductoId() == productoId.longValue()) {
+				documento.getEnvio().setProducto(productosBD.get(k));
+				break;
+			}
+		}
+		
 		return documento;
 	}
 
