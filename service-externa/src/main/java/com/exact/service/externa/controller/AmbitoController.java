@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.exact.service.externa.service.interfaces.IAmbitoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 @RequestMapping("/ambitos")
@@ -41,12 +43,18 @@ public class AmbitoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
-		return new ResponseEntity<Map<String, Object>>(ambitoService.guardarSubAmbito(subambito) , HttpStatus.OK);
+	public ResponseEntity<String> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
+		Map<String,Object> subAmbito = ambitoService.guardarSubAmbito(subambito);
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
-		return new ResponseEntity<Map<String, Object>>(ambitoService.modificarSubAmbito(id, subambito) , HttpStatus.OK);
+	public ResponseEntity<String> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
+		Map<String,Object> subAmbito = ambitoService.modificarSubAmbito(id, subambito);
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
 	}
 }
