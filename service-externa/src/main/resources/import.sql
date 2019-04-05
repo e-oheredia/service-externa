@@ -58,6 +58,7 @@ SET IDENTITY_INSERT [dbo].[estado_guia] ON
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (1,'CREADO')
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (2,'ENVIADO')
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (3,'DESCARGADO')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4,'CERRADO')
 SET IDENTITY_INSERT [dbo].[estado_guia] OFF
 
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (1, 2)
