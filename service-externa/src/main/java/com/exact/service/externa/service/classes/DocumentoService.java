@@ -101,9 +101,9 @@ public class DocumentoService implements IDocumentoService {
 	ISeguimientoGuiaDao seguimientoGuiadao;
 	
 	@Autowired
-
 	IProductoEdao productoEdao;
 
+	@Autowired
 	IEstadoDocumentoDao estadoDocumentodao;
 
 	
@@ -320,10 +320,10 @@ public class DocumentoService implements IDocumentoService {
 				return map;
 			}
 			
-			Optional<EstadoDocumento> estadoDocumentoBD = estadoDocumentodao.findById(seguimientoDocumentoExcel.getEstadoDocumento().getId());
-			if(estadoDocumentoBD.isPresent()) {
-				EstadoDocumento estado = estadoDocumentoBD.get();
-				boolean rpta = estado.getMotivos().stream().anyMatch(motivo -> motivo.getId().longValue()==seguimientoDocumentoExcel.getMotivoEstado().getId().longValue());
+			EstadoDocumento estadoDocumentoBD = estadoDocumentodao.findById(seguimientoDocumentoExcel.getEstadoDocumento().getId()).orElse(null);
+			if(estadoDocumentoBD!=null) {
+				//EstadoDocumento estado = estadoDocumentoBD.get();
+				boolean rpta = estadoDocumentoBD.getMotivos().stream().anyMatch(motivo -> motivo.getId().longValue()==seguimientoDocumentoExcel.getMotivoEstado().getId().longValue());
 				if(!rpta) {
 					map.put(7, "EL MOTIVO NO CORRESPONDE A EL ESTADO INGRESADO");
 				}
