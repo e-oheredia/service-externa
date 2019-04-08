@@ -156,7 +156,7 @@ public class EnvioService implements IEnvioService {
 		if (enviosNoAutorizadosActivos.size() != 0) {
 			List<Long> buzonIds = enviosNoAutorizadosActivos.stream().map(Envio::getBuzonId)
 					.collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoDocumentoId)
+			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
@@ -173,8 +173,8 @@ public class EnvioService implements IEnvioService {
 				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
+					if (envio.getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
@@ -195,7 +195,7 @@ public class EnvioService implements IEnvioService {
 
 		if (enviosCreadosList.size() != 0) {
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId)
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
 			List<Long> distritoIds = new ArrayList<Long>();
 			enviosCreadosList.stream().forEach(envioCreado -> {
@@ -233,8 +233,8 @@ public class EnvioService implements IEnvioService {
 				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
+					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;

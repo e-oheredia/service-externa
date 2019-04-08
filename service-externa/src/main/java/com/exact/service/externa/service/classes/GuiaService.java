@@ -322,8 +322,8 @@ public class GuiaService implements IGuiaService{
 				
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
@@ -379,8 +379,8 @@ public class GuiaService implements IGuiaService{
 				
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
