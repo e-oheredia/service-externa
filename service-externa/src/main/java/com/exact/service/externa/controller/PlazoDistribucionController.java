@@ -29,13 +29,21 @@ public class PlazoDistribucionController {
 	@PostMapping
 	public ResponseEntity<PlazoDistribucion> guardar(@RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setActivo(true);
-		return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+		try {
+			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setId(id);
-		return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+		try {
+			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping()

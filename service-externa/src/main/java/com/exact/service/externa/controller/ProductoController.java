@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.service.interfaces.IProductoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 @RestController
@@ -36,13 +38,29 @@ public class ProductoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> guardar(@RequestBody String producto) throws IOException, JSONException, Exception  {
-		return new ResponseEntity<Map<String, Object>>(productoService.guardar(producto), HttpStatus.OK);
+	public ResponseEntity<String> guardar(@RequestBody String producto) throws IOException, JSONException, Exception  {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		try {
+			Map<String,Object> productoBD = productoService.guardar(producto);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(productoBD), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> modificar(@PathVariable Long id,@RequestBody String producto) throws IOException, JSONException, Exception {
-		return new ResponseEntity<Map<String, Object>>(productoService.modificar(id, producto), HttpStatus.OK);
+	public ResponseEntity<String> modificar(@PathVariable Long id,@RequestBody String producto) throws IOException, JSONException, Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		try {
+			Map<String,Object> productoBD = productoService.modificar(id, producto);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(productoBD), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		
 
 	}
 	

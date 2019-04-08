@@ -39,18 +39,29 @@ public class TipoDocumentoController {
 	
 	@PostMapping
 	public ResponseEntity<String> guardar(@RequestBody String tipoDocumento) throws ClientProtocolException, IOException, JSONException  {
-		Map<String,Object> tipodocumento = tipoDocumentoService.guardar(tipoDocumento);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tipodocumento), HttpStatus.OK);
+		try {
+			Map<String,Object> tipodocumento = tipoDocumentoService.guardar(tipoDocumento);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tipodocumento), HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<String> modificar(@PathVariable Long id,@RequestBody String tipoDocumento) throws IOException, JSONException {
-		Map<String,Object> tipodocumento = tipoDocumentoService.modificar(id, tipoDocumento);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tipodocumento), HttpStatus.OK);
+		try {
+			Map<String,Object> tipodocumento = tipoDocumentoService.modificar(id, tipoDocumento);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(tipodocumento), HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 }

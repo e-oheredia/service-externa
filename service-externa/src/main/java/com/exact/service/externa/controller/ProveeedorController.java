@@ -51,13 +51,21 @@ public class ProveeedorController {
 	@PostMapping
 	public ResponseEntity<Proveedor> guardar(@RequestBody Proveedor proveedor) {
 		proveedor.setActivo(true);
+		try {
 			return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<Proveedor> modificar(@PathVariable Long id, @RequestBody Proveedor proveedor) {
 		proveedor.setId(id);
-		return new ResponseEntity<Proveedor>(proveedorService.modificar(proveedor), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping

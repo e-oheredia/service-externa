@@ -29,13 +29,23 @@ public class TipoServicioController {
 	@PostMapping
 	public ResponseEntity<TipoServicio> guardar(@RequestBody TipoServicio tipoServicio){
 		tipoServicio.setActivo(true);
-		return new ResponseEntity<TipoServicio>(tipoServicioService.guardar(tipoServicio), HttpStatus.OK);
+		try {
+			return new ResponseEntity<TipoServicio>(tipoServicioService.guardar(tipoServicio) , HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<TipoServicio>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<TipoServicio> modificar(@PathVariable Long id, @RequestBody TipoServicio tipoServicio){
 		tipoServicio.setId(id);
-		return new ResponseEntity<TipoServicio>(tipoServicioService.guardar(tipoServicio), HttpStatus.OK);
+		TipoServicio tiposervicio = new TipoServicio();
+		try {
+			tiposervicio = tipoServicioService.guardar(tipoServicio);
+		} catch (Exception e) {
+			return new ResponseEntity<TipoServicio>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<TipoServicio>(tiposervicio , HttpStatus.OK);
 	}
 	
 	@GetMapping

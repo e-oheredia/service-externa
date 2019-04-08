@@ -21,10 +21,10 @@ public class PlazoDistribucion implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="plazo_distribucion_id")
 	private Long id;
-	@Column(nullable=false)
+	@Column(nullable=false, unique=true)
 	private String nombre;
 	
-	@Column(name="tiempo_envio", nullable=false, unique=true)
+	@Column(name="tiempo_envio", nullable=false)
 	private int tiempoEnvio;
 	
 	@ManyToOne(optional=false)

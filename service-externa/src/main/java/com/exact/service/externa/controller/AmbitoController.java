@@ -44,17 +44,26 @@ public class AmbitoController {
 	
 	@PostMapping
 	public ResponseEntity<String> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
-		Map<String,Object> subAmbito = ambitoService.guardarSubAmbito(subambito);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+		try {
+			Map<String,Object> subAmbito = ambitoService.guardarSubAmbito(subambito);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+		} catch (Exception e) {
+			return  new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<String> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
-		Map<String,Object> subAmbito = ambitoService.modificarSubAmbito(id, subambito);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+		try {
+			Map<String,Object> subAmbito = ambitoService.modificarSubAmbito(id, subambito);
+			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+		} catch (Exception e) {
+			return  new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 }
