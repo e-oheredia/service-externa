@@ -24,7 +24,7 @@ public class PlazoDistribucion implements Serializable{
 	@Column(nullable=false)
 	private String nombre;
 	
-	@Column(name="tiempo_envio", nullable=false)
+	@Column(name="tiempo_envio", nullable=false, unique=true)
 	private int tiempoEnvio;
 	
 	@ManyToOne(optional=false)

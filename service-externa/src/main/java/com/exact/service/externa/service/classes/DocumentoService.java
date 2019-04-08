@@ -5,9 +5,11 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIAD
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
+import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
@@ -143,7 +146,7 @@ public class DocumentoService implements IDocumentoService {
 		
 		for (Documento documento : documentosCustodiadosList) {
 			buzonIds.add(documento.getEnvio().getBuzonId());
-			tipoDocumentoIds.add(documento.getEnvio().getTipoDocumentoId());
+			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
 		
 		
@@ -162,8 +165,8 @@ public class DocumentoService implements IDocumentoService {
 			}
 			int j = 0;
 			while(j < tiposDocumento.size()) {
-				if (documento.getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-					documento.getEnvio().setTipoDocumento(tiposDocumento.get(j));
+				if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+					documento.getEnvio().setClasificacion(tiposDocumento.get(j));
 					break;
 				}
 				j++;
@@ -253,6 +256,8 @@ public class DocumentoService implements IDocumentoService {
 			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
 		
+		Guia guia = guiadao.findGuiabyAutogenerado(documentosExcelList.get(0).getDocumentoAutogenerado());
+		
 		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
 		
 
@@ -261,8 +266,6 @@ public class DocumentoService implements IDocumentoService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return map;
 		}
-		
-				
 		
 		for(Documento documento : documentosExcelList) {					
 			
@@ -286,11 +289,7 @@ public class DocumentoService implements IDocumentoService {
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
-				
-			
-			
 			SeguimientoDocumento seguimientoDocumentoExcel = documento.getUltimoSeguimientoDocumento();
-			
 			
 			if (seguimientoDocumentoExcel.getEstadoDocumento().getId() != ENTREGADO &&
 				seguimientoDocumentoExcel.getEstadoDocumento().getId() != REZAGADO &&
@@ -322,7 +321,6 @@ public class DocumentoService implements IDocumentoService {
 			
 			EstadoDocumento estadoDocumentoBD = estadoDocumentodao.findById(seguimientoDocumentoExcel.getEstadoDocumento().getId()).orElse(null);
 			if(estadoDocumentoBD!=null) {
-				//EstadoDocumento estado = estadoDocumentoBD.get();
 				boolean rpta = estadoDocumentoBD.getMotivos().stream().anyMatch(motivo -> motivo.getId().longValue()==seguimientoDocumentoExcel.getMotivoEstado().getId().longValue());
 				if(!rpta) {
 					map.put(7, "EL MOTIVO NO CORRESPONDE A EL ESTADO INGRESADO");
@@ -342,6 +340,23 @@ public class DocumentoService implements IDocumentoService {
 		}
 		
 		documentoDao.saveAll(documentosBDList);		
+		
+		boolean rpta = guiadao.existeDocumentosPendientes(guia.getId());
+		if(!rpta) {
+			List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
+			SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+			EstadoGuia estadoGuia = new EstadoGuia();		
+			
+			estadoGuia.setId(GUIA_CERRADO);
+			seguimientoGuia.setGuia(guia);
+			seguimientoGuia.setEstadoGuia(estadoGuia);		
+			seguimientoGuia.setUsuarioId(usuarioId);
+			seguimientoGuiaList.add(seguimientoGuia);
+			
+			Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+			guia.setSeguimientosGuia(sg);
+			guiadao.save(guia);
+		}
 		
 		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
 		return map;
@@ -537,7 +552,7 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
-		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
@@ -555,6 +570,15 @@ public class DocumentoService implements IDocumentoService {
 				break;
 			}
 		}
+		
+		for(int k=0;k < productosBD.size();k++) {	
+			Long productoId= Long.valueOf(productosBD.get(k).get("id").toString());
+			if (documento.getEnvio().getProductoId() == productoId.longValue()) {
+				documento.getEnvio().setProducto(productosBD.get(k));
+				break;
+			}
+		}
+		
 		return documento;
 	}
 

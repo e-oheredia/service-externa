@@ -48,4 +48,14 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 	@Query("FROM Guia g WHERE g IN (SELECT sg.guia FROM SeguimientoGuia sg "
 			+ "WHERE cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sg.estadoGuia.id=1)")
 	public Iterable<Guia> listarGuiasPorFechas(Date fechaIni, Date fechaFin);
+	
+	@Query("FROM Guia g WHERE g IN ( SELECT dg.guia FROM DocumentoGuia dg WHERE dg.documento IN ("
+			+ "SELECT do FROM Documento do WHERE do.documentoAutogenerado=?1))")
+	public Guia findGuiabyAutogenerado(String autogenereado);
+	
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE"
+			+ " dg.guia.id=?1) AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id=("
+			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
+	boolean existeDocumentosPendientes(Long id);
+	
 }

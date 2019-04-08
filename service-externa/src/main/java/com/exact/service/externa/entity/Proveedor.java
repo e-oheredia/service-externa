@@ -28,7 +28,7 @@ public class Proveedor implements Serializable{
 	@Column(name="proveedor_id")
 	private Long id;
 	
-	@Column(name="nombre",nullable=false)
+	@Column(name="nombre",nullable=false, unique=true)
 	private String nombre;
 	
 	@ManyToMany(fetch=FetchType.LAZY)

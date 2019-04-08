@@ -21,7 +21,7 @@ public class MotivoEstado {
 	@Column(name="motivo_estado_id")
 	private Long id;
 	
-	@Column(nullable=false)
+	@Column(nullable=false, unique=true)
 	private String nombre;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
