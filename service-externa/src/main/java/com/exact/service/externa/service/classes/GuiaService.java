@@ -3,11 +3,17 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGADO;
+
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -437,6 +443,29 @@ public class GuiaService implements IGuiaService{
 			return guias;
 		}
 		return null;
+	}
+
+	@Override
+	public Guia fechaDescargaGuia(Long id, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+		Optional<Guia> guiaBD = guiaDao.findById(id);
+		if(!guiaBD.isPresent()) {
+			return null;
+		}
+		Guia guia = guiaBD.get();
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_DESCARGADO);
+		seguimientoGuia.setGuia(guia);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+		guia.setFechaDescarga(new Date());
+		guia.setSeguimientosGuia(sg);
+		return guiaDao.save(guia);
 	}
 
 	
