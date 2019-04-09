@@ -326,4 +326,21 @@ public class GuiaController {
 		}
 	}
 	
+	@PutMapping("{id}/descarga")
+	public ResponseEntity<?> fechaDescargaGuia(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Guia guia = guiaService.fechaDescargaGuia(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("documentosGuiaFilter", "guia");
+		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
+			
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }
