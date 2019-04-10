@@ -67,22 +67,6 @@ public class Guia implements Serializable{
 	@Transient
 	private Map<String, Object> sede;
 	
-	@Column(name="fecha_descarga")
-	@JsonFormat
-	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
-	private Date fechaDescarga;
-	
-	
-	
-	public Date getFechaDescarga() {
-		return fechaDescarga;
-	}
-
-
-	public void setFechaDescarga(Date fechaDescarga) {
-		this.fechaDescarga = fechaDescarga;
-	}
-
 
 	public Map<String, Object> getSede() {
 		return sede;

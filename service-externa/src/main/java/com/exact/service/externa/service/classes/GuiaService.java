@@ -463,7 +463,6 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuiaList.add(seguimientoGuia);
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
-		guia.setFechaDescarga(new Date());
 		guia.setSeguimientosGuia(sg);
 		return guiaDao.save(guia);
 	}
