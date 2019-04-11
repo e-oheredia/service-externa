@@ -188,16 +188,19 @@ public class DocumentoService implements IDocumentoService {
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
+		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
 			distritosIds.add(documento.getDistritoId());
 			buzonIds.add(documento.getEnvio().getBuzonId());
+			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
 		
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 		
 		for (Documento documento : documentosUbcp) {
 			
@@ -238,6 +241,15 @@ public class DocumentoService implements IDocumentoService {
 					break;
 				}
 				m++;
+			}
+			
+			int n = 0;
+			while(n < tiposDocumento.size()) {
+				if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(n).get("id").toString())) {
+					documento.getEnvio().setClasificacion(tiposDocumento.get(n));
+					break;
+				}
+				n++;
 			}
 		}
 		return documentosUbcp;
@@ -486,16 +498,19 @@ public class DocumentoService implements IDocumentoService {
 		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
+		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentosUTD) {
 			distritosIds.add(documento.getDistritoId());
 			buzonIds.add(documento.getEnvio().getBuzonId());
+			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
 		
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		List<Map<String, Object>> tipoDocumentos = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 		
 		for (Documento documento : documentosUTD) {
 			
@@ -531,11 +546,20 @@ public class DocumentoService implements IDocumentoService {
 			
 			int m = 0; 
 			while(m < productos.size()) {
-				if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+				if (documento.getEnvio().getTipoClasificacionId()== Long.valueOf(productos.get(m).get("id").toString())) {
 					documento.getEnvio().setProducto(productos.get(m));
 					break;
 				}
 				m++;
+			}
+			
+			int n = 0; 
+			while(n < tipoDocumentos.size()) {
+				if (documento.getEnvio().getProductoId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
+					documento.getEnvio().setClasificacion(tipoDocumentos.get(n));
+					break;
+				}
+				n++;
 			}
 		}
 		return documentosUTD;
@@ -553,6 +577,7 @@ public class DocumentoService implements IDocumentoService {
 		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
+		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
@@ -575,6 +600,14 @@ public class DocumentoService implements IDocumentoService {
 			Long productoId= Long.valueOf(productosBD.get(k).get("id").toString());
 			if (documento.getEnvio().getProductoId() == productoId.longValue()) {
 				documento.getEnvio().setProducto(productosBD.get(k));
+				break;
+			}
+		}
+		
+		for(int m=0;m < tiposDocumento.size();m++) {	
+			Long tipoDocumentoId= Long.valueOf(tiposDocumento.get(m).get("id").toString());
+			if (documento.getEnvio().getTipoClasificacionId() == tipoDocumentoId.longValue()) {
+				documento.getEnvio().setClasificacion(tiposDocumento.get(m));
 				break;
 			}
 		}
