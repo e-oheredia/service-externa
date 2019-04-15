@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="envio")
-@Inheritance(
+
+	@Inheritance(
 	    strategy = InheritanceType.JOINED
 	)
 public class Envio implements Serializable {	
@@ -67,6 +68,9 @@ public class Envio implements Serializable {
 	@Transient
 	private Map<String, Object> producto;
 	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="tipo_envio_id")
+	private TipoEnvio tipoEnvio;
 	
 	
 	public Long getTipoClasificacionId() {

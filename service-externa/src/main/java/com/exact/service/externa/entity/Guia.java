@@ -64,6 +64,10 @@ public class Guia implements Serializable{
 	@Column(name="sede_id")
 	private Long sedeId;
 	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="tipo_guia_id")
+	private TipoGuia tipoGuia;
+	
 	@Transient
 	private Map<String, Object> sede;
 	
