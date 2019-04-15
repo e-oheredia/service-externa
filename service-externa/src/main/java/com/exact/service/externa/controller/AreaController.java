@@ -21,9 +21,7 @@ import com.exact.service.externa.service.interfaces.IAreaService;
 
 @RestController
 @RequestMapping("/areas")
-public class AreaController {
-
-	@Autowired
+public class AreaController {@Autowired
 	IAreaPlazoDistribucionService areaPlazoDistribucionService;
 	@Autowired
 	IAreaService areaService;
@@ -55,4 +53,12 @@ public class AreaController {
 
 		return new ResponseEntity<Iterable<Map<String, Object>>>(areaService.listarAll(), HttpStatus.OK);
 	}
+	
+	@GetMapping("/areasplazo")
+	public ResponseEntity<Iterable<AreaPlazoDistribucion>> listarAreaPlazos()
+			throws IOException, JSONException {
+
+		return new ResponseEntity<Iterable<AreaPlazoDistribucion>>(areaPlazoDistribucionService.listarAreaPlazos(), HttpStatus.OK);
+	}
+	
 }

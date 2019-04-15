@@ -14,8 +14,17 @@ public class TipoSeguridad {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="tipo_seguridad_id")
 	private Long id;	
-	@Column(nullable=false)
+	@Column(nullable=false, unique=true)
 	private String nombre;
+	@Column(nullable=false)
+	private boolean activo;
+		
+	public boolean isActivo() {
+		return activo;
+	}
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
 	public Long getId() {
 		return id;
 	}

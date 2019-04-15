@@ -2,6 +2,7 @@ package com.exact.service.externa.entity;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -69,15 +71,15 @@ public class Guia implements Serializable{
 	@Transient
 	private Map<String, Object> sede;
 	
-		
+
 	public Map<String, Object> getSede() {
 		return sede;
 	}
 
 
 	public void setSede(Map<String, Object> sede) {
+		this.sedeId= Long.valueOf(sede.get("id").toString());
 		this.sede = sede;
-		this.sedeId = Long.valueOf(sede.get("id").toString());
 	}
 
 
@@ -176,6 +178,8 @@ public class Guia implements Serializable{
 		return (this.getSeguimientosGuia().stream().max(Comparator.comparing(SeguimientoGuia::getFecha))
 		.orElseThrow(NoSuchElementException::new));		
 	}
+	
+
 
 	private static final long serialVersionUID = 1L;
 }

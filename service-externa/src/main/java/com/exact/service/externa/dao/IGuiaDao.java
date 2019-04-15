@@ -1,10 +1,16 @@
 package com.exact.service.externa.dao;
 
+import java.util.Date;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 //import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 
 @Repository
@@ -30,4 +36,26 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = do.id) AND sd.estadoDocumento.id = 3)))"
 			+ "ORDER BY d.id ASC")
 	public Iterable<Guia> findByGuiasSinCerrar();
+	
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM Guia g WHERE g.id = ?1")
+	public void retirarGuia(Long guiaId);
+	
+	@Query("FROM Guia g WHERE g.numeroGuia=?1")
+	public Guia findBynumeroGuia(String numeroGuia);
+	
+	@Query("FROM Guia g WHERE g IN (SELECT sg.guia FROM SeguimientoGuia sg "
+			+ "WHERE cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sg.estadoGuia.id=1)")
+	public Iterable<Guia> listarGuiasPorFechas(Date fechaIni, Date fechaFin);
+	
+	@Query("FROM Guia g WHERE g IN ( SELECT dg.guia FROM DocumentoGuia dg WHERE dg.documento IN ("
+			+ "SELECT do FROM Documento do WHERE do.documentoAutogenerado=?1))")
+	public Guia findGuiabyAutogenerado(String autogenereado);
+	
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE"
+			+ " dg.guia.id=?1) AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id=("
+			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
+	boolean existeDocumentosPendientes(Long id);
+	
 }

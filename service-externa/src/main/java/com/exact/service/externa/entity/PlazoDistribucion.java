@@ -21,7 +21,7 @@ public class PlazoDistribucion implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="plazo_distribucion_id")
 	private Long id;
-	@Column(nullable=false)
+	@Column(nullable=false, unique=true)
 	private String nombre;
 	
 	@Column(name="tiempo_envio", nullable=false)
@@ -31,6 +31,15 @@ public class PlazoDistribucion implements Serializable{
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
+	@Column(name="activo", nullable=false)
+	private boolean activo;
+	
+	public boolean isActivo() {
+		return activo;
+	}
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
 	public int getTiempoEnvio() {
 		return tiempoEnvio;
 	}

@@ -116,4 +116,3 @@ SET IDENTITY_INSERT [dbo].[tipo_guia] ON
 INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (1, N' GUIA REGULAR')
 INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (2, N' GUIA BLOQUE')
 SET IDENTITY_INSERT [dbo].[tipo_guia] OFF
-

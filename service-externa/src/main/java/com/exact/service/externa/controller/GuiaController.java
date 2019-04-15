@@ -1,6 +1,9 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
@@ -47,6 +52,7 @@ public class GuiaController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -69,6 +75,7 @@ public class GuiaController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		String dtoMapAsString = cu.filterObjetoJson(nuevaGuia, filter);
 		
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -93,6 +100,7 @@ public class GuiaController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -234,8 +242,8 @@ public class GuiaController {
 		
 	}
 	
-	@GetMapping("/paraproveedor")
-	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+	@GetMapping("/procesarguias")
+	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
 		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
 		
@@ -244,6 +252,7 @@ public class GuiaController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -259,9 +268,79 @@ public class GuiaController {
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PutMapping("{id}/desvalidar")
+	public ResponseEntity<?> desvalidarDocumentoGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
+		DocumentoGuia dg = documentoGuiaService.desvalidarDocumento(id);
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
+			
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/reporteguias")
+	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	{
+		if(numeroGuia!=null){
+			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia);
+			if(guia==null) {
+				return new ResponseEntity<String>("No existe Guia con ese numero", HttpStatus.BAD_REQUEST);
+			}
+			CommonUtils cu = new CommonUtils();
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentoFilter", "documentosGuia");
+			filter.put("documentosGuiaFilter", "guia");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			///////////////////////////////////////////////////////////
+			String dtoMapAsString = cu.filterObjetoJson(guia,filter);
+			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		}
+		else{
+			if(fechaini=="" || fechafin==""){
+				return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+			}
+			Iterable<Guia> guias = guiaService.listarGuiasPorFechas(fechaini, fechafin);
+			if(guias==null) {
+				return new ResponseEntity<String>("Error en Listar Guías", HttpStatus.BAD_REQUEST);
+			}
+			CommonUtils cu = new CommonUtils();
+			Map<String, String> filter = new HashMap<String, String>();
+			filter.put("envioFilter", "documentos");
+			filter.put("documentoFilter", "documentosGuia");
+			filter.put("documentosGuiaFilter", "guia");
+			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			///////////////////////////////////////////////////////////
+		    String dtoMapAsString = cu.filterListaObjetoJson(guias,filter);
+		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		}
+	}
+	
+	@PutMapping("{id}/descarga")
+	public ResponseEntity<?> fechaDescargaGuia(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Guia guia = guiaService.fechaDescargaGuia(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("documentosGuiaFilter", "guia");
+		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
+			
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

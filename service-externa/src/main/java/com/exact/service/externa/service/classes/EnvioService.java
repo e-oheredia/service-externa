@@ -13,14 +13,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
+import org.simplejavamail.email.Email;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.Mailer;
+import org.simplejavamail.mailer.MailerBuilder;
+import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,8 +37,11 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
+import com.exact.service.externa.edao.interfaces.IServiceMailEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
+import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
@@ -74,10 +85,25 @@ public class EnvioService implements IEnvioService {
 
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
+	
+	@Value("${mail.subject}")
+	String mailSubject;
+	
+	@Value("${mail.text}")
+	String mailText;
+	
+	@Autowired
+	IServiceMailEdao mailDao;
+	
+	@Autowired
+	IGestionUsuariosEdao gestionUsuarioEdao;
+	
+	@Autowired
+	IProductoEdao productoEdao;
 
 	@Override
 	@Transactional
-	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file) throws IOException {
+	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file, String header) throws IOException, ParseException, MessagingException, JSONException {
 
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
 		String ruta = "autorizaciones";
@@ -105,10 +131,15 @@ public class EnvioService implements IEnvioService {
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
+			String correoslst = gestionUsuarioEdao.obtenerCorreoAutorizador(header);
+			if(correoslst!=null) {
+				Documento documentoCreado = envio.getDocumentos().iterator().next();
+				String nombre = envio.getBuzon().get("nombre").toString();
+				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
+				mailDao.enviarMensaje(correoslst, mailSubject, texto);
+			}
 		}
-
 		Envio envioRegistrado = envioDao.save(envio);
-
 		return envioRegistrado;
 	}
 
@@ -125,7 +156,7 @@ public class EnvioService implements IEnvioService {
 		if (enviosNoAutorizadosActivos.size() != 0) {
 			List<Long> buzonIds = enviosNoAutorizadosActivos.stream().map(Envio::getBuzonId)
 					.collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoDocumentoId)
+			List<Long> tipoDocumentoIds = enviosNoAutorizadosActivos.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
@@ -142,8 +173,8 @@ public class EnvioService implements IEnvioService {
 				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
+					if (envio.getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
@@ -155,7 +186,7 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Iterable<Envio> listarEnviosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception {
 		
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		Iterable<Envio> enviosCreados = envioDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
@@ -164,7 +195,7 @@ public class EnvioService implements IEnvioService {
 
 		if (enviosCreadosList.size() != 0) {
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId)
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
 			List<Long> distritoIds = new ArrayList<Long>();
 			enviosCreadosList.stream().forEach(envioCreado -> {
@@ -177,6 +208,7 @@ public class EnvioService implements IEnvioService {
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
+			List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 			for (Envio envio : enviosCreadosList) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 
@@ -201,11 +233,20 @@ public class EnvioService implements IEnvioService {
 				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
+					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
+				}
+				
+				int k = 0;
+				while (k < productos.size()) {
+					if (envio.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+						envio.setProducto(productos.get(k));
+						break;
+					}
+					k++;
 				}
 
 			}

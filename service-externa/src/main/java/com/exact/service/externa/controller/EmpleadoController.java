@@ -36,4 +36,9 @@ public class EmpleadoController {
 		return new ResponseEntity<String>(dtoMapAsString, dtoMapAsString == null ? HttpStatus.NOT_FOUND: HttpStatus.OK);		
 	}
 	
+	@GetMapping()
+	public ResponseEntity<Iterable<Map<String, Object>>> listarEmpleados() throws ClientProtocolException, IOException, JSONException{
+		return new ResponseEntity<Iterable<Map<String, Object>>>(empleadoService.listarEmpleados(), HttpStatus.OK);
+	}
+	
 }

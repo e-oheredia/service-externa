@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,6 +20,7 @@ import javax.persistence.Transient;
 public class BuzonPlazoDistribucion implements Serializable {
 	
 	
+	
 	@Id
 	@Column(name="buzon_id")
 	private Long buzonId;
@@ -28,14 +31,6 @@ public class BuzonPlazoDistribucion implements Serializable {
 	private Map<String, Object> buzon;	
 	
 	
-	public Long getBuzonId() {
-		return buzonId;
-	}
-
-	public void setBuzonId(Long buzonId) {
-		this.buzonId = buzonId;
-	}
-
 	public PlazoDistribucion getPlazoDistribucion() {
 		return plazoDistribucion;
 	}
@@ -44,13 +39,24 @@ public class BuzonPlazoDistribucion implements Serializable {
 		this.plazoDistribucion = plazoDistribucion;
 	}
 
+	public Long getBuzonId() {
+		return buzonId;
+	}
+
+	public void setBuzonId(Long buzonId) {
+		this.buzonId = buzonId;
+	}
+
 	public Map<String, Object> getBuzon() {
 		return buzon;
 	}
 
 	public void setBuzon(Map<String, Object> buzon) {
+		this.buzonId=Long.valueOf(buzon.get("id").toString());
 		this.buzon = buzon;
 	}
+
+
 
 	/**
 	 * 

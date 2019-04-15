@@ -40,10 +40,12 @@ public class Envio implements Serializable {
 	@Column(name="ruta_autorizacion")
 	private String rutaAutorizacion;
 	private boolean autorizado;
-	@Column(name="tipo_documento_id")
-	private Long tipoDocumentoId;
-	@Column(name="sede_id") 
+	@Column(name="tipo_clasificacion_id")
+	private Long tipoClasificacionId;
+	@Column(name="sede_id")
 	private Long sedeId;
+	@Column(name="producto_id")
+	private Long productoId;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="plazo_distribucion_id")
 	private PlazoDistribucion plazoDistribucion;
@@ -58,17 +60,53 @@ public class Envio implements Serializable {
 	@JsonProperty("documentos")
 	private Set<Documento> documentos;
 	@Transient
-	private Map<String, Object> tipoDocumento;			
+	private Map<String, Object> clasificacion;			
 	@Transient
 	private Map<String, Object> buzon;
 	@Transient
 	private Map<String, Object> sede;
+	@Transient
+	private Map<String, Object> producto;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name="tipo_envio_id")
 	private TipoEnvio tipoEnvio;
 	
-		
+	
+	public Long getTipoClasificacionId() {
+		return tipoClasificacionId;
+	}
+
+	public void setTipoClasificacionId(Long tipoClasificacionId) {
+		this.tipoClasificacionId = tipoClasificacionId;
+	}
+
+	public Map<String, Object> getClasificacion() {
+		return clasificacion;
+	}
+
+	public void setClasificacion(Map<String, Object> clasificacion) {
+		this.tipoClasificacionId = Long.valueOf(clasificacion.get("id").toString());
+		this.clasificacion = clasificacion;
+	}
+
+	public Long getProductoId() {
+		return productoId;
+	}
+
+	public void setProductoId(Long productoId) {
+		this.productoId = productoId;
+	}
+
+	public Map<String, Object> getProducto() {
+		return producto;
+	}
+
+	public void setProducto(Map<String, Object> producto) {
+		this.productoId=Long.valueOf(producto.get("id").toString());
+		this.producto = producto;
+	}
+
 	public Long getSedeId() {
 		return sedeId;
 	}
@@ -82,8 +120,8 @@ public class Envio implements Serializable {
 	}
 
 	public void setSede(Map<String, Object> sede) {
-		this.sede = sede;
 		this.sedeId = Long.valueOf(sede.get("id").toString());
+		this.sede = sede;
 	}
 
 	@PrePersist
@@ -117,12 +155,12 @@ public class Envio implements Serializable {
 	public void setAutorizado(boolean autorizado) {
 		this.autorizado = autorizado;
 	}
-	public Long getTipoDocumentoId() {
-		return tipoDocumentoId;
-	}
-	public void setTipoDocumentoId(Long tipoDocumentoId) {
-		this.tipoDocumentoId = tipoDocumentoId;
-	}
+//	public Long getTipoDocumentoId() {
+//		return tipoDocumentoId;
+//	}
+//	public void setTipoDocumentoId(Long tipoDocumentoId) {
+//		this.tipoDocumentoId = tipoDocumentoId;
+//	}
 	public PlazoDistribucion getPlazoDistribucion() {
 		return plazoDistribucion;
 	}
@@ -147,13 +185,13 @@ public class Envio implements Serializable {
 	public void setDocumentos(Set<Documento> documentos) {
 		this.documentos = documentos;
 	}
-	public Map<String, Object> getTipoDocumento() {
-		return tipoDocumento;
-	}
-	public void setTipoDocumento(Map<String, Object> tipoDocumento) {
-		this.tipoDocumentoId = Long.valueOf(tipoDocumento.get("id").toString());
-		this.tipoDocumento = tipoDocumento;
-	}
+//	public Map<String, Object> getTipoDocumento() {
+//		return tipoDocumento;
+//	}
+//	public void setTipoDocumento(Map<String, Object> tipoDocumento) {
+//		this.tipoDocumentoId = Long.valueOf(tipoDocumento.get("id").toString());
+//		this.tipoDocumento = tipoDocumento;
+//	}
 	public Map<String, Object> getBuzon() {		
 		return buzon;
 	}
@@ -161,7 +199,8 @@ public class Envio implements Serializable {
 		this.buzonId = Long.valueOf(buzon.get("id").toString());
 		this.buzon = buzon;
 	}	
-	
+
+
 	/**
 	 * 
 	 */

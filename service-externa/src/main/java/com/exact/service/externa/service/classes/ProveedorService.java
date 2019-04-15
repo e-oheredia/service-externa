@@ -1,9 +1,11 @@
-package com.exact.service.externa.service.classes;
+																																																											package com.exact.service.externa.service.classes;
 
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -12,13 +14,14 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import com.exact.service.externa.dao.IProveedorDao;
-import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
 @Service
 public class ProveedorService implements IProveedorService{
+
 
 	@Autowired
 	IProveedorDao proveedorDao;
@@ -30,5 +33,28 @@ public class ProveedorService implements IProveedorService{
 		
 		return proveedoresCreadosList;
 	}
+
+	@Override
+	public Proveedor guardar(Proveedor proveedor) {
+		return proveedorDao.save(proveedor);
+	}
+
+	@Override
+	public Proveedor modificar(Proveedor proveedor) {
+		if(proveedorDao.existsById(proveedor.getId())) {
+			return guardar(proveedor);
+		}else
+			return null;
+	}
+
+	@Override
+	public Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException {
+		Iterable<Proveedor> proveedoresBD = proveedorDao.findAll();
+		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedoresBD.spliterator(), false).collect(Collectors.toList());
+		proveedoreslst.removeIf(proveedor -> !proveedor.isActivo());
+		return proveedoreslst;
+	}
+
+
 
 }

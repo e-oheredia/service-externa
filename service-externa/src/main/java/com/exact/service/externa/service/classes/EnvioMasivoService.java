@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,10 @@ import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IEnvioMasivoDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
+import com.exact.service.externa.edao.interfaces.IServiceMailEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
@@ -67,10 +72,22 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
 	
+	@Value("${mail.subject}")
+	String mailSubject;
+	
+	@Value("${mail.text}")
+	String mailText;
+	
+	@Autowired
+	IServiceMailEdao mailDao;
+	
+	@Autowired
+	IGestionUsuariosEdao gestionUsuarioEdao;
+	
 
 	@Override
-	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file)
-			throws IOException {
+	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file, String header)
+			throws IOException, ParseException, MessagingException, JSONException {
 		
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();	
 		String ruta ="autorizaciones";
@@ -88,6 +105,10 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		Long envioIdAnterior = envioDao.getMaxId();		
 		Long nuevoEnvioId = envioIdAnterior == null ? 1L : envioIdAnterior + 1L;
 		
+		String masivoAutogeneradoAnterior = envioMasivoDao.getMaxMasivoAutogenerado();
+		String masivoAutogeneradoNuevo = autogeneradoUtils.generateMasivoAutogenerado(masivoAutogeneradoAnterior);
+		envioMasivo.setMasivoAutogenerado(masivoAutogeneradoNuevo);
+		
 		if (file != null) {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
 			envioMasivo.setRutaAutorizacion(rutaAutorizacion);
@@ -95,16 +116,14 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
+			String correolst = gestionUsuarioEdao.obtenerCorreoAutorizador(header);
+			if(correolst!=null) {
+				String nombre = envioMasivo.getBuzon().get("nombre").toString();
+				String texto="Se ha creado un envio masivo de documentos con autogenerado "+ envioMasivo.getMasivoAutogenerado() +" del usuario "+nombre;
+				mailDao.enviarMensaje(correolst, mailSubject, texto);
+			}
 		}		
-		
-		String masivoAutogeneradoAnterior = envioMasivoDao.getMaxMasivoAutogenerado();
-		String masivoAutogeneradoNuevo = autogeneradoUtils.generateMasivoAutogenerado(masivoAutogeneradoAnterior);
-		
-		envioMasivo.setMasivoAutogenerado(masivoAutogeneradoNuevo);
-		
-		EnvioMasivo envioRegistrado =envioMasivoDao.save(envioMasivo);
-		
-		return envioRegistrado;
+		return envioMasivoDao.save(envioMasivo);
 	}
 	@Override	
 	public Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
@@ -122,7 +141,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 
 			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
-			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoDocumentoId).collect(Collectors.toList());
+			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId).collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 			for (Envio envio: enviosCreadosList) {				
@@ -147,8 +166,8 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				}
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (envio.getTipoDocumentoId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						envio.setTipoDocumento(tiposDocumento.get(j));
+					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						envio.setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;

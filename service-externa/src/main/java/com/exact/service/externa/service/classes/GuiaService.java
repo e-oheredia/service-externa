@@ -3,15 +3,23 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGADO;
+
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -19,6 +27,8 @@ import java.util.stream.StreamSupport;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +36,7 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
@@ -34,7 +45,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
-import com.exact.service.externa.entity.Proveedor;
+
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
@@ -69,6 +80,9 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	ISedeEdao sedeEdao;
 	
+	@Autowired
+	IProductoEdao productoEdao;
+	
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException {
@@ -86,7 +100,7 @@ public class GuiaService implements IGuiaService{
 	public Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
-		guia.setSedeId(Long.valueOf(sede.get("id").toString()));
+		guia.setSede(sede);
 		
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		
@@ -287,15 +301,18 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar();
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		for(Guia guia : guiasParaProveedorList) {
+			
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
 			
 			for(DocumentoGuia documentoGuia : documentoGuiaList) {
@@ -311,11 +328,29 @@ public class GuiaService implements IGuiaService{
 				
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
+				}
+				
+				int k=0;
+				while(k < sedes.size()) {
+					if(documentoGuia.getDocumento().getEnvio().getSedeId() == Long.valueOf(sedes.get(k).get("id").toString())) {
+						documentoGuia.getGuia().setSede(sedes.get(k));
+						break;
+					}
+					k++;
+				}
+				
+				int m = 0; 
+				while(m < productos.size()) {
+					if (documentoGuia.getDocumento().getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setProducto(productos.get(m));
+						break;
+					}
+					m++;
 				}
 				
 			}			
@@ -333,6 +368,7 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		
+		
 		for(Guia guia : guiasSinCerrarList) {
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
 			
@@ -349,18 +385,89 @@ public class GuiaService implements IGuiaService{
 				
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getTipoDocumentoId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
-						documentoGuia.getDocumento().getEnvio().setTipoDocumento(tiposDocumento.get(j));
+					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+						documentoGuia.getDocumento().getEnvio().setClasificacion(tiposDocumento.get(j));
 						break;
 					}
 					j++;
 				}
-				
 			}			
-			
 		}
-		
 		return guiasSinCerrarList;	
 	}
+
+	@Override
+	public Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException {
+		Guia guia = guiaDao.findBynumeroGuia(numeroguia);
+		if(guia==null) {
+			return null;
+		}
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		for(int i=0;i<sedes.size();i++) {
+			if(guia.getSedeId()==Long.valueOf(sedes.get(i).get("id").toString())) {
+				guia.setSede(sedes.get(i));
+				break;
+			}
+		}
+		return guia;
+	}
+
+	@Override
+	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin) throws ClientProtocolException, IOException, JSONException {
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
+			return null;
+		}
+		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
+			Iterable<Guia> guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF);
+			if(guiasBD==null) {
+				return null;
+			}
+			List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
+			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+			for(Guia guia : guias) {
+				int i=0;
+				while(i < sedes.size()) {
+					if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+						guia.setSede(sedes.get(i));
+						break;
+					}
+					i++;
+				}
+			}
+			return guias;
+		}
+		return null;
+	}
+
+	@Override
+	public Guia fechaDescargaGuia(Long id, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+		Optional<Guia> guiaBD = guiaDao.findById(id);
+		if(!guiaBD.isPresent()) {
+			return null;
+		}
+		Guia guia = guiaBD.get();
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_DESCARGADO);
+		seguimientoGuia.setGuia(guia);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+		guia.setSeguimientosGuia(sg);
+		return guiaDao.save(guia);
+	}
+
 	
+
+		
 }

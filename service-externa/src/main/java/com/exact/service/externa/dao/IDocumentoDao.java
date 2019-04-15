@@ -22,8 +22,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 "
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 2) AND "
 			+ "d.id NOT IN (SELECT dg.documento.id FROM DocumentoGuia dg)" )
-	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long plazoDistribucionId, Long tipoServicioId, Long tipoSeguridadId, Long sedeId);
-	
+	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long plazoDistribucionId, Long tipoServicioId, Long tipoSeguridadId, Long sedeId);	
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
@@ -40,13 +39,13 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "sd.estadoDocumento.id =4) AND d.recepcionado=0 ")
-	public Iterable<Documento> listarDocumentosEntregados();
+			+ "sd.estadoDocumento.id =4) AND d.codigoDevolucion='' AND d.envio.sedeId=?1 ")
+	public Iterable<Documento> listarDocumentosEntregados(Long sedeId);
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "(sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6)) AND d.recepcionado=0 ")
-	public Iterable<Documento> listarDocumentosDevueltos();
+			+ "(sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6)) AND d.codigoDevolucion='' AND d.envio.sedeId=?1")
+	public Iterable<Documento> listarDocumentosDevueltos(Long sedeId);
 
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
 			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1)")
@@ -54,14 +53,17 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	
 	@Query("FROM Documento d WHERE d.documentoAutogenerado=?1")
-	public Documento listarDocumentoUTD(String autogenerado);
+	public Documento listarDocumento(String autogenerado);
 	
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
 			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=?3)")
 	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaini, Date fechafin, Long estadoDocumentoId);
 	
-	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND "
+			+ "cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id =4)")
+	public Iterable<Documento> listarCargos(Date fechaini, Date fechafin);
 	 
 
 }
