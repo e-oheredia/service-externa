@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="envio")
-@Inheritance(
+
+	@Inheritance(
 	    strategy = InheritanceType.JOINED
 	)
 public class Envio implements Serializable {	
@@ -41,7 +42,7 @@ public class Envio implements Serializable {
 	private boolean autorizado;
 	@Column(name="tipo_documento_id")
 	private Long tipoDocumentoId;
-	@Column(name="sede_id")
+	@Column(name="sede_id") 
 	private Long sedeId;
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="plazo_distribucion_id")
@@ -63,6 +64,9 @@ public class Envio implements Serializable {
 	@Transient
 	private Map<String, Object> sede;
 	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="tipo_envio_id")
+	private TipoEnvio tipoEnvio;
 	
 		
 	public Long getSedeId() {
