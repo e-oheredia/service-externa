@@ -68,11 +68,19 @@ public class Envio implements Serializable {
 	@Transient
 	private Map<String, Object> producto;
 	
-	@ManyToOne(optional=false)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_envio_id")
 	private TipoEnvio tipoEnvio;
 	
 	
+	public TipoEnvio getTipoEnvio() {
+		return tipoEnvio;
+	}
+
+	public void setTipoEnvio(TipoEnvio tipoEnvio) {
+		this.tipoEnvio = tipoEnvio;
+	}
+
 	public Long getTipoClasificacionId() {
 		return tipoClasificacionId;
 	}
@@ -185,13 +193,6 @@ public class Envio implements Serializable {
 	public void setDocumentos(Set<Documento> documentos) {
 		this.documentos = documentos;
 	}
-//	public Map<String, Object> getTipoDocumento() {
-//		return tipoDocumento;
-//	}
-//	public void setTipoDocumento(Map<String, Object> tipoDocumento) {
-//		this.tipoDocumentoId = Long.valueOf(tipoDocumento.get("id").toString());
-//		this.tipoDocumento = tipoDocumento;
-//	}
 	public Map<String, Object> getBuzon() {		
 		return buzon;
 	}

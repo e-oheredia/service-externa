@@ -3,6 +3,11 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
+import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_BLOQUE;
+import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_REGULAR;
+import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
+import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,13 +51,12 @@ import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
+import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.TipoEnvio;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
 
 @Service
 public class EnvioService implements IEnvioService {
@@ -121,6 +125,16 @@ public class EnvioService implements IEnvioService {
 
 		Long envioIdAnterior = envioDao.getMaxId();
 		Long nuevoEnvioId = envioIdAnterior == null ? 1L : envioIdAnterior + 1L;
+		
+		String perfilUsuario = gestionUsuarioEdao.findPerfil(idUsuario, header);
+		TipoEnvio tipoEnvio = new TipoEnvio();
+		if(perfilUsuario.equals("USUARIO_REGULAR")) {
+			tipoEnvio.setId(ENVIO_REGULAR);
+		}else if(perfilUsuario.equals("USUARIO_BLOQUE")) {
+			tipoEnvio.setId(ENVIO_BLOQUE);
+		}
+		envio.setTipoEnvio(tipoEnvio);
+		
 
 		if (file != null) {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "."

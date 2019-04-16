@@ -38,5 +38,15 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 		return response;
 		
 	}
+	
+	@Override
+	public String findPerfil(Long usuarioId ,String header) throws ParseException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil" + "/"+ usuarioId +"/usuario");
+		httpGet.addHeader("Authorization", header);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		return response;
+		
+	}
 
 }

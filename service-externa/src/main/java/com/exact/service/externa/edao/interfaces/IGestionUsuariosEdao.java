@@ -13,6 +13,7 @@ import org.json.JSONException;
 public interface IGestionUsuariosEdao {
 	
 	public String obtenerCorreoAutorizador(String header) throws ParseException, IOException,JSONException ;
-
+	public String findPerfil(Long usuarioId, String header) throws ParseException, IOException,JSONException ;
+	
 	
 }

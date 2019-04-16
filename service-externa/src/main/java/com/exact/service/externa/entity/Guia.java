@@ -64,13 +64,23 @@ public class Guia implements Serializable{
 	@Column(name="sede_id")
 	private Long sedeId;
 	
-	@ManyToOne(optional=false)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_guia_id")
 	private TipoGuia tipoGuia;
 	
 	@Transient
 	private Map<String, Object> sede;
 	
+
+	public TipoGuia getTipoGuia() {
+		return tipoGuia;
+	}
+
+
+	public void setTipoGuia(TipoGuia tipoGuia) {
+		this.tipoGuia = tipoGuia;
+	}
+
 
 	public Map<String, Object> getSede() {
 		return sede;

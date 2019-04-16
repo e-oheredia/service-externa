@@ -26,9 +26,6 @@ public class TipoEnvio implements Serializable{
 	@Column(name="nombre",nullable=false)
 	private String nombre;
 	
-	@OneToMany(fetch=FetchType.LAZY, mappedBy="tipoEnvio")
-	private Set<Envio> envios;
-
 	public Long getId() {
 		return id;
 	}
@@ -45,15 +42,7 @@ public class TipoEnvio implements Serializable{
 		this.nombre = nombre;
 	}
 
-	public Set<Envio> getEnvios() {
-		return envios;
-	}
 
-	public void setEnvios(Set<Envio> envios) {
-		this.envios = envios;
-	}
-	
-	
 	/**
 	 * 
 	 */

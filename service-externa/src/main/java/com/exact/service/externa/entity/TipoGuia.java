@@ -23,9 +23,6 @@ public class TipoGuia implements Serializable {
 	
 	@Column(name="nombre",nullable=false)
 	private String nombre;
-	
-	@OneToMany(fetch=FetchType.LAZY, mappedBy="tipoGuia")
-	private Set<Guia> guias;
 
 	public Long getId() {
 		return id;
@@ -43,13 +40,6 @@ public class TipoGuia implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public Set<Guia> getGuias() {
-		return guias;
-	}
-
-	public void setGuias(Set<Guia> guias) {
-		this.guias = guias;
-	}
 	
 	/**
 	 * 

@@ -64,6 +64,12 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND "
 			+ "cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id =4)")
 	public Iterable<Documento> listarCargos(Date fechaini, Date fechafin);
+	
+	@Query("FROM Documento d WHERE d.envio.id=?1 AND d.envio IN (SELECT e FROM Envio e WHERE "
+			+ "e.sedeId=?2) AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 "
+			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 1) AND "
+			+ "d.id NOT IN (SELECT dg.documento.id FROM DocumentoGuia dg)" )
+	public Iterable<Documento> findDocumentosByEnvioId(Long envioId, Long sedeId);
 	 
 
 }

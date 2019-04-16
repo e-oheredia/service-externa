@@ -25,5 +25,8 @@ public interface IDocumentoGuiaDao extends CrudRepository<DocumentoGuia, Long> {
 	@Query("SELECT d FROM DocumentoGuia d WHERE d.documento.id=?1")
 	public DocumentoGuia findByDocumentoId(Long documentoId);
 	
+	@Query("SELECT d FROM DocumentoGuia d WHERE d.guia.id=?1")
+	public Iterable<DocumentoGuia> findByGuiaId(Long guiaId);
+	
 	
 }

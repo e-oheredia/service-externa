@@ -19,5 +19,4 @@ public interface IEnvioService {
 	Envio denegarEnvio(Long idEnvio, Long idUsuario);
 	Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception;
 	
-	
 }

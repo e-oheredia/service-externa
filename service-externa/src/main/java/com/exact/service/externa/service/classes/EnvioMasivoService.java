@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_REGULAR;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.TipoEnvio;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
@@ -108,6 +110,13 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		String masivoAutogeneradoAnterior = envioMasivoDao.getMaxMasivoAutogenerado();
 		String masivoAutogeneradoNuevo = autogeneradoUtils.generateMasivoAutogenerado(masivoAutogeneradoAnterior);
 		envioMasivo.setMasivoAutogenerado(masivoAutogeneradoNuevo);
+		
+		String perfilUsuario = gestionUsuarioEdao.findPerfil(idUsuario, header);
+		TipoEnvio tipoEnvio = new TipoEnvio();
+		if(perfilUsuario.equals("USUARIO_REGULAR")) {
+			tipoEnvio.setId(ENVIO_REGULAR);
+		}
+		envioMasivo.setTipoEnvio(tipoEnvio);
 		
 		if (file != null) {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
