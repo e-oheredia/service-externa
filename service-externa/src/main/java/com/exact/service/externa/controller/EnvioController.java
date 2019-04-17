@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,12 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.Envio;
+import com.exact.service.externa.entity.EnvioMasivo;
+import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IEnvioService;
+import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
+import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_BLOQUE;
 
 @RestController
 @RequestMapping("/envios")
@@ -40,10 +46,13 @@ public class EnvioController {
 
 	@Autowired
 	IEnvioService envioService;
+	
+	@Autowired
+	IGuiaService guiaService;
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
-	public ResponseEntity<String> registrarEnvio(@RequestParam("envio") String envioJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
+	public ResponseEntity<String> registrarEnvio(@RequestParam("envio") String envioJsonString, @RequestParam(required=false) MultipartFile file,  @RequestParam(value="codigoGuia",required=false) String codigoGuia , @RequestParam(value="proveedorId",required=false) Long proveedorId, Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		ObjectMapper mapper = new ObjectMapper();
@@ -122,6 +131,7 @@ public class EnvioController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+
 	
 
 }

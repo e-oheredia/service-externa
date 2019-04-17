@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +63,8 @@ public class GuiaController {
 	@PostMapping
 	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
 		@SuppressWarnings("unchecked")
-		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();		
-		Guia nuevaGuia = guiaService.crearGuia(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
-		
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
+		Guia nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
 		if (nuevaGuia == null) {
 			Map<String, Object> respuesta = new HashMap<String, Object>();
 			respuesta.put("mensaje", "No existen documentos custodiados para la Guia");	
@@ -150,7 +151,7 @@ public class GuiaController {
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
 		
-		valor = guiaService.enviarGuia(guiaId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		valor = guiaService.enviarGuiaRegular(guiaId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		
 		switch(valor) {
 		case 0: 

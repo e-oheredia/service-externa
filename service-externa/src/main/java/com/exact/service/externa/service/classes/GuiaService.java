@@ -7,6 +7,9 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGADO;
+import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
+import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
+
 
 
 import java.io.IOException;
@@ -36,18 +39,21 @@ import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
+import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
+import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
-
+import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
+import com.exact.service.externa.entity.TipoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
@@ -83,6 +89,9 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	IProductoEdao productoEdao;
 	
+	@Autowired
+	IGestionUsuariosEdao gestionUsuarioEdao;
+	
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException {
@@ -97,20 +106,17 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	@Transactional
-	public Guia crearGuia(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Guia crearGuiaRegular(Guia guia, Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		guia.setSede(sede);
+		TipoGuia tipoGuia = new TipoGuia();
+		tipoGuia.setId(GUIA_REGULAR);
+		guia.setTipoGuia(tipoGuia);
 		
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
-		
-		if (documentos == null) {
-			return null;		
-		}		
-		
 		List<Documento> documentosList = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-			
-		if (documentosList.size() == 0) {
+		if(documentosList.isEmpty()) {
 			return null;
 		}
 		
@@ -132,7 +138,6 @@ public class GuiaService implements IGuiaService{
 		
 		Set<DocumentoGuia> dg = new HashSet<DocumentoGuia>(documentosGuiaList);
 		guia.setDocumentosGuia(dg);
-		
 		
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
 		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
@@ -187,7 +192,7 @@ public class GuiaService implements IGuiaService{
 	
 	@Override
 	@Transactional
-	public int enviarGuia(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+	public int enviarGuiaRegular(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
 		
 		Guia guiaEnviada = guiaDao.findById(guiaId).orElse(null);
 		
@@ -467,7 +472,101 @@ public class GuiaService implements IGuiaService{
 		return guiaDao.save(guia);
 	}
 
-	
-
+	@Override
+	@Transactional
+	public Guia crearGuiaBloque(EnvioMasivo envioMasivo, Long usuarioId ,String codigoGuia, Long proveedorId, String matricula)
+			throws ClientProtocolException, IOException, JSONException {
 		
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		Guia guia = new Guia();
+		Proveedor proveedor = new Proveedor();
+		TipoGuia tipoGuia = new TipoGuia();
+		tipoGuia.setId(GUIA_BLOQUE);
+		proveedor.setId(proveedorId);
+		guia.setSede(sede);
+		guia.setPlazoDistribucion(envioMasivo.getPlazoDistribucion());
+		guia.setTipoSeguridad(envioMasivo.getTipoSeguridad());
+		guia.setTipoServicio(envioMasivo.getTipoServicio());
+		guia.setNumeroGuia(codigoGuia);
+		guia.setProveedor(proveedor);
+		guia.setTipoGuia(tipoGuia);
+		
+		List<DocumentoGuia> documentosGuiaList = new ArrayList<>();
+		
+		for (Documento documento : envioMasivo.getDocumentos()) {			
+			
+			DocumentoGuiaId documentoGuiaId = new DocumentoGuiaId();
+			documentoGuiaId.setGuiaId(guia.getId());
+			documentoGuiaId.setDocumentoId(documento.getId());
+			
+			DocumentoGuia documentoGuia = new DocumentoGuia();
+			documentoGuia.setDocumento(documento);
+			documentoGuia.setGuia(guia);
+			documentoGuia.setValidado(true);
+			documentoGuia.setId(documentoGuiaId);
+			documentosGuiaList.add(documentoGuia);
+		}
+		Set<DocumentoGuia> dg = new HashSet<>(documentosGuiaList);
+		guia.setDocumentosGuia(dg);
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_CREADO);
+		seguimientoGuia.setGuia(guia);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
+		guia.setSeguimientosGuia(sg);
+		
+		guiaDao.save(guia);
+		
+		return guia;
+		
+	}
+
+	@Override
+	public Guia enviarGuiaBloque(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException {
+		Guia guiaBloque = guiaDao.findById(guiaId).orElse(null);
+		if(guiaBloque==null) {
+			return null;
+		}
+		Iterable<DocumentoGuia> documentosGuiaBloque = documentoGuiaDao.findByGuiaId(guiaBloque.getId());
+		List<DocumentoGuia> lstDocumentosGuiaBloque = StreamSupport.stream(documentosGuiaBloque.spliterator(), false).collect(Collectors.toList());
+		
+		if(lstDocumentosGuiaBloque.isEmpty()) {
+			return null;
+		}
+		
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_ENVIADO);
+		seguimientoGuia.setGuia(guiaBloque);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
+		guiaBloque.setSeguimientosGuia(sg);
+		
+		Set<DocumentoGuia> lista = guiaBloque.getDocumentosGuia();
+		List<DocumentoGuia> listDG = new ArrayList<>(lista);
+		
+		for (DocumentoGuia dg : listDG) {
+			List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<>();
+			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(usuarioId, new EstadoDocumento(PENDIENTE_ENTREGA));
+			Documento doc = dg.getDocumento();
+			seguimientoDocumento.setDocumento(doc);
+			seguimientosDocumento.add(seguimientoDocumento);
+			Set<SeguimientoDocumento> sd = new HashSet<>(seguimientosDocumento);
+			dg.getDocumento().setSeguimientosDocumento(sd);
+		}
+		
+		return guiaDao.save(guiaBloque);
+		
+		
+	}
 }

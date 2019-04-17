@@ -24,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
+import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
+import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,6 +39,9 @@ public class EnvioMasivoController {
 	
 	@Autowired
 	IEnvioMasivoService envioMasivoService;
+	
+	@Autowired
+	IGuiaService guiaService;
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
@@ -72,5 +77,26 @@ public class EnvioMasivoController {
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PostMapping("/bloque")
+	public ResponseEntity<String> registrarEnvioBloque(@RequestParam("envioBloque") String envioJsonString,  @RequestParam(value="codigoGuia") String codigoGuia , @RequestParam(value="proveedorId") Long proveedorId, Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		ObjectMapper mapper = new ObjectMapper();
+		EnvioMasivo envioBloque = mapper.readValue(envioJsonString, EnvioMasivo.class);		
+		String header = req.getHeader("Authorization");
+		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, header);
+		guiaService.crearGuiaBloque(envioBloqueNuevo, Long.valueOf(datosUsuario.get("idUsuario").toString()), codigoGuia, proveedorId,  datosUsuario.get("matricula").toString());
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");		
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		
 	}
 }
