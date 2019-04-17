@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
+import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_REGULAR;
 
 import java.io.IOException;
@@ -115,7 +116,10 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		TipoEnvio tipoEnvio = new TipoEnvio();
 		if(perfilUsuario.equals("USUARIO_REGULAR")) {
 			tipoEnvio.setId(ENVIO_REGULAR);
+		}else if(perfilUsuario.equals("USUARIO_BLOQUE")) {
+			tipoEnvio.setId(ENVIO_BLOQUE);
 		}
+		
 		envioMasivo.setTipoEnvio(tipoEnvio);
 		
 		if (file != null) {

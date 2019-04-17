@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.Envio;
+import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
@@ -130,26 +131,7 @@ public class EnvioController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@PostMapping("/bloque")
-	public ResponseEntity<String> registrarEnvioBloque(@RequestParam("envio") String envioJsonString,  @RequestParam(value="codigoGuia") String codigoGuia , @RequestParam(value="proveedorId") Long proveedorId, Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
-		@SuppressWarnings("unchecked")
-		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		ObjectMapper mapper = new ObjectMapper();
-		Envio envio = mapper.readValue(envioJsonString, Envio.class);		
-		String header = req.getHeader("Authorization");
-		Envio envioBloque = envioService.registrarEnvio(envio,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, header);
-		Guia guiaBloque = guiaService.crearGuiaBloque(envioBloque, Long.valueOf(datosUsuario.get("idUsuario").toString()), codigoGuia, proveedorId,  datosUsuario.get("matricula").toString());
-		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentoFilter", "documentosGuia");
-		filter.put("documentosGuiaFilter", "guia");
-		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterObjetoJson(guiaBloque, filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-		
-	}
+
 	
 
 }

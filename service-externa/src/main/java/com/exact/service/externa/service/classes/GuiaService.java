@@ -46,6 +46,7 @@ import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
+import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
@@ -473,7 +474,7 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	@Transactional
-	public Guia crearGuiaBloque(Envio envio, Long usuarioId ,String codigoGuia, Long proveedorId, String matricula)
+	public Guia crearGuiaBloque(EnvioMasivo envioMasivo, Long usuarioId ,String codigoGuia, Long proveedorId, String matricula)
 			throws ClientProtocolException, IOException, JSONException {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
@@ -483,16 +484,16 @@ public class GuiaService implements IGuiaService{
 		tipoGuia.setId(GUIA_BLOQUE);
 		proveedor.setId(proveedorId);
 		guia.setSede(sede);
-		guia.setPlazoDistribucion(envio.getPlazoDistribucion());
-		guia.setTipoSeguridad(envio.getTipoSeguridad());
-		guia.setTipoServicio(envio.getTipoServicio());
+		guia.setPlazoDistribucion(envioMasivo.getPlazoDistribucion());
+		guia.setTipoSeguridad(envioMasivo.getTipoSeguridad());
+		guia.setTipoServicio(envioMasivo.getTipoServicio());
 		guia.setNumeroGuia(codigoGuia);
 		guia.setProveedor(proveedor);
 		guia.setTipoGuia(tipoGuia);
 		
 		List<DocumentoGuia> documentosGuiaList = new ArrayList<>();
 		
-		for (Documento documento : envio.getDocumentos()) {			
+		for (Documento documento : envioMasivo.getDocumentos()) {			
 			
 			DocumentoGuiaId documentoGuiaId = new DocumentoGuiaId();
 			documentoGuiaId.setGuiaId(guia.getId());
