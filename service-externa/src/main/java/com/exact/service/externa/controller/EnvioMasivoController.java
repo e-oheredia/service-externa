@@ -67,6 +67,7 @@ public class EnvioMasivoController {
 	@GetMapping("/creados")
 	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
+		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -97,6 +98,5 @@ public class EnvioMasivoController {
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-		
 	}
 }
