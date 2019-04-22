@@ -37,6 +37,13 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "ORDER BY d.id ASC")
 	public Iterable<Guia> findByGuiasSinCerrar(Long tipoGuia);
 	
+	@Query("FROM Guia d WHERE d IN ( "
+			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = (SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=1  AND sg.usuarioId=?1) AND d.tipoGuia.id=2 "
+			+ "ORDER BY d.id ASC ")
+	public Iterable<Guia> findByGuiasBloques(Long Id);	
+	
+	
+	
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM Guia g WHERE g.id = ?1")

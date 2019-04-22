@@ -3,6 +3,7 @@ package com.exact.service.externa.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,11 +19,12 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public String getMaxDocumentoAutogenerado();
 	
 	@Query("FROM Documento d WHERE d.envio IN (SELECT e FROM Envio e WHERE "
-			+ "e.autorizado = 1 AND e.plazoDistribucion.id = ?1 AND e.tipoServicio.id = ?2 AND e.tipoSeguridad.id = ?3 AND e.sedeId=?4) AND "
+			+ "e.autorizado = 1 AND e.plazoDistribucion.id = ?1 AND e.tipoServicio.id =?2 AND e.productoId =?3 AND e.tipoClasificacionId=?4 AND e.tipoSeguridad.id = ?5 AND e.sedeId=?6 AND e.tipoEnvio.id=1) AND "
 			+ "d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 "
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 2) AND "
 			+ "d.id NOT IN (SELECT dg.documento.id FROM DocumentoGuia dg)" )
-	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(Long plazoDistribucionId, Long tipoServicioId, Long tipoSeguridadId, Long sedeId);	
+	public Iterable<Documento> findByPlazoDistribucionAndTipoServicioAndTipoSeguridadAndProductoAndClasificacion(Long plazoDistribucionId, Long tipoServicioId,Long producto, Long clasificacion, Long tipoSeguridadId, Long sedeId);	
+	
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
@@ -70,6 +72,9 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 1) AND "
 			+ "d.id NOT IN (SELECT dg.documento.id FROM DocumentoGuia dg)" )
 	public Iterable<Documento> findDocumentosByEnvioId(Long envioId, Long sedeId);
+
+
+
 	 
 
 }
