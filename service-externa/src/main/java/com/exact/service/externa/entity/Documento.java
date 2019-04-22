@@ -86,8 +86,22 @@ public class Documento implements Serializable {
 	public void prePersist() {
 		this.recepcionado=false;
 	}
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="tipo_devolucion_id")
+	private TipoDevolucion tipoDevolucion;
 
 	
+	public TipoDevolucion getTipoDevolucion() {
+		return tipoDevolucion;
+	}
+
+
+	public void setTipoDevolucion(TipoDevolucion tipoDevolucion) {
+		this.tipoDevolucion = tipoDevolucion;
+	}
+
+
 	public String getCodigoDevolucion() {
 		return codigoDevolucion;
 	}
