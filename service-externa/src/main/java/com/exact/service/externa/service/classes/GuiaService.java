@@ -587,8 +587,9 @@ public class GuiaService implements IGuiaService{
 	
 	
 	@Override
-	public Iterable<Guia> listarGuiasBloques(Long usuarioId) throws IOException, Exception {
+	public Iterable<Guia> listarGuiasBloques(Long usuarioId, String Matricula) throws IOException, Exception {
 		
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(Matricula);
 		Iterable<Guia> guiasBloqueBD = guiaDao.findByGuiasBloques(usuarioId);
 		List<Guia> guiasBloque = StreamSupport.stream(guiasBloqueBD.spliterator(), false).collect(Collectors.toList());
 		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
@@ -614,9 +615,7 @@ public class GuiaService implements IGuiaService{
 				}
 				j++;
 			}
-			
-			
-			
+			guia.setSede(sede);
 		}
 		return guiasBloque;
 	}
