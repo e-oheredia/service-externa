@@ -248,12 +248,11 @@ public class GuiaService implements IGuiaService{
 	@Transactional
 	public int modificarGuia(Guia guia) throws ClientProtocolException, IOException, JSONException {
 
-		Guia guiaSeleccionada = guiaDao.findById(guia.getId()).orElse(null);
-		
-		if (guiaSeleccionada == null) {
+		Optional<Guia> guiaBD = guiaDao.findById(guia.getId());
+		if(!guiaBD.isPresent()) {
 			return 0;
-		}				
-		
+		}
+		Guia guiaSeleccionada = guiaBD.get();
 		List<SeguimientoGuia> sgList = StreamSupport.stream(guiaSeleccionada.getSeguimientosGuia().spliterator(), false).collect(Collectors.toList());			
 		
 		boolean esCreado = true;		
@@ -268,7 +267,9 @@ public class GuiaService implements IGuiaService{
 			return 2;
 		}			
 		
-		guiaSeleccionada.setProveedor(guia.getProveedor());
+		if(guiaSeleccionada.getTipoGuia().getId().longValue()==GUIA_REGULAR) {
+			guiaSeleccionada.setProveedor(guia.getProveedor());
+		}
 		guiaSeleccionada.setNumeroGuia(guia.getNumeroGuia());
 		
 		guiaDao.save(guiaSeleccionada);
@@ -306,9 +307,9 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+	public Iterable<Guia> listarGuiasRegularParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar();
+		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar(GUIA_REGULAR);
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
@@ -367,7 +368,7 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	public Iterable<Guia> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
-		Iterable<Guia> guiasSinCerrar = guiaDao.findByGuiasSinCerrar();
+		Iterable<Guia> guiasSinCerrar = guiaDao.findByGuiasSinCerrar(GUIA_REGULAR);
 		List<Guia> guiasSinCerrarList = StreamSupport.stream(guiasSinCerrar.spliterator(), false).collect(Collectors.toList());	
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
@@ -568,5 +569,11 @@ public class GuiaService implements IGuiaService{
 		return guiaDao.save(guiaBloque);
 		
 		
+	}
+
+	@Override
+	public Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+		Iterable<Guia> guias = guiaDao.findByGuiasSinCerrar(GUIA_BLOQUE);
+		return guias;
 	}
 }

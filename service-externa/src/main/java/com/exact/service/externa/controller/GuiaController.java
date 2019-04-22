@@ -187,7 +187,6 @@ public class GuiaController {
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
-		
 		guia.setId(guiaId);
 		
 		valor = guiaService.modificarGuia(guia);
@@ -244,9 +243,9 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/procesarguias")
-	public ResponseEntity<String> listarGuiasParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasRegularParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasRegularParaProveedor();
 		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -342,6 +341,40 @@ public class GuiaController {
 		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	
+	@PutMapping("{guiaId}/enviobloque")
+	public ResponseEntity<String> enviarGuiaBloque(@PathVariable Long guiaId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Guia guia = guiaService.enviarGuiaBloque(guiaId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("documentosGuiaFilter", "guia");
+		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
+			
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/guiasbloque")
+	public ResponseEntity<String> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+		
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueParaProveedor();
+		
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
+		
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

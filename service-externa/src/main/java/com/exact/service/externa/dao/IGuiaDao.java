@@ -33,9 +33,9 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "SELECT dg.guia FROM DocumentoGuia dg WHERE dg.documento IN ( "
 			+ "SELECT do FROM Documento do WHERE do IN ("
 			+ "SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id = ("
-			+ "SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = do.id) AND sd.estadoDocumento.id = 3)))"
+			+ "SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = do.id) AND sd.estadoDocumento.id = 3))) AND d.tipoGuia.id=?1 "
 			+ "ORDER BY d.id ASC")
-	public Iterable<Guia> findByGuiasSinCerrar();
+	public Iterable<Guia> findByGuiasSinCerrar(Long tipoGuia);
 	
 	@Transactional
 	@Modifying
@@ -57,5 +57,6 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ " dg.guia.id=?1) AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id=("
 			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
 	boolean existeDocumentosPendientes(Long id);
+	
 	
 }

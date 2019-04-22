@@ -18,11 +18,12 @@ public interface IGuiaService {
 	int enviarGuiaRegular (Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	int modificarGuia(Guia guia) throws  ClientProtocolException, IOException, JSONException;
 	int eliminarGuia(Long guiaId) throws  ClientProtocolException, IOException, JSONException;
-	Iterable<Guia> listarGuiasParaProveedor()throws  ClientProtocolException, IOException, JSONException, Exception;
+	Iterable<Guia> listarGuiasRegularParaProveedor()throws  ClientProtocolException, IOException, JSONException, Exception;
 	Iterable<Guia> listarGuiasSinCerrar()throws  ClientProtocolException, IOException, JSONException;
 	Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin)throws  ClientProtocolException, IOException, JSONException;
 	Guia fechaDescargaGuia(Long id, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	Guia crearGuiaBloque(EnvioMasivo envioMasivo,Long usuarioId ,String codigoGuia, Long proveedorId, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Guia enviarGuiaBloque(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception;
 }
