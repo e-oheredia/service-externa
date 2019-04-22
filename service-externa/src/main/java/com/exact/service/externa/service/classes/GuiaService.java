@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.http.client.ClientProtocolException;
@@ -476,7 +477,7 @@ public class GuiaService implements IGuiaService{
 	@Transactional
 	public Guia crearGuiaBloque(EnvioMasivo envioMasivo, Long usuarioId ,String codigoGuia, Long proveedorId, String matricula)
 			throws ClientProtocolException, IOException, JSONException {
-		
+		int cont = 0;
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		Guia guia = new Guia();
 		Proveedor proveedor = new Proveedor();
@@ -487,6 +488,8 @@ public class GuiaService implements IGuiaService{
 		guia.setPlazoDistribucion(envioMasivo.getPlazoDistribucion());
 		guia.setTipoSeguridad(envioMasivo.getTipoSeguridad());
 		guia.setTipoServicio(envioMasivo.getTipoServicio());
+		guia.setProducto(envioMasivo.getProducto());
+		guia.setClasificacion(envioMasivo.getClasificacion());
 		guia.setNumeroGuia(codigoGuia);
 		guia.setProveedor(proveedor);
 		guia.setTipoGuia(tipoGuia);
@@ -505,7 +508,10 @@ public class GuiaService implements IGuiaService{
 			documentoGuia.setValidado(true);
 			documentoGuia.setId(documentoGuiaId);
 			documentosGuiaList.add(documentoGuia);
+			cont++;
 		}
+		//guia.setCantidad(cont);
+		guia.setCantidadDocumentos(cont);
 		Set<DocumentoGuia> dg = new HashSet<>(documentosGuiaList);
 		guia.setDocumentosGuia(dg);
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
@@ -569,4 +575,41 @@ public class GuiaService implements IGuiaService{
 		
 		
 	}
+	
+	
+	@Override
+	public Iterable<Guia> listarGuiasBloques(Long usuarioId) throws IOException, Exception {
+		
+		Iterable<Guia> guiasBloqueBD = guiaDao.findByGuiasBloques(usuarioId);
+		List<Guia> guiasBloque = StreamSupport.stream(guiasBloqueBD.spliterator(), false).collect(Collectors.toList());
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		
+		
+		for(Guia guia : guiasBloque) {
+			
+			int k = 0;
+			int j =0;
+			while (k < productos.size()) {
+				if (guia.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+					guia.setProducto(productos.get(k));
+					break;
+				}
+				k++;
+			}
+
+			while (j < tipodocumento.size()) {
+				if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tipodocumento.get(j).get("id").toString())) {
+					guia.setClasificacion(tipodocumento.get(j));
+					break;
+				}
+				j++;
+			}
+			
+			
+			
+		}
+		return guiasBloque;
+	}
+	
 }
