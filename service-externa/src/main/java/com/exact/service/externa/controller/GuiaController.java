@@ -55,10 +55,30 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
+		String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
+	
+	@GetMapping("/creadosbloque")
+	public ResponseEntity<String> listarGuiasBloques(Authentication authentication) throws Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		
+		Iterable<Guia> guiasCreadas = guiaService.listarGuiasBloques(Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		CommonUtils cu = new CommonUtils();	    
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("documentosGuiaFilter", "guia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");				
+	    String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
+		
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}	
+	
+	
 	
 	@PostMapping
 	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{

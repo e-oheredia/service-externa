@@ -128,7 +128,7 @@ public class DocumentoService implements IDocumentoService {
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		
-		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridad(guia.getPlazoDistribucion().getId(), guia.getTipoServicio().getId(), guia.getTipoSeguridad().getId(), Long.valueOf(sede.get("id").toString()));
+		Iterable<Documento> documentosCreados = documentoDao.findByPlazoDistribucionAndTipoServicioAndTipoSeguridadAndProductoAndClasificacion(guia.getPlazoDistribucion().getId(), guia.getTipoServicio().getId(),  guia.getProductoId(), guia.getTipoClasificacionId(),guia.getTipoSeguridad().getId(), Long.valueOf(sede.get("id").toString()));
 		List<Documento> documentosCreadosList = StreamSupport.stream(documentosCreados.spliterator(), false).collect(Collectors.toList());	
 		
 		return documentosCreadosList;

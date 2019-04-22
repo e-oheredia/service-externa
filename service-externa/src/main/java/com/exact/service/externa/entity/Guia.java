@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="Guia")
+@JsonFilter("GuiaFilter")
 public class Guia implements Serializable{
 
 	@Id
@@ -53,12 +54,83 @@ public class Guia implements Serializable{
 	@JoinColumn(name="proveedor_id")
 	private Proveedor proveedor;
 	
+	@Column(name="producto_id")
+	private Long productoId;
+	
+	@Column(name="tipo_clasificacion_id")
+	private Long tipoClasificacionId;
+	
+	public Long getProductoId() {
+		return productoId;
+	}
+
+
+	public void setProductoId(Long productoId) {
+		this.productoId = productoId;
+	}
+
+
+	public Long getTipoClasificacionId() {
+		return tipoClasificacionId;
+	}
+
+
+	public void setTipoClasificacionId(Long tipoClasificacionId) {
+		this.tipoClasificacionId = tipoClasificacionId;
+	}
+
+
+
+	@Transient
+	private Map<String, Object> producto;
+	
+	@Transient
+	private Map<String, Object> clasificacion;		
+	
+	public Map<String, Object> getProducto() {
+		return producto;
+	}
+
+
+	public void setProducto(Map<String, Object> producto) {
+		this.productoId=Long.valueOf(producto.get("id").toString());		
+		this.producto = producto;
+	}
+
+
+	public Map<String, Object> getClasificacion() {
+		return clasificacion;
+	}
+
+
+	public void setClasificacion(Map<String, Object> clasificacion) {
+		this.tipoClasificacionId = Long.valueOf(clasificacion.get("id").toString());		
+		this.clasificacion = clasificacion;
+	}
+
+
+
+	@Column(name="cantidad_documentos")
+	private int cantidadDocumentos;
+	
+
+	public int getCantidadDocumentos() {
+		return cantidadDocumentos;
+	}
+
+
+	public void setCantidadDocumentos(int cantidadDocumentos) {
+		this.cantidadDocumentos = cantidadDocumentos;
+	}
+
+
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	@JsonFilter("documentosGuiaFilter")
-	@JsonProperty("documentosGuia")
+	@JsonProperty("documentosGuia")	
 	private Set<DocumentoGuia> documentosGuia;	
 	
 	@Column(name="sede_id")
