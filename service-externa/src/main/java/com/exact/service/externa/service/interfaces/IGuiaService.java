@@ -26,6 +26,6 @@ public interface IGuiaService {
 	Guia crearGuiaBloque(EnvioMasivo envioMasivo,Long usuarioId ,String codigoGuia, Long proveedorId, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Guia enviarGuiaBloque(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception;
-	Iterable<Guia> listarGuiasBloques(Long usuario_Id) throws IOException, Exception;
+	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
 
 }

@@ -65,7 +65,7 @@ public class GuiaController {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
-		Iterable<Guia> guiasCreadas = guiaService.listarGuiasBloques(Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Iterable<Guia> guiasCreadas = guiaService.listarGuiasBloques(Long.valueOf(datosUsuario.get("idUsuario").toString()),datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
@@ -190,7 +190,6 @@ public class GuiaController {
 			rpta ="NO SE PUEDE REALIZAR LA ACCIÓN, LA GUIA YA HA SIDO ENVIADA";
 			status=HttpStatus.BAD_REQUEST;
 			break;
-		
 		}
 		
 		respuesta.put("mensaje", rpta);	
@@ -248,7 +247,7 @@ public class GuiaController {
 				break;
 		case 1: 
 				rpta="GUIA ELIMINADA SATISFACTORIAMENTE";
-				status=HttpStatus.OK;
+				status=HttpStatus.OK;	
 				break;
 		case 2:	
 				rpta ="ESTADO DE GUIA NO VALIDO";
