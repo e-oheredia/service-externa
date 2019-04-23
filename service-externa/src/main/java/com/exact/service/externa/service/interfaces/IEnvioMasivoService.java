@@ -12,6 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.entity.EnvioMasivo;
 
 public interface IEnvioMasivoService {
-	EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile multipartFile, String header)  throws IOException, ParseException, MessagingException,  IOException, JSONException;
+	EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile multipartFile,String matricula ,String header)  throws IOException, ParseException, MessagingException,  IOException, JSONException;
 	Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException;
 }

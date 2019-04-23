@@ -264,7 +264,7 @@ public class GuiaController {
 	@GetMapping("/procesarguias")
 	public ResponseEntity<String> listarGuiasRegularParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasRegularParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
 		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -272,6 +272,7 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");	
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -372,7 +373,7 @@ public class GuiaController {
 		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
-		filter.put("guiaFilter", "documentosGuia");
+		filter.put("GuiaFilter", "documentosGuia");	
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("documentosGuiaFilter", "guia");
 		String dtoMapAsString = cu.filterObjetoJson(guia, filter);

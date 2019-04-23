@@ -72,6 +72,9 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 1) AND "
 			+ "d.id NOT IN (SELECT dg.documento.id FROM DocumentoGuia dg)" )
 	public Iterable<Documento> findDocumentosByEnvioId(Long envioId, Long sedeId);
+	
+	@Query("FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.numeroGuia=?1)")
+	public Iterable<Documento> listarDocumentosByNumeroGuia(String numeroGuia);
 
 
 
