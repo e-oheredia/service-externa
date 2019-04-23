@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
+import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
@@ -59,6 +62,11 @@ import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+
 
 @Service
 public class GuiaService implements IGuiaService{
@@ -93,6 +101,11 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	IGestionUsuariosEdao gestionUsuarioEdao;
 	
+	@Autowired
+	IEstadoDocumentoDao estadodocumentodao;
+	
+	private static final Log Logger = LogFactory.getLog(GuiaService.class);
+
 	
 	@Override
 	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException {
@@ -312,22 +325,46 @@ public class GuiaService implements IGuiaService{
 		
 		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar();
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
-		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		int entregados =0;
+		int rezagados =0;
+		int nodistri =0;
+		int pendientes =0;
+		int cont=0;
 		
 		for(Guia guia : guiasParaProveedorList) {
 			
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
 			
 			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				Documento documento = documentoGuia.getDocumento();
+				EstadoDocumento estadodocumento = estadodocumentodao.buscarpordocumento(documento.getId());
+				Logger.info("ESTADO DOCUMENTOS : "+ estadodocumento.getNombre());
+				
+				
+				if(estadodocumento.getId()==ENTREGADO) {
+					entregados++;
+				}
+				
+				if(estadodocumento.getId()==REZAGADO) {
+					rezagados++;
+				}
+				if(estadodocumento.getId()==NO_DISTRIBUIBLE) {
+					nodistri++;
+				}
+				if(estadodocumento.getId()==PENDIENTE_ENTREGA) {
+					pendientes++;
+				}
+				
 				
 				int i = 0;
 				while(i < distritos.size()) {
 					if (documentoGuia.getDocumento().getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
 						documentoGuia.getDocumento().setDistrito(distritos.get(i));
+						//documentoGuia.getDocumento().						
 						break;
 					}
 					i++;
@@ -341,6 +378,9 @@ public class GuiaService implements IGuiaService{
 					}
 					j++;
 				}
+				
+				
+				
 				
 				int k=0;
 				while(k < sedes.size()) {
@@ -359,11 +399,15 @@ public class GuiaService implements IGuiaService{
 					}
 					m++;
 				}
-				
+				cont++;
 			}			
-			
+			guia.setCantidadEntregados(entregados);
+			guia.setCantidadNoDistribuibles(nodistri);
+			guia.setCantidadPendientes(pendientes);
+			guia.setCantidadRezagados(rezagados);
+			guia.setCantidadDocumentos(cont);
 		}
-		
+
 		return guiasParaProveedorList;	
 	}
 
