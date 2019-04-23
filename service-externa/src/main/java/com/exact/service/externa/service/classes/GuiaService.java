@@ -621,6 +621,11 @@ public class GuiaService implements IGuiaService{
 		
 		
 	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosPorGuiaId(Long id) throws ClientProtocolException, IOException, JSONException, Exception {
+		return guiaDao.listarDocumentosByGuiaId(id);
+	}
 	
 
 }

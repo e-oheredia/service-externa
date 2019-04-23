@@ -400,20 +400,4 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("/documentosguia")
-	public ResponseEntity<String> listarDocumentosPorNumeroGuia(@RequestBody Guia guia) throws Exception{
-		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorNumeroGuia(guia.getNumeroGuia());
-		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
-		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentosGuiaFilter", "documento");
-		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterListaObjetoJson(documentoslst,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-	}
-	
-	
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
@@ -27,5 +28,6 @@ public interface IGuiaService {
 	Guia enviarGuiaBloque(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception;
 	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
+	Iterable<Documento> listarDocumentosPorGuiaId(Long guiaId) throws ClientProtocolException, IOException, JSONException, Exception;
 
 }
