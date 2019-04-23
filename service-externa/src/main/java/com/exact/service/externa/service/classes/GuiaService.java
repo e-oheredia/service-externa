@@ -7,6 +7,7 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 
@@ -678,6 +679,50 @@ public class GuiaService implements IGuiaService{
 			
 	return documentoslst;
 	
+	}
+
+	@Override
+	@Transactional
+	public Guia cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
+		List<String> autogeneradoList = new ArrayList<String>();		
+		
+		for(Documento documento : documentoDevueltos) {
+			autogeneradoList.add(documento.getDocumentoAutogenerado());
+		}
+		Guia guia = guiaDao.findGuiabyAutogenerado(documentoDevueltos.get(0).getDocumentoAutogenerado());
+		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
+		
+		if(documentosBDList.isEmpty()) {
+			return null;
+		}
+		int i=0;
+		for(Documento documento : documentosBDList) {
+			if(documento.getDocumentoAutogenerado().equals(documentoDevueltos.get(i).getDocumentoAutogenerado())) {
+				documento.setTiposDevolucion(documentoDevueltos.get(i).getTiposDevolucion());
+				break;
+			}
+			i++;
+		}
+		Optional<Documento> documentoSinTipo = documentosBDList.stream().filter(x -> !x.getTiposDevolucion().isEmpty()).findFirst();
+		if(documentoSinTipo.isPresent()) {
+			return null;
+		}
+		documentoDao.saveAll(documentosBDList);
+		
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
+		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
+		EstadoGuia estadoGuia = new EstadoGuia();		
+		
+		estadoGuia.setId(GUIA_CERRADO);
+		seguimientoGuia.setGuia(guia);
+		seguimientoGuia.setEstadoGuia(estadoGuia);		
+		seguimientoGuia.setUsuarioId(usuarioId);
+		seguimientoGuiaList.add(seguimientoGuia);
+		
+		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
+		guia.setSeguimientosGuia(sg);
+		
+		return guiaDao.save(guia);
 	}
 	
 	

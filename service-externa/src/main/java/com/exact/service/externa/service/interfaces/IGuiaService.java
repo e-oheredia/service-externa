@@ -2,6 +2,7 @@ package com.exact.service.externa.service.interfaces;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -29,5 +30,6 @@ public interface IGuiaService {
 	Iterable<Guia> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception;
 	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
 	Iterable<Documento> listarDocumentosPorGuiaId(Long guiaId) throws ClientProtocolException, IOException, JSONException, Exception;
+	Guia cargarResultadosDevolucion(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception;
 
 }
