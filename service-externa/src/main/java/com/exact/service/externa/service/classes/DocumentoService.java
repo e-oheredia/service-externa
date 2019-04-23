@@ -10,6 +10,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
+import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -359,7 +360,7 @@ public class DocumentoService implements IDocumentoService {
 			SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
 			EstadoGuia estadoGuia = new EstadoGuia();		
 			
-			estadoGuia.setId(GUIA_CERRADO);
+			estadoGuia.setId(GUIA_COMPLETA);
 			seguimientoGuia.setGuia(guia);
 			seguimientoGuia.setEstadoGuia(estadoGuia);		
 			seguimientoGuia.setUsuarioId(usuarioId);
