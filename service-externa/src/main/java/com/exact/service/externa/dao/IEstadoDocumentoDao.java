@@ -14,7 +14,7 @@ public interface IEstadoDocumentoDao extends CrudRepository<EstadoDocumento,Long
 	public Iterable<EstadoDocumento> findByTipoEstadoDocumentoId(Long tipoEstadoDocumentoId);
 	
 	
-	@Query("SELECT SG.estadoDocumento FROM SeguimientoDocumento SG where SG.id=(Select MAX(sg.id) FROM SeguimientoDocumento sg WHERE sg.documento.id = ?1)")
+	@Query("SELECT SG.estadoDocumento FROM SeguimientoDocumento SG where SG.id=(Select MAX(sg2.id) FROM SeguimientoDocumento sg2 WHERE sg2.documento.id = ?1)")
 	public EstadoDocumento buscarpordocumento(Long id);
 	
 	
