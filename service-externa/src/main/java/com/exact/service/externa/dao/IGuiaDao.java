@@ -65,8 +65,8 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
 	boolean existeDocumentosPendientes(Long id);
 	
-	@Query("FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.numeroGuia=?1)")
-	public Iterable<Documento> listarDocumentosByNumeroGuia(String numeroGuia);
+	@Query("FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.id=?1)")
+	public Iterable<Documento> listarDocumentosByGuiaId(Long id);
 	
 	@Query("FROM Guia d WHERE d IN ( "
 			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("

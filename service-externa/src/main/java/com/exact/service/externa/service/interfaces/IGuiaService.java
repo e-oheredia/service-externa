@@ -28,6 +28,6 @@ public interface IGuiaService {
 	Guia enviarGuiaBloque(Long guiaId, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception;
 	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
-	Iterable<Documento> listarDocumentosPorNumeroGuia(String numeroGuia) throws ClientProtocolException, IOException, JSONException, Exception;
+	Iterable<Documento> listarDocumentosPorGuiaId(Long guiaId) throws ClientProtocolException, IOException, JSONException, Exception;
 
 }

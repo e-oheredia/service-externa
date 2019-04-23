@@ -400,9 +400,9 @@ public class GuiaController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("/documentosguia")
-	public ResponseEntity<String> listarDocumentosPorNumeroGuia(@RequestBody Guia guia) throws Exception{
-		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorNumeroGuia(guia.getNumeroGuia());
+	@GetMapping("{id}/documentosguia")
+	public ResponseEntity<String> listarDocumentosPorNumeroGuia(@PathVariable Long id) throws Exception{
+		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
 		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
