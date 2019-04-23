@@ -335,7 +335,7 @@ public class GuiaService implements IGuiaService{
 				
 				int j = 0;
 				while(j < tiposDocumento.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
+					if (documentoGuia.getDocumento().getEnvio().getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
 						documentoGuia.getDocumento().getEnvio().setClasificacion(tiposDocumento.get(j));
 						break;
 					}
@@ -344,7 +344,7 @@ public class GuiaService implements IGuiaService{
 				
 				int k=0;
 				while(k < sedes.size()) {
-					if(documentoGuia.getDocumento().getEnvio().getSedeId() == Long.valueOf(sedes.get(k).get("id").toString())) {
+					if(documentoGuia.getDocumento().getEnvio().getSedeId().longValue() == Long.valueOf(sedes.get(k).get("id").toString())) {
 						documentoGuia.getGuia().setSede(sedes.get(k));
 						break;
 					}
@@ -353,7 +353,7 @@ public class GuiaService implements IGuiaService{
 				
 				int m = 0; 
 				while(m < productos.size()) {
-					if (documentoGuia.getDocumento().getEnvio().getProductoId() == Long.valueOf(productos.get(m).get("id").toString())) {
+					if (documentoGuia.getDocumento().getEnvio().getProductoId().longValue() == Long.valueOf(productos.get(m).get("id").toString())) {
 						documentoGuia.getDocumento().getEnvio().setProducto(productos.get(m));
 						break;
 					}
@@ -579,8 +579,8 @@ public class GuiaService implements IGuiaService{
 
 
 	@Override
-	public Iterable<Guia> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
-		Iterable<Guia> guias = guiaDao.findByGuiasSinCerrar();
+	public Iterable<Guia> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception {
+		Iterable<Guia> guias = guiaDao.listarGuiasCompletadas();
 		return guias;
 	}
 
@@ -624,8 +624,62 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	public Iterable<Documento> listarDocumentosPorGuiaId(Long id) throws ClientProtocolException, IOException, JSONException, Exception {
-		return guiaDao.listarDocumentosByGuiaId(id);
+	Iterable<Documento> documentosBD = guiaDao.listarDocumentosByGuiaId(id);
+	List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+	
+	if(documentoslst.isEmpty()) {
+		return null;
 	}
+	
+	List<Long> tipoDocumentoIds = new ArrayList();
+	List<Long> productoIds = new ArrayList();
+	List<Long> distritosIds = new ArrayList();
+	
+	for (Documento documento : documentoslst) {
+		distritosIds.add(documento.getDistritoId());
+		productoIds.add(documento.getEnvio().getProductoId());
+		tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
+	}
+	
+	List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+	List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+	List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+	
+	for (Documento documento : documentoslst) {
+		
+		int i = 0; 
+		while(i < distritos.size()) {
+			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+			if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+				documento.setDistrito(distritos.get(i));
+				break;
+			}
+			i++;
+		}
+	
+		int j = 0; 
+		while(j < productos.size()) {
+			if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(j).get("id").toString())) {
+				documento.getEnvio().setProducto(productos.get(j));
+				break;
+			}
+			j++;
+		}
+		
+		int k = 0;
+		while(k < tiposDocumento.size()) {
+			if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(k).get("id").toString())) {
+				documento.getEnvio().setClasificacion(tiposDocumento.get(k));
+				break;
+			}
+			k++;
+		}
+	}
+			
+	return documentoslst;
+	
+	}
+	
 	
 
 }
