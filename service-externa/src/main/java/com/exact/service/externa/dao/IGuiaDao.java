@@ -70,7 +70,7 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 	
 	@Query("FROM Guia d WHERE d IN ( "
 			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("
-			+ "SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=4 )")
+			+ "SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=4)")
 	public Iterable<Guia> listarGuiasCompletadas();	
 	
 }

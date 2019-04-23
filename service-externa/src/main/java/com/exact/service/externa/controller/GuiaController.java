@@ -385,9 +385,9 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/guiasbloque")
-	public ResponseEntity<String> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueCompletadas();
 		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -401,7 +401,7 @@ public class GuiaController {
 	}
 	
 	@GetMapping("{id}/documentosguia")
-	public ResponseEntity<String> listarDocumentosPorNumeroGuia(@PathVariable Long id) throws Exception{
+	public ResponseEntity<String> listarDocumentosPorGuiaId(@PathVariable Long id) throws Exception{
 		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
 		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		CommonUtils cu = new CommonUtils();

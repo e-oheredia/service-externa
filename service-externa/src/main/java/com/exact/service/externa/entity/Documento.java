@@ -89,16 +89,18 @@ public class Documento implements Serializable {
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="tipo_devolucion_id")
-	private TipoDevolucion tipoDevolucion;
+	private TipoDevolucion tiposDevolucion;
 
 	
-	public TipoDevolucion getTipoDevolucion() {
-		return tipoDevolucion;
+
+
+	public TipoDevolucion getTiposDevolucion() {
+		return tiposDevolucion;
 	}
 
 
-	public void setTipoDevolucion(TipoDevolucion tipoDevolucion) {
-		this.tipoDevolucion = tipoDevolucion;
+	public void setTiposDevolucion(TipoDevolucion tiposDevolucion) {
+		this.tiposDevolucion = tiposDevolucion;
 	}
 
 

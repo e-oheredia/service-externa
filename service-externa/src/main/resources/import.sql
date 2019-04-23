@@ -109,12 +109,17 @@ INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion
 INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
 
 SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
-
 INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (1, N'ENVIO REGULAR')
 INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (2, N'ENVIO BLOQUE')
 SET IDENTITY_INSERT [dbo].[tipo_envio] OFF
-SET IDENTITY_INSERT [dbo].[tipo_guia] ON 
 
+SET IDENTITY_INSERT [dbo].[tipo_guia] ON 
 INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (1, N' GUIA REGULAR')
 INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (2, N' GUIA BLOQUE')
 SET IDENTITY_INSERT [dbo].[tipo_guia] OFF
+
+SET IDENTITY_INSERT [dbo].[tipo_devolucion] ON 
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (1, N'CARGO')
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (2, N'REZAGO')
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (3, N'DENUNCIA')
+SET IDENTITY_INSERT [dbo].[tipo_devolucion] OFF
