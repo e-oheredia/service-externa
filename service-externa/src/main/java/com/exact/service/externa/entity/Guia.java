@@ -85,8 +85,75 @@ public class Guia implements Serializable{
 	private Map<String, Object> producto;
 	
 	@Transient
-	private Map<String, Object> clasificacion;		
+	private Map<String, Object> clasificacion;	
 	
+	@Transient
+	private int cantidadEntregados;
+	
+	@Transient
+	private int cantidadRezagados;
+	
+	@Transient
+	private int cantidadNoDistribuibles;
+	
+	@Transient
+	private int cantidadPendientes;	
+	
+	@Transient
+	private int cantidadValidados;
+	
+	
+
+	public int getCantidadValidados() {
+		return cantidadValidados;
+	}
+
+
+	public void setCantidadValidados(int cantidadValidados) {
+		this.cantidadValidados = cantidadValidados;
+	}
+
+
+	public int getCantidadEntregados() {
+		return cantidadEntregados;
+	}
+
+
+	public void setCantidadEntregados(int cantidadEntregados) {
+		this.cantidadEntregados = cantidadEntregados;
+	}
+
+
+	public int getCantidadRezagados() {
+		return cantidadRezagados;
+	}
+
+
+	public void setCantidadRezagados(int cantidadRezagados) {
+		this.cantidadRezagados = cantidadRezagados;
+	}
+
+
+	public int getCantidadNoDistribuibles() {
+		return cantidadNoDistribuibles;
+	}
+
+
+	public void setCantidadNoDistribuibles(int cantidadNoDistribuibles) {
+		this.cantidadNoDistribuibles = cantidadNoDistribuibles;
+	}
+
+
+	public int getCantidadPendientes() {
+		return cantidadPendientes;
+	}
+
+
+	public void setCantidadPendientes(int cantidadPendientes) {
+		this.cantidadPendientes = cantidadPendientes;
+	}
+
+
 	public Map<String, Object> getProducto() {
 		return producto;
 	}

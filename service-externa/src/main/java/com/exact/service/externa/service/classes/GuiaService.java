@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
+import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
@@ -59,6 +62,11 @@ import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+
 
 @Service
 public class GuiaService implements IGuiaService{
@@ -93,14 +101,47 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	IGestionUsuariosEdao gestionUsuarioEdao;
 	
+	@Autowired
+	IEstadoDocumentoDao estadodocumentodao;
+	
+	private static final Log Logger = LogFactory.getLog(GuiaService.class);
+
 	
 	@Override
-	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasCreadas(String matricula) throws ClientProtocolException, IOException, JSONException , Exception{
 		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		
 		Iterable<Guia> guiasCreadas = guiaDao.findByUltimoEstadoId(CREADO, Long.valueOf(sede.get("id").toString()));
 		List<Guia> guiasCreadasList = StreamSupport.stream(guiasCreadas.spliterator(), false).collect(Collectors.toList());	
+		
+		
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		
+		
+		for(Guia guia : guiasCreadasList) {
+			
+			int k = 0;
+			int j =0;
+			while (k < productos.size()) {
+				if (guia.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+					guia.setProducto(productos.get(k));
+					break;
+				}
+				k++;
+			}
+
+			while (j < tipodocumento.size()) {
+				if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tipodocumento.get(j).get("id").toString())) {
+					guia.setClasificacion(tipodocumento.get(j));
+					break;
+				}
+				j++;
+			}
+			guia.setSede(sede);
+		}
+		
 		
 		return guiasCreadasList;		
 	}
@@ -312,22 +353,51 @@ public class GuiaService implements IGuiaService{
 		
 		Iterable<Guia> guiasParaProveedor = guiaDao.findByGuiasSinCerrar();
 		List<Guia> guiasParaProveedorList = StreamSupport.stream(guiasParaProveedor.spliterator(), false).collect(Collectors.toList());	
-		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-		
+
 		for(Guia guia : guiasParaProveedorList) {
+			
+			int entregados =0;
+			int rezagados =0;
+			int nodistri =0;
+			int pendientes =0;
+			int cont=0;
+			int validados=0;
 			
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
 			
 			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				Documento documento = documentoGuia.getDocumento();
+				EstadoDocumento estadodocumento = estadodocumentodao.buscarpordocumento(documento.getId());
+				Logger.info("ESTADO DOCUMENTOS : "+ estadodocumento.getNombre());
+				
+				if(documentoGuia.isValidado()) {
+					validados++;
+				}
+				
+				if(estadodocumento.getId()==ENTREGADO) {
+					entregados++;
+				}
+				
+				if(estadodocumento.getId()==REZAGADO) {
+					rezagados++;
+				}
+				if(estadodocumento.getId()==NO_DISTRIBUIBLE) {
+					nodistri++;
+				}
+				if(estadodocumento.getId()==PENDIENTE_ENTREGA) {
+					pendientes++;
+				}
+				
 				
 				int i = 0;
 				while(i < distritos.size()) {
 					if (documentoGuia.getDocumento().getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
 						documentoGuia.getDocumento().setDistrito(distritos.get(i));
+						//documentoGuia.getDocumento().						
 						break;
 					}
 					i++;
@@ -341,6 +411,9 @@ public class GuiaService implements IGuiaService{
 					}
 					j++;
 				}
+				
+				
+				
 				
 				int k=0;
 				while(k < sedes.size()) {
@@ -359,21 +432,49 @@ public class GuiaService implements IGuiaService{
 					}
 					m++;
 				}
-				
-			}			
+				cont++;
+			}
 			
+			
+			int x = 0;
+			int y =0;
+			while (x < productos.size()) {
+				if (guia.getProductoId().longValue() == Long.valueOf(productos.get(x).get("id").toString())) {
+					guia.setProducto(productos.get(x));
+					break;
+				}
+				x++;
+			}
+
+			while (y < tiposDocumento.size()) {
+				if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(y).get("id").toString())) {
+					guia.setClasificacion(tiposDocumento.get(y));
+					break;
+				}
+				y++;
+			}
+			
+			
+			guia.setCantidadEntregados(entregados);
+			guia.setCantidadNoDistribuibles(nodistri);
+			guia.setCantidadPendientes(pendientes);
+			guia.setCantidadRezagados(rezagados);
+			guia.setCantidadDocumentos(cont);
+			guia.setCantidadValidados(validados);
 		}
-		
+
 		return guiasParaProveedorList;	
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException, Exception {
 		Iterable<Guia> guiasSinCerrar = guiaDao.findByGuiasSinCerrar();
 		List<Guia> guiasSinCerrarList = StreamSupport.stream(guiasSinCerrar.spliterator(), false).collect(Collectors.toList());	
 		
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		
 		for(Guia guia : guiasSinCerrarList) {
@@ -398,14 +499,39 @@ public class GuiaService implements IGuiaService{
 					}
 					j++;
 				}
-			}			
+			}		
+			
+			
+			
+			int k = 0;
+			int n =0;
+			while (k < productos.size()) {
+				if (guia.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+					guia.setProducto(productos.get(k));
+					break;
+				}
+				k++;
+			}
+
+			while (n < tipodocumento.size()) {
+				if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tipodocumento.get(n).get("id").toString())) {
+					guia.setClasificacion(tipodocumento.get(n));
+					break;
+				}
+				n++;
+			}
+			
+			
 		}
 		return guiasSinCerrarList;	
 	}
 
 	@Override
-	public Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException {
+	public Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException, Exception {
 		Guia guia = guiaDao.findBynumeroGuia(numeroguia);
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		
 		if(guia==null) {
 			return null;
 		}
@@ -416,12 +542,36 @@ public class GuiaService implements IGuiaService{
 				break;
 			}
 		}
+		
+		
+		int k = 0;
+		int n =0;
+		while (k < productos.size()) {
+			if (guia.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+				guia.setProducto(productos.get(k));
+				break;
+			}
+			k++;
+		}
+
+		while (n < tipodocumento.size()) {
+			if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tipodocumento.get(n).get("id").toString())) {
+				guia.setClasificacion(tipodocumento.get(n));
+				break;
+			}
+			n++;
+		}
+		
+		
+		
 		return guia;
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin) throws ClientProtocolException, IOException, JSONException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		Date dateI= null;
 		Date dateF= null;
 		try {
@@ -446,6 +596,27 @@ public class GuiaService implements IGuiaService{
 					}
 					i++;
 				}
+				
+				int k = 0;
+				int n =0;
+				while (k < productos.size()) {
+					if (guia.getProductoId().longValue() == Long.valueOf(productos.get(k).get("id").toString())) {
+						guia.setProducto(productos.get(k));
+						break;
+					}
+					k++;
+				}
+
+				while (n < tipodocumento.size()) {
+					if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tipodocumento.get(n).get("id").toString())) {
+						guia.setClasificacion(tipodocumento.get(n));
+						break;
+					}
+					n++;
+				}
+				
+				
+				
 			}
 			return guias;
 		}

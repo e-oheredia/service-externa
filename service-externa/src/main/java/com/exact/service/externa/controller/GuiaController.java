@@ -47,7 +47,7 @@ public class GuiaController {
 	IDocumentoGuiaService documentoGuiaService;
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException,Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
@@ -58,6 +58,8 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");				
+		
 		String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -100,6 +102,8 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");				
+		
 		String dtoMapAsString = cu.filterObjetoJson(nuevaGuia, filter);
 		
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -125,6 +129,7 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");			
 		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -282,7 +287,7 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/sincerrar")
-	public ResponseEntity<String> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException, Exception {
 		
 		Iterable<Guia> guiasSinCerrar = guiaService.listarGuiasSinCerrar();
 		
@@ -292,6 +297,7 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");			
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -312,7 +318,7 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/reporteguias")
-	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia ) throws ClientProtocolException, IOException, JSONException, ParseException, Exception 
 	{
 		if(numeroGuia!=null){
 			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia);
@@ -361,6 +367,7 @@ public class GuiaController {
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("documentosGuiaFilter", "guia");
+		filter.put("GuiaFilter", "documentosGuia");		
 		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
 			
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -395,6 +402,7 @@ public class GuiaController {
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");	
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -410,6 +418,7 @@ public class GuiaController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("GuiaFilter", "documentosGuia");	
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentoslst,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
