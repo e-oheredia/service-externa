@@ -99,8 +99,20 @@ public class Guia implements Serializable{
 	@Transient
 	private int cantidadPendientes;	
 	
+	@Transient
+	private int cantidadValidados;
 	
 	
+
+	public int getCantidadValidados() {
+		return cantidadValidados;
+	}
+
+
+	public void setCantidadValidados(int cantidadValidados) {
+		this.cantidadValidados = cantidadValidados;
+	}
+
 
 	public int getCantidadEntregados() {
 		return cantidadEntregados;

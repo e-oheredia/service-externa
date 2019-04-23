@@ -334,7 +334,7 @@ public class GuiaService implements IGuiaService{
 		int nodistri =0;
 		int pendientes =0;
 		int cont=0;
-		
+		int validados=0;
 		for(Guia guia : guiasParaProveedorList) {
 			
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
@@ -344,6 +344,9 @@ public class GuiaService implements IGuiaService{
 				EstadoDocumento estadodocumento = estadodocumentodao.buscarpordocumento(documento.getId());
 				Logger.info("ESTADO DOCUMENTOS : "+ estadodocumento.getNombre());
 				
+				if(documentoGuia.isValidado()) {
+					validados++;
+				}
 				
 				if(estadodocumento.getId()==ENTREGADO) {
 					entregados++;
@@ -406,6 +409,7 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadPendientes(pendientes);
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
+			guia.setCantidadValidados(validados);
 		}
 
 		return guiasParaProveedorList;	
