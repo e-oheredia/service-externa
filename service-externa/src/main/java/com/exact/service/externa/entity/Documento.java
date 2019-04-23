@@ -16,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -87,19 +89,18 @@ public class Documento implements Serializable {
 		this.recepcionado=false;
 	}
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="tipo_devolucion_id")
-	private TipoDevolucion tiposDevolucion;
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="documento_tipo_devolucion", joinColumns = { @JoinColumn(name = "documento_id") },
+    inverseJoinColumns = { @JoinColumn(name = "tipo_devolucion_id") })
+	private Set<TipoDevolucion> tiposDevolucion;
 
-	
 
-
-	public TipoDevolucion getTiposDevolucion() {
+	public Set<TipoDevolucion> getTiposDevolucion() {
 		return tiposDevolucion;
 	}
 
 
-	public void setTiposDevolucion(TipoDevolucion tiposDevolucion) {
+	public void setTiposDevolucion(Set<TipoDevolucion> tiposDevolucion) {
 		this.tiposDevolucion = tiposDevolucion;
 	}
 
