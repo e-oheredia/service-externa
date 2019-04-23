@@ -33,5 +33,5 @@ public interface IDocumentoService {
 	Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 	Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Documento guardarCodigoDevolucion(Long documentoId, String codigoDev) throws ClientProtocolException, IOException, JSONException;
-	Iterable<Documento> listarDocumentosPorNumeroGuia(String numeroGuia) throws ClientProtocolException, IOException, JSONException, Exception;
+	
 }

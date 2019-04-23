@@ -40,7 +40,7 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 	@Query("FROM Guia d WHERE d IN ( "
 			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = (SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=1  AND sg.usuarioId=?1) AND d.tipoGuia.id=2 "
 			+ "ORDER BY d.id ASC ")
-	public Iterable<Guia> findByGuiasBloques(Long Id);	
+	public Iterable<Guia> findByGuiasBloques(Long usuarioId);	
 	
 	
 	
@@ -65,5 +65,12 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
 	boolean existeDocumentosPendientes(Long id);
 	
+	@Query("FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.numeroGuia=?1)")
+	public Iterable<Documento> listarDocumentosByNumeroGuia(String numeroGuia);
+	
+	@Query("FROM Guia d WHERE d IN ( "
+			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("
+			+ "SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=4 )")
+	public Iterable<Guia> listarGuiasCompletadas();	
 	
 }
