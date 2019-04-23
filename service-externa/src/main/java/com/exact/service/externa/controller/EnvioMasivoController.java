@@ -52,7 +52,7 @@ public class EnvioMasivoController {
 		ObjectMapper mapper = new ObjectMapper();
 		String header = req.getHeader("Authorization");
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
-		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file, header);
+		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file,datosUsuario.get("matricula").toString() ,header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -87,7 +87,7 @@ public class EnvioMasivoController {
 		ObjectMapper mapper = new ObjectMapper();
 		EnvioMasivo envioBloque = mapper.readValue(envioJsonString, EnvioMasivo.class);		
 		String header = req.getHeader("Authorization");
-		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, header);
+		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, datosUsuario.get("matricula").toString(),header);
 		guiaService.crearGuiaBloque(envioBloqueNuevo, Long.valueOf(datosUsuario.get("idUsuario").toString()), codigoGuia, proveedorId,  datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();

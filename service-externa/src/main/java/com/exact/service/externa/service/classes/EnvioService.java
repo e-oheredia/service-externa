@@ -126,16 +126,10 @@ public class EnvioService implements IEnvioService {
 		Long envioIdAnterior = envioDao.getMaxId();
 		Long nuevoEnvioId = envioIdAnterior == null ? 1L : envioIdAnterior + 1L;
 		
-		String perfilUsuario = gestionUsuarioEdao.findPerfil(idUsuario, header);
 		TipoEnvio tipoEnvio = new TipoEnvio();
-		if(perfilUsuario.equals("USUARIO_REGULAR")) {
-			tipoEnvio.setId(ENVIO_REGULAR);
-		}else if(perfilUsuario.equals("USUARIO_BLOQUE")) {
-			tipoEnvio.setId(ENVIO_BLOQUE);
-		}
+		tipoEnvio.setId(ENVIO_REGULAR);
 		envio.setTipoEnvio(tipoEnvio);
 		
-
 		if (file != null) {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "."
 					+ FilenameUtils.getExtension(file.getOriginalFilename());

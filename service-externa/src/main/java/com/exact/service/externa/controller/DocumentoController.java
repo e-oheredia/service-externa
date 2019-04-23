@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.http.client.ClientProtocolException;
@@ -396,6 +397,21 @@ public class DocumentoController {
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/documentosguia")
+	public ResponseEntity<String> listarDocumentosPorNumeroGuia(@RequestBody Guia guia) throws Exception{
+		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorNumeroGuia(guia.getNumeroGuia());
+		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentoslst,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
