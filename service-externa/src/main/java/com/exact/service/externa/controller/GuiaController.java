@@ -5,7 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -386,9 +389,9 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/guiasbloque")
-	public ResponseEntity<String> listarGuiasBloqueParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception {
 		
-		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueParaProveedor();
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueCompletadas();
 		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -399,6 +402,21 @@ public class GuiaController {
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("{id}/documentosguia")
+	public ResponseEntity<String> listarDocumentosPorGuiaId(@PathVariable Long id) throws Exception{
+		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
+		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentoslst,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

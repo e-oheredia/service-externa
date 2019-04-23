@@ -727,9 +727,6 @@ public class DocumentoService implements IDocumentoService {
 		return documentoDao.save(documento);
 	}
 
-	@Override
-	public Iterable<Documento> listarDocumentosPorNumeroGuia(String numeroGuia) throws ClientProtocolException, IOException, JSONException, Exception {
-		return documentoDao.listarDocumentosByNumeroGuia(numeroGuia);
-	}
+
 
 }
