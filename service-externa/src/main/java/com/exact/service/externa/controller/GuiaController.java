@@ -392,9 +392,10 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/guiasbloque")
-	public ResponseEntity<String> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception {
-		
-		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueCompletadas();
+	public ResponseEntity<String> listarGuiasBloqueCompletadas(Authentication authentication) throws ClientProtocolException, IOException, JSONException, Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueCompletadas(Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
 		
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -411,7 +412,6 @@ public class GuiaController {
 	@GetMapping("{id}/documentosguia")
 	public ResponseEntity<String> listarDocumentosPorGuiaId(@PathVariable Long id) throws Exception{
 		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
-		List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("envioFilter", "documentos");
@@ -420,8 +420,25 @@ public class GuiaController {
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("GuiaFilter", "documentosGuia");	
 		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterListaObjetoJson(documentoslst,filter);
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosBD,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PutMapping("/cargadevolucionbloque")
+	public ResponseEntity<String> cargarResultadosDevolucion(@RequestBody List<Documento> documentos, Authentication authentication) throws NumberFormatException, Exception{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Guia guia = guiaService.cargarResultadosDevolucion(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("GuiaFilter", "documentosGuia");	
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("documentosGuiaFilter", "guia");
+		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
+			
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }
