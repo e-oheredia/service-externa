@@ -951,7 +951,6 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
 		guia.setSeguimientosGuia(sg);
-		
 		return guiaDao.save(guia);
 	}
 	
