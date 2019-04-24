@@ -479,6 +479,7 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
+			
 		}
 
 		return guiasParaProveedorList;	
@@ -768,9 +769,68 @@ public class GuiaService implements IGuiaService{
 
 
 	@Override
-	public Iterable<Guia> listarGuiasBloqueCompletadas() throws ClientProtocolException, IOException, JSONException, Exception {
-		Iterable<Guia> guias = guiaDao.listarGuiasCompletadas();
-		return guias;
+	public Iterable<Guia> listarGuiasBloqueCompletadas(Long usuarioId, String matricula) throws ClientProtocolException, IOException, JSONException, Exception {
+		
+		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
+		Iterable<Guia> guiasBloqueBD = guiaDao.listarGuiasCompletadas();
+		List<Guia> guiasBloque = StreamSupport.stream(guiasBloqueBD.spliterator(), false).collect(Collectors.toList());
+		List<Map<String, Object>> tiposDocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		
+		for(Guia guia : guiasBloque) {
+			
+				int entregados =0;
+				int rezagados =0;
+				int nodistri =0;
+				int cont=0;
+				
+				List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
+
+				for(DocumentoGuia documentoGuia : documentoGuiaList) {
+					Documento documento = documentoGuia.getDocumento();
+					EstadoDocumento estadodocumento = estadodocumentodao.buscarpordocumento(documento.getId());
+					if(estadodocumento.getId()==ENTREGADO) {
+						entregados++;
+					}
+					if(estadodocumento.getId()==REZAGADO) {
+						rezagados++;
+					}
+					if(estadodocumento.getId()==NO_DISTRIBUIBLE) {
+						nodistri++;
+					}
+					cont++;
+				}
+				
+				int j = 0;
+				while (j < productos.size()) {
+					if (guia.getProductoId().longValue() == Long.valueOf(productos.get(j).get("id").toString())) {
+						guia.setProducto(productos.get(j));
+						break;
+					}
+					j++;
+				}
+				int k =0;
+				while (k < tiposDocumento.size()) {
+					if (guia.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(k).get("id").toString())) {
+						guia.setClasificacion(tiposDocumento.get(k));
+						break;
+					}
+					k++;
+				}
+				int i=0;
+				while(i < sedes.size()) {
+					if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+						guia.setSede(sedes.get(i));
+						break;
+					}
+					i++;
+				}
+				guia.setCantidadEntregados(entregados);
+				guia.setCantidadNoDistribuibles(nodistri);
+				guia.setCantidadRezagados(rezagados);
+				guia.setCantidadDocumentos(cont);
+		}
+		return guiasBloqueBD;
 	}
 
 	
@@ -871,7 +931,6 @@ public class GuiaService implements IGuiaService{
 	@Transactional
 	public Guia cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
 		List<String> autogeneradoList = new ArrayList<String>();		
-		
 		for(Documento documento : documentoDevueltos) {
 			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
@@ -907,7 +966,6 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
 		guia.setSeguimientosGuia(sg);
-		
 		return guiaDao.save(guia);
 	}
 	
