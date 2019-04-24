@@ -122,7 +122,7 @@ public class GuiaService implements IGuiaService{
 		
 		
 		for(Guia guia : guiasCreadasList) {
-			
+			int cont=0;
 			int k = 0;
 			int j =0;
 			while (k < productos.size()) {
@@ -141,8 +141,21 @@ public class GuiaService implements IGuiaService{
 				j++;
 			}
 			guia.setSede(sede);
+			
+			
+			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
+			
+			int validados=0;
+			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+				if(documentoGuia.isValidado()) {
+					validados++;
+				}
+				cont++;
+			}
+			guia.setCantidadDocumentos(cont);
+			guia.setCantidadValidados(validados);
+			
 		}
-		
 		
 		return guiasCreadasList;		
 	}
@@ -156,7 +169,7 @@ public class GuiaService implements IGuiaService{
 		TipoGuia tipoGuia = new TipoGuia();
 		tipoGuia.setId(GUIA_REGULAR);
 		guia.setTipoGuia(tipoGuia);
-		
+		int cont=0;
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		List<Documento> documentosList = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosList.isEmpty()) {
@@ -177,7 +190,8 @@ public class GuiaService implements IGuiaService{
 			documentoGuia.setValidado(false);
 			documentoGuia.setId(documentoGuiaId);
 			documentosGuiaList.add(documentoGuia);
-		}
+			//cont++;
+		}		
 		
 		Set<DocumentoGuia> dg = new HashSet<DocumentoGuia>(documentosGuiaList);
 		guia.setDocumentosGuia(dg);
@@ -195,9 +209,12 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuiaList.add(seguimientoGuia);
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
+		guia.setCantidadDocumentos(cont);
 		guia.setSeguimientosGuia(sg);
 		
 		guiaDao.save(guia);
+		
+		
 		
 		return guia;
 	}
@@ -790,8 +807,6 @@ public class GuiaService implements IGuiaService{
 			guia.setSede(sede);
 		}
 		return guiasBloque;
-		
-		
 	}
 
 	@Override
