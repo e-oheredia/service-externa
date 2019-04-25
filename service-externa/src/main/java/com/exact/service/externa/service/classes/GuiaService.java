@@ -955,7 +955,6 @@ public class GuiaService implements IGuiaService{
 		for(Documento documento : documentosBDList) {
 			if(documento.getDocumentoAutogenerado().equals(documentoDevueltos.get(i).getDocumentoAutogenerado())) {
 				documento.setTiposDevolucion(documentoDevueltos.get(i).getTiposDevolucion());
-				break;
 			}
 			List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<>(documento.getSeguimientosDocumento());
 			SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
@@ -967,6 +966,7 @@ public class GuiaService implements IGuiaService{
 			seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
 			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
 			documento.setSeguimientosDocumento(sd);
+			i++;
 		}
 		documentoDao.saveAll(documentosBDList);
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
@@ -983,6 +983,7 @@ public class GuiaService implements IGuiaService{
 		guia.setSeguimientosGuia(sg);
 		guiaDao.save(guia);
 		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		
 		return map;
 
 	}
