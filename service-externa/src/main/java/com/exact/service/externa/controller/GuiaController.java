@@ -349,6 +349,7 @@ public class GuiaController {
 			filter.put("documentoFilter", "documentosGuia");
 			filter.put("documentosGuiaFilter", "guia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			filter.put("GuiaFilter", "documentosGuia");	
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(guias,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -425,20 +426,20 @@ public class GuiaController {
 	}
 	
 	@PutMapping("/cargadevolucionbloque")
-	public ResponseEntity<String> cargarResultadosDevolucion(@RequestBody List<Documento> documentos, Authentication authentication) throws NumberFormatException, Exception{
+	public ResponseEntity<?> cargarResultadosDevolucion(@RequestBody List<Documento> documentos, Authentication authentication) throws NumberFormatException, Exception{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Guia guia = guiaService.cargarResultadosDevolucion(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
-		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentoFilter", "documentosGuia");
-		filter.put("GuiaFilter", "documentosGuia");	
-		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		filter.put("documentosGuiaFilter", "guia");
-		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
-			
-		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<Integer,String> resultado = guiaService.cargarResultadosDevolucion(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		int[] resultadoArray = resultado.keySet().stream().mapToInt(Integer::intValue).toArray();
+		int valor = resultadoArray[0];
+		String rpta = resultado.get(valor);
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		if(valor==1) {
+			status=HttpStatus.OK;
+		}
+		respuesta.put("mensaje", rpta);	
+		return new ResponseEntity<Map<String, Object>>(respuesta,status);
 	}
 	
 }

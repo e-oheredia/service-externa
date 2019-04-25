@@ -45,6 +45,7 @@ INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_d
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (6, N'NO DISTRIBUIBLE', 2)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (7, N'DENEGADO', 1)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (8, N'ELIMINADO', 1)
+INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (9, N'CERRADO', 1)
 SET IDENTITY_INSERT [dbo].[estado_documento] OFF
 SET IDENTITY_INSERT [dbo].[motivo_estado] ON 
 
@@ -63,7 +64,7 @@ INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (13, N'RECHAZADO', 5)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (14, N'NO PERMITE ENTREGA', 5)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (15, N'FALLECIDO', 5)
-INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (16, N'EXTRAVIADO/ROBADO', 6)
+INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (16, N'EXTRAVIADO O ROBADO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (17, N'FALTANTE', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (18, N'ANULADO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (19, N'DEVUELTO', 6)
@@ -83,7 +84,8 @@ SET IDENTITY_INSERT [dbo].[estado_guia] ON
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (1, N'CREADO')
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (2, N'ENVIADO')
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (3, N'DESCARGADO')
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4, N'CERRADO')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4, N'COMPLETA')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (5, N'CERRADO')
 SET IDENTITY_INSERT [dbo].[estado_guia] OFF
 
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (1, 2)

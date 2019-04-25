@@ -3,6 +3,7 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
@@ -19,7 +20,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +42,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
+import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
@@ -104,6 +110,9 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IEstadoDocumentoDao estadodocumentodao;
+	
+	@Autowired
+	ISeguimientoDocumentoDao seguimientoDocumentodao;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -929,32 +938,38 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	@Transactional
-	public Guia cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
-		List<String> autogeneradoList = new ArrayList<String>();		
+	public Map<Integer,String> cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
+		Map<Integer,String> map = new HashMap<Integer,String>();
+		List<String> autogeneradoList = new ArrayList<>();		
 		for(Documento documento : documentoDevueltos) {
-			autogeneradoList.add(documento.getDocumentoAutogenerado());
+		autogeneradoList.add(documento.getDocumentoAutogenerado());
+		}
+		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
+		if(documentosBDList.isEmpty()) {
+			map.put(0, "NO HAY COINCIDENCIAS DE DOCUMENTOS");
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return map;
 		}
 		Guia guia = guiaDao.findGuiabyAutogenerado(documentoDevueltos.get(0).getDocumentoAutogenerado());
-		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
-		
-		if(documentosBDList.isEmpty()) {
-			return null;
-		}
 		int i=0;
 		for(Documento documento : documentosBDList) {
 			if(documento.getDocumentoAutogenerado().equals(documentoDevueltos.get(i).getDocumentoAutogenerado())) {
 				documento.setTiposDevolucion(documentoDevueltos.get(i).getTiposDevolucion());
-				break;
 			}
+			List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<>(documento.getSeguimientosDocumento());
+			SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+			documento.setRecepcionado(true);
+			SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(usuarioId, sdMax.getEstadoDocumento(),"Documento(s) recibido(s)");
+			seguimientodocumento.setUsuarioId(usuarioId);
+			seguimientodocumento.setDocumento(documento);
+			seguimientosDocumentolst.add(seguimientodocumento);
+			seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+			documento.setSeguimientosDocumento(sd);
 			i++;
 		}
-		Optional<Documento> documentoSinTipo = documentosBDList.stream().filter(x -> !x.getTiposDevolucion().isEmpty()).findFirst();
-		if(documentoSinTipo.isPresent()) {
-			return null;
-		}
 		documentoDao.saveAll(documentosBDList);
-		
-		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
+		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
 		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
 		EstadoGuia estadoGuia = new EstadoGuia();		
 		
@@ -964,9 +979,13 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuia.setUsuarioId(usuarioId);
 		seguimientoGuiaList.add(seguimientoGuia);
 		
-		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
+		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
 		guia.setSeguimientosGuia(sg);
-		return guiaDao.save(guia);
+		guiaDao.save(guia);
+		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		
+		return map;
+
 	}
 	
 	
