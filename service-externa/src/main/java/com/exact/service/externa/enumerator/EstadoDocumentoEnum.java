@@ -10,6 +10,7 @@ public class EstadoDocumentoEnum {
 	public static final Long NO_DISTRIBUIBLE = 6L; 
 	public static final Long DENEGADO = 7L;
 	public static final Long ELIMINADO = 8L;
+	public static final Long CERRADO = 9L;
 	
 	
 }
