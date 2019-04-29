@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.exact.service.externa.service.interfaces.IAmbitoDiaService;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -26,6 +26,9 @@ public class AmbitoController {
 	
 	@Autowired
 	IAmbitoService ambitoService;
+	
+	@Autowired
+	IAmbitoDiaService ambitodiaservice;
 	
 	@GetMapping
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
@@ -66,4 +69,10 @@ public class AmbitoController {
 		}
 		
 	}
+	
+	@GetMapping("/{id}/diaslaborales")
+	public ResponseEntity<Iterable<Map<String, Object>>> listarDiasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
+		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listardiaslaborales(id) , HttpStatus.OK);
+	}	
+	
 }
