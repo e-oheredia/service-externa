@@ -88,6 +88,13 @@ INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4, N'COMPLETA')
 INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (5, N'CERRADO')
 SET IDENTITY_INSERT [dbo].[estado_guia] OFF
 
+SET IDENTITY_INSERT [dbo].[estado_autorizado] ON 
+
+INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (1, N'PENDIENTE')
+INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (2, N'APROBADA')
+INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (3, N'DENEGADA')
+SET IDENTITY_INSERT [dbo].[estado_autorizado] OFF
+
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (1, 2)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (2, 1)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (3, 1)

@@ -131,6 +131,19 @@ public class EnvioController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/enviosautorizacion")
+	public ResponseEntity<String> listarEnviosAutorizacion() throws Exception {
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosAutorizacion(), filter);
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 
 	
 
