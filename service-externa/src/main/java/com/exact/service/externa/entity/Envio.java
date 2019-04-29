@@ -39,7 +39,6 @@ public class Envio implements Serializable {
 	private Long buzonId;
 	@Column(name="ruta_autorizacion")
 	private String rutaAutorizacion;
-	private boolean autorizado;
 	@Column(name="tipo_clasificacion_id")
 	private Long tipoClasificacionId;
 	@Column(name="sede_id")
@@ -72,7 +71,17 @@ public class Envio implements Serializable {
 	@JoinColumn(name="tipo_envio_id")
 	private TipoEnvio tipoEnvio;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
+	private Set<SeguimientoAutorizado> seguimientoAutorizado;
 	
+	public Set<SeguimientoAutorizado> getSeguimientosAutorizado() {
+		return seguimientoAutorizado;
+	}
+
+	public void setSeguimientosAutorizado(Set<SeguimientoAutorizado> seguimientosAutorizado) {
+		this.seguimientoAutorizado = seguimientosAutorizado;
+	}
+
 	public TipoEnvio getTipoEnvio() {
 		return tipoEnvio;
 	}
@@ -132,12 +141,12 @@ public class Envio implements Serializable {
 		this.sede = sede;
 	}
 
-	@PrePersist
-	public void prePersist() {
-		if (rutaAutorizacion == null || rutaAutorizacion.isEmpty()) {
-			this.autorizado = true;
-		}
-	}	
+//	@PrePersist
+//	public void prePersist() {
+//		if (rutaAutorizacion == null || rutaAutorizacion.isEmpty()) {
+//			this.autorizado = true;
+//		}
+//	}	
 	
 	public Long getId() {
 		return id;
@@ -157,12 +166,12 @@ public class Envio implements Serializable {
 	public void setRutaAutorizacion(String rutaAutorizacion) {
 		this.rutaAutorizacion = rutaAutorizacion;
 	}
-	public boolean isAutorizado() {
-		return autorizado;
-	}
-	public void setAutorizado(boolean autorizado) {
-		this.autorizado = autorizado;
-	}
+//	public boolean isAutorizado() {
+//		return autorizado;
+//	}
+//	public void setAutorizado(boolean autorizado) {
+//		this.autorizado = autorizado;
+//	}
 //	public Long getTipoDocumentoId() {
 //		return tipoDocumentoId;
 //	}
