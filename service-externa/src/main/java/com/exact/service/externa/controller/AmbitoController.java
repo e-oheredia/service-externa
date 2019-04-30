@@ -35,6 +35,16 @@ public class AmbitoController {
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listarAmbitos(), HttpStatus.OK);
 	}
 	
+	@GetMapping("/diaslaborables")
+	public ResponseEntity<Iterable<Map<String, Object>>> listarDias() throws IOException, JSONException, Exception {
+		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listardiaslaborables(), HttpStatus.OK);
+	}
+	
+	@PutMapping("/{id}/diaslaborables")
+	public ResponseEntity<Map<String, Object>> ModificarDias(@PathVariable Long id,@RequestBody String ambito) throws IOException, JSONException, Exception {
+		return new ResponseEntity<Map<String, Object>>(ambitoService.modificarAmbito(id,ambito), HttpStatus.OK);
+	}
+	
 	@GetMapping("/subambitos")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAllSubAmbitos() throws IOException, JSONException, Exception {
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listarSubAmbitos(), HttpStatus.OK);
@@ -74,5 +84,10 @@ public class AmbitoController {
 	public ResponseEntity<Iterable<Map<String, Object>>> listarDiasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listardiaslaborales(id) , HttpStatus.OK);
 	}	
+	
+	@GetMapping("/{id}/horaslaborales")
+	public ResponseEntity<Iterable<Map<String, Object>>> listarHorasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
+		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listarhoraslaborales(id) , HttpStatus.OK);
+	}		
 	
 }

@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
 import com.exact.service.externa.edao.interfaces.IAmbitoEdao;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
 
@@ -15,6 +16,9 @@ public class AmbitoService implements IAmbitoService{
 
 	@Autowired
 	IAmbitoEdao ambitoEdao;
+	
+	@Autowired
+	IAmbitoDiasEdao ambitodias;
 	
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitos() throws IOException, JSONException {
@@ -44,6 +48,16 @@ public class AmbitoService implements IAmbitoService{
 	@Override
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException {
 		return ambitoEdao.modificarSubAmbito(id, ambito);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listardiaslaborables() throws Exception {
+		return ambitodias.listarAmbitos();
+	}
+
+	@Override
+	public Map<String, Object> modificarAmbito(Long id, String ambito) throws IOException, JSONException {
+		return ambitodias.modificarAmbito(id, ambito);
 	}
 
 }
