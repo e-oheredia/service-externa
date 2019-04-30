@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
 import com.exact.service.externa.service.interfaces.IAmbitoDiaService;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
+import com.exact.service.externa.service.interfaces.IFeriadoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -29,6 +32,9 @@ public class AmbitoController {
 	
 	@Autowired
 	IAmbitoDiaService ambitodiaservice;
+	
+	@Autowired
+	IFeriadoService feriadoservice;
 	
 	@GetMapping
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
@@ -89,5 +95,10 @@ public class AmbitoController {
 	public ResponseEntity<Iterable<Map<String, Object>>> listarHorasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listarhoraslaborales(id) , HttpStatus.OK);
 	}		
+	
+	@PostMapping("/{id}/feriados")
+	public ResponseEntity<Map<String, Object>> guardarferiado(@PathVariable Long id, @RequestBody String feriado) throws IOException, JSONException, Exception{
+		return new ResponseEntity<Map<String, Object>>(feriadoservice.guardarferiado(id,feriado) , HttpStatus.OK);
+	}	
 	
 }

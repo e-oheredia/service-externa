@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
@@ -41,6 +42,9 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	
 	
 	private final String subpath2 = "/horaslaborales";
+	
+	private final String subpath3 = "/feriados";
+
 
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitos() throws Exception{
@@ -88,6 +92,19 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 		CloseableHttpResponse httpResponse = requester.requestPut(httput);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONObject responseJson = new JSONObject(response);		 	
+		return CommonUtils.jsonToMap(responseJson);
+	}
+
+	@Override
+	public Map<String, Object> guardarferiado(Long id,String feriado) throws IOException, JSONException, java.io.IOException {
+		HttpPost httpost = new HttpPost(ambitosPath +path+"/" +id+subpath3);
+		StringEntity entity = new StringEntity(feriado);
+		httpost.setEntity(entity);
+		httpost.setHeader("Accept", "application/json");
+		httpost.setHeader("Content-type", "application/json");
+		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		
 		return CommonUtils.jsonToMap(responseJson);
 	}
 }

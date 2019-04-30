@@ -25,5 +25,7 @@ public interface IAmbitoDiasEdao {
 	public Map<String, Object> modificarAmbito(Long id, String subambito) 
 			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;
 	
-	
+
+	public Map<String, Object> guardarferiado(Long id, String feriado) 
+			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;	
 }
