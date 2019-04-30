@@ -3,6 +3,7 @@ package com.exact.service.externa.service.classes;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,12 @@ public class AmbitoDiaService implements IAmbitoDiaService{
 	@Override
 	public Iterable<Map<String, Object>> listardiaslaborales(Long ambitoid) throws IOException, JSONException, Exception {
 		return ambitodias.listardiaslaborales(ambitoid);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarhoraslaborales(Long ambitoid) throws ClientProtocolException, IOException, JSONException {
+		return ambitodias.listarhoraslaborales(ambitoid);
+
 	}
 
 }

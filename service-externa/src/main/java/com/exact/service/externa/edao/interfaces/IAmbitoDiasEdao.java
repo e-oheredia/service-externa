@@ -1,6 +1,7 @@
 package com.exact.service.externa.edao.interfaces;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -13,5 +14,16 @@ public interface IAmbitoDiasEdao {
 	
 	public Iterable<Map<String, Object>> listardiaslaborales(Long ambitoid)
 			throws ClientProtocolException, IOException, JSONException;
+	
+	public Iterable<Map<String, Object>> listarhoraslaborales(Long ambitoid)
+			throws ClientProtocolException, IOException, JSONException;
+
+	public Iterable<Map<String, Object>> listarambitosdiaslabores()
+			throws ClientProtocolException, IOException, JSONException;
+
+
+	public Map<String, Object> modificarAmbito(Long id, String subambito) 
+			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;
+	
 	
 }
