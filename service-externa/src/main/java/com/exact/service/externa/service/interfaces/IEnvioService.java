@@ -15,9 +15,9 @@ import com.exact.service.externa.entity.Envio;
 public interface IEnvioService {
 	Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile multipartFile, String header) throws IOException,ParseException, MessagingException, JSONException ;
 	Iterable<Envio> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException; 
-	Envio autorizarEnvio(Long idEnvio, Long idUsuario);
-	Envio denegarEnvio(Long idEnvio, Long idUsuario);
+	Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException;
+	Envio denegarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException;
 	Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception;
-	Iterable<Envio> listarEnviosAutorizacion() throws IOException, Exception; 
-	Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario) throws IOException, Exception;
+	Iterable<Envio> listarEnviosAutorizacion(String fechaIni, String fechaFin) throws IOException, Exception; 
+	Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario, String header) throws ParseException, IOException, JSONException;
 }

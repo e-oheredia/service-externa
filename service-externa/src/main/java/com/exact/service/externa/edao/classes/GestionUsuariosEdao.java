@@ -30,8 +30,8 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 	private IRequester requester;
 	
 	@Override
-	public String obtenerCorreoAutorizador(String header) throws ParseException, IOException, JSONException {
-		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil" + "/correousuario");
+	public String obtenerCorreoAutorizador(Long id, String header) throws ParseException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil" + "/" + id +"/correousuario");
 		httpGet.addHeader("Authorization", header);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
@@ -42,6 +42,16 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 	@Override
 	public String findPerfil(Long usuarioId ,String header) throws ParseException, IOException, JSONException {
 		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil" + "/"+ usuarioId +"/usuario");
+		httpGet.addHeader("Authorization", header);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		return response;
+		
+	}
+	
+	@Override
+	public String obtenerNombreUsuario(Long id, String header) throws ParseException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/usuario" + "/" + id +"/nombre");
 		httpGet.addHeader("Authorization", header);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());

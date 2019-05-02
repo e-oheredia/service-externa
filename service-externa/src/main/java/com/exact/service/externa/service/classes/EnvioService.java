@@ -10,11 +10,17 @@ import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.APROBADA;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.DENEGADA;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.PENDIENTE;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
+
 
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,6 +44,8 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -144,12 +152,13 @@ public class EnvioService implements IEnvioService {
 		envio.setTipoEnvio(tipoEnvio);
 		
 		if (file != null) {
+			String correos = null;
 			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 			List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 			SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 			estadoAutorizado.setId(PENDIENTE);
 			seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
-			seguimientoAutorizado.setUsuarioAutorizador(idUsuario);
+			seguimientoAutorizado.setUsuarioId(idUsuario);
 			String rutaAutorizacion = nuevoEnvioId.toString() + "."
 					+ FilenameUtils.getExtension(file.getOriginalFilename());
 			envio.setRutaAutorizacion(rutaAutorizacion);
@@ -158,12 +167,17 @@ public class EnvioService implements IEnvioService {
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
-			String correoslst = gestionUsuarioEdao.obtenerCorreoAutorizador(header);
-			if(correoslst!=null) {
+			Long tipoPlazo = envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
+			if(tipoPlazo==EXPRESS){
+				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(EXPRESS, header);
+			}else if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
+				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(REGULAR, header);
+			}
+			if(correos!=null) {
 				Documento documentoCreado = envio.getDocumentos().iterator().next();
 				String nombre = envio.getBuzon().get("nombre").toString();
 				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
-				mailDao.enviarMensaje(correoslst, mailSubject, texto);
+				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
 			seguimientoAutorizado.setEnvio(envio);
 			lstseguimientoAutorizado.add(seguimientoAutorizado);
@@ -286,18 +300,20 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio autorizarEnvio(Long idEnvio, Long idUsuario) {
+	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException {
 
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
 		}
+		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(APROBADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
-		seguimientoAutorizado.setUsuarioAutorizador(idUsuario);
+		seguimientoAutorizado.setUsuarioId(idUsuario);
+		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
 		envio.getDocumentos().stream().forEach(documento -> {
 			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
 					documento.getUltimoSeguimientoDocumento().getEstadoDocumento(), observacionAutorizacion);
@@ -312,7 +328,7 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio denegarEnvio(Long idEnvio, Long idUsuario) {
+	public Envio denegarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException{
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
@@ -323,12 +339,14 @@ public class EnvioService implements IEnvioService {
 			seguimientoDocumento.setDocumento(documento);
 			documento.addSeguimientoDocumento(seguimientoDocumento);
 		});
+		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(DENEGADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
-		seguimientoAutorizado.setUsuarioAutorizador(idUsuario);
+		seguimientoAutorizado.setUsuarioId(idUsuario);
+		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
 		seguimientoAutorizado.setEnvio(envio);
 		lstseguimientoAutorizado.add(seguimientoAutorizado);
 		Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
@@ -338,13 +356,29 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Iterable<Envio> listarEnviosAutorizacion() throws IOException, Exception {
+	public Iterable<Envio> listarEnviosAutorizacion(String fechaIni, String fechaFin) throws IOException, Exception {
 		
-		Iterable<Envio> envioAutorizaciones = envioDao.listarEnviosAutorizacion();
-		List<Envio> lstenvioAutorizaciones = StreamSupport.stream(envioAutorizaciones.spliterator(),false).collect(Collectors.toList());
-		List<Long> buzonIds = lstenvioAutorizaciones.stream().map(Envio::getBuzonId)
-				.collect(Collectors.toList());
-		
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
+			return null;
+		}
+		Iterable<Envio> envioAutorizaciones = null;
+		List<Envio> lstenvioAutorizaciones=null;
+		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
+			envioAutorizaciones = envioDao.listarEnviosAutorizacion(dateI,dateF);
+			lstenvioAutorizaciones = StreamSupport.stream(envioAutorizaciones.spliterator(),false).collect(Collectors.toList());
+		}else {
+			return null;
+		}
+		if(lstenvioAutorizaciones.isEmpty()) {
+			return null;
+		}
+		List<Long> buzonIds = lstenvioAutorizaciones.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		for(Envio envio: lstenvioAutorizaciones) {
@@ -372,7 +406,7 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario) throws IOException, Exception {
+	public Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario, String header) throws ParseException, IOException, JSONException {
 		Envio envioBD = envioDao.findEnvioConAutorizacion(idEnvio);
 		if(envioBD == null) {
 			return null;
@@ -385,12 +419,14 @@ public class EnvioService implements IEnvioService {
 				break;
 			}
 		}
+		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(APROBADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
-		seguimientoAutorizado.setUsuarioAutorizador(idUsuario);
+		seguimientoAutorizado.setUsuarioId(idUsuario);
+		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
 		seguimientoAutorizado.setEnvio(envioBD);
 		lstseguimientoAutorizado.add(seguimientoAutorizado);
 		Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);

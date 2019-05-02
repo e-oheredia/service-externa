@@ -72,10 +72,11 @@ public class EnvioController {
 	}
 	
 	@PutMapping("/{id}/autorizacion")
-	public ResponseEntity<String> autorizarEnvio(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> autorizarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws ClientProtocolException, IOException, JSONException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		String header = req.getHeader("Authorization");
+		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -88,10 +89,11 @@ public class EnvioController {
 	}
 	
 	@PutMapping("/{id}/denegacion")
-	public ResponseEntity<String> denegarEnvio(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> denegarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws ClientProtocolException, IOException, JSONException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Envio envioDenegado = envioService.denegarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		String header = req.getHeader("Authorization");
+		Envio envioDenegado = envioService.denegarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -132,7 +134,7 @@ public class EnvioController {
 	}
 	
 	@GetMapping("/enviosautorizacion")
-	public ResponseEntity<String> listarEnviosAutorizacion() throws Exception {
+	public ResponseEntity<String> listarEnviosAutorizacion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws Exception {
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -140,15 +142,16 @@ public class EnvioController {
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosAutorizacion(), filter);
+		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosAutorizacion(fechaini,fechafin), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}/modificautorizacion")
-	public ResponseEntity<String> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody Envio envio, Authentication authentication) throws Exception, IOException {
+	public ResponseEntity<String> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody Envio envio, Authentication authentication, HttpServletRequest req) throws Exception, IOException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Envio envioModificado = envioService.modificaPlazo(id, envio,Long.valueOf(datosUsuario.get("idUsuario").toString()) );
+		String header = req.getHeader("Authorization");
+		Envio envioModificado = envioService.modificaPlazo(id, envio,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
