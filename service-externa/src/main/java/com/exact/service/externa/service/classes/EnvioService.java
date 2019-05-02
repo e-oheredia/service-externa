@@ -46,6 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
+import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
@@ -59,6 +60,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoAutorizado;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoEnvio;
@@ -112,6 +114,9 @@ public class EnvioService implements IEnvioService {
 	
 	@Autowired
 	IProductoEdao productoEdao;
+	
+	@Autowired
+	IPlazoDistribucionDao plazoDistribucionDao;
 
 	@Override
 	@Transactional
@@ -364,6 +369,35 @@ public class EnvioService implements IEnvioService {
 		
 		
 		return lstenvioAutorizaciones;
+	}
+
+	@Override
+	public Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario) throws IOException, Exception {
+		Envio envioBD = envioDao.findEnvioConAutorizacion(idEnvio);
+		if(envioBD == null) {
+			return null;
+		}
+		envioBD.setPlazoDistribucion(envio.getPlazoDistribucion());
+		List<PlazoDistribucion> plazos = (List<PlazoDistribucion>) plazoDistribucionDao.findAll();
+		for(int i=0;i<plazos.size();i++) {
+			if(envioBD.getPlazoDistribucion().getId().longValue()==plazos.get(i).getId().longValue()) {
+				envioBD.setPlazoDistribucion(plazos.get(i));
+				break;
+			}
+		}
+		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
+		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
+		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
+		estadoAutorizado.setId(APROBADA);
+		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
+		seguimientoAutorizado.setUsuarioAutorizador(idUsuario);
+		seguimientoAutorizado.setEnvio(envioBD);
+		lstseguimientoAutorizado.add(seguimientoAutorizado);
+		Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
+		envioBD.setSeguimientosAutorizado(sa);
+		
+		return envioDao.save(envioBD);
+		
 	}
 
 }
