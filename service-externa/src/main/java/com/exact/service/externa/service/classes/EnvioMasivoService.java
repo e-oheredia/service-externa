@@ -1,13 +1,19 @@
 package com.exact.service.externa.service.classes;
 
+import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.PENDIENTE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_REGULAR;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,7 +42,9 @@ import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
+import com.exact.service.externa.entity.EstadoAutorizado;
 import com.exact.service.externa.entity.EstadoDocumento;
+import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoEnvio;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
@@ -124,18 +132,34 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		envioMasivo.setTipoEnvio(tipoEnvio);
 		
 		if (file != null) {
+			String correos = null;
+			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
+			List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
+			SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
+			estadoAutorizado.setId(PENDIENTE);
+			seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
+			seguimientoAutorizado.setUsuarioId(idUsuario);
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
 			envioMasivo.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
-			String correolst = gestionUsuarioEdao.obtenerCorreoAutorizador(header);
-			if(correolst!=null) {
+			Long tipoPlazo = envioMasivo.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
+			if(tipoPlazo==EXPRESS){
+				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(EXPRESS, header);
+			}else if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
+				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(REGULAR, header);
+			}
+			if(correos!=null) {
 				String nombre = envioMasivo.getBuzon().get("nombre").toString();
 				String texto="Se ha creado un envio masivo de documentos con autogenerado "+ envioMasivo.getMasivoAutogenerado() +" del usuario "+nombre;
-				mailDao.enviarMensaje(correolst, mailSubject, texto);
+				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
+			seguimientoAutorizado.setEnvio(envioMasivo);
+			lstseguimientoAutorizado.add(seguimientoAutorizado);
+			Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
+			envioMasivo.setSeguimientosAutorizado(sa);
 		}		
 		return envioMasivoDao.save(envioMasivo);
 	}

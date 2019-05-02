@@ -33,7 +33,10 @@ public class SeguimientoAutorizado implements Serializable{
 	private Date fecha;
 	
 	@Column(nullable = false, name = "usuario_id")
-	private Long usuarioAutorizador;
+	private Long usuarioId;
+	
+	@Column(nullable = true, name = "nombre_usuario")
+	private String nombreUsuario;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="envio_id")
@@ -65,12 +68,20 @@ public class SeguimientoAutorizado implements Serializable{
 		this.fecha = fecha;
 	}
 
-	public Long getUsuarioAutorizador() {
-		return usuarioAutorizador;
+	public Long getUsuarioId() {
+		return usuarioId;
 	}
 
-	public void setUsuarioAutorizador(Long usuarioAutorizador) {
-		this.usuarioAutorizador = usuarioAutorizador;
+	public void setUsuarioId(Long usuarioId) {
+		this.usuarioId = usuarioId;
+	}
+
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
 	}
 
 	public EstadoAutorizado getEstadoAutorizado() {

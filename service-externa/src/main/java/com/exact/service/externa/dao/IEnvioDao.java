@@ -1,5 +1,7 @@
 package com.exact.service.externa.dao;
 
+import java.util.Date;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -23,9 +25,9 @@ public interface IEnvioDao extends CrudRepository<Envio, Long> {
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = ?1)) AND e.sedeId=?2")
 	public Iterable<Envio> findByUltimoEstadoId(Long ultimoEstadoId, Long sedeId);
 	
-	@Query("FROM Envio e WHERE e IN(SELECT sa.envio FROM SeguimientoAutorizado sa WHERE "
-			+ "sa.id IS NOT NULL)")
-	public Iterable<Envio> listarEnviosAutorizacion();
+	@Query("FROM Envio e WHERE e IN(SELECT sa.envio FROM SeguimientoAutorizado sa WHERE sa.id IS NOT NULL AND cast(sa.fecha as date) "
+			+ "BETWEEN cast(?1 as date) AND cast(?2 as date))")
+	public Iterable<Envio> listarEnviosAutorizacion(Date fechaIni, Date fechaFin);
 	
 	@Query("FROM Envio e WHERE e IN (SELECT sa.envio FROM SeguimientoAutorizado sa WHERE sa.id IS NOT NULL) AND e.id=?1")
 	public Envio findEnvioConAutorizacion(Long id);
