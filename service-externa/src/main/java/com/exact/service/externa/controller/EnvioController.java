@@ -144,6 +144,22 @@ public class EnvioController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@PutMapping("/{id}/modificautorizacion")
+	public ResponseEntity<String> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody Envio envio, Authentication authentication) throws Exception, IOException {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
+		Envio envioModificado = envioService.modificaPlazo(id, envio,Long.valueOf(datosUsuario.get("idUsuario").toString()) );
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(envioModificado, filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 
 	
 

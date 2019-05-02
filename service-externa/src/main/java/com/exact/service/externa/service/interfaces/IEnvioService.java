@@ -19,5 +19,5 @@ public interface IEnvioService {
 	Envio denegarEnvio(Long idEnvio, Long idUsuario);
 	Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception;
 	Iterable<Envio> listarEnviosAutorizacion() throws IOException, Exception; 
-	
+	Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario) throws IOException, Exception;
 }

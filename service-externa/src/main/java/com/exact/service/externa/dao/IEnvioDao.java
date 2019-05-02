@@ -27,4 +27,7 @@ public interface IEnvioDao extends CrudRepository<Envio, Long> {
 			+ "sa.id IS NOT NULL)")
 	public Iterable<Envio> listarEnviosAutorizacion();
 	
+	@Query("FROM Envio e WHERE e IN (SELECT sa.envio FROM SeguimientoAutorizado sa WHERE sa.id IS NOT NULL) AND e.id=?1")
+	public Envio findEnvioConAutorizacion(Long id);
+	
 }
