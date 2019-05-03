@@ -189,7 +189,7 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Iterable<Envio> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Envio> listarEnviosNoAutorizados() throws IOException, Exception {
 		Iterable<Envio> enviosNoAutorizados = envioDao.findByEstadoAutorizado(PENDIENTE);
 		List<Envio> enviosNoAutorizadosActivos = StreamSupport.stream(enviosNoAutorizados.spliterator(), false)
 				.filter(envioNoAutorizado -> {
@@ -206,6 +206,8 @@ public class EnvioService implements IEnvioService {
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
+			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeDao.listarSedesDespacho();
+			List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 			for (Envio envio : enviosNoAutorizadosActivos) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 				int i = 0;
@@ -223,6 +225,23 @@ public class EnvioService implements IEnvioService {
 						break;
 					}
 					j++;
+				}
+				int k = 0;
+				while (k < sedes.size()) {
+					if (envio.getSedeId()== Long.valueOf(sedes.get(k).get("id").toString())) {
+						envio.setSede(sedes.get(k));
+						break;
+					}
+					k++;
+				}
+				
+				int m = 0;
+				while (m < productos.size()) {
+					if (envio.getProductoId().longValue() == Long.valueOf(productos.get(m).get("id").toString())) {
+						envio.setProducto(productos.get(m));
+						break;
+					}
+					m++;
 				}
 
 			}
@@ -406,12 +425,12 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio modificaPlazo(Long idEnvio, Envio envio, Long idUsuario, String header) throws ParseException, IOException, JSONException {
+	public Envio modificaPlazo(Long idEnvio, PlazoDistribucion plazo, Long idUsuario, String header) throws ParseException, IOException, JSONException {
 		Envio envioBD = envioDao.findEnvioConAutorizacion(idEnvio);
 		if(envioBD == null) {
 			return null;
 		}
-		envioBD.setPlazoDistribucion(envio.getPlazoDistribucion());
+		envioBD.setPlazoDistribucion(plazo);
 		List<PlazoDistribucion> plazos = (List<PlazoDistribucion>) plazoDistribucionDao.findAll();
 		for(int i=0;i<plazos.size();i++) {
 			if(envioBD.getPlazoDistribucion().getId().longValue()==plazos.get(i).getId().longValue()) {
