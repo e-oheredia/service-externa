@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.utils.CommonUtils;
@@ -106,7 +107,7 @@ public class EnvioController {
 	}
 	
 	@GetMapping("/noautorizados")
-	public ResponseEntity<String> listarEnviosNoAutorizados() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarEnviosNoAutorizados() throws Exception {
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
@@ -147,11 +148,11 @@ public class EnvioController {
 	}
 	
 	@PutMapping("/{id}/modificautorizacion")
-	public ResponseEntity<String> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody Envio envio, Authentication authentication, HttpServletRequest req) throws Exception, IOException {
+	public ResponseEntity<?> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody PlazoDistribucion plazo, Authentication authentication, HttpServletRequest req) throws Exception, IOException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
-		Envio envioModificado = envioService.modificaPlazo(id, envio,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
+		Envio envioModificado = envioService.modificaPlazo(id, plazo,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
