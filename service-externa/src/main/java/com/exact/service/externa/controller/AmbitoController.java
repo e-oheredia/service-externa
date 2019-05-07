@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
 import com.exact.service.externa.service.interfaces.IAmbitoDiaService;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
+import com.exact.service.externa.service.interfaces.IDiaService;
 import com.exact.service.externa.service.interfaces.IFeriadoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,6 +37,9 @@ public class AmbitoController {
 	
 	@Autowired
 	IFeriadoService feriadoservice;
+	
+	@Autowired
+	IDiaService diaservice;
 	
 	@GetMapping
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
@@ -100,5 +105,12 @@ public class AmbitoController {
 	public ResponseEntity<Map<String, Object>> guardarferiado(@PathVariable Long id, @RequestBody String feriado) throws IOException, JSONException, Exception{
 		return new ResponseEntity<Map<String, Object>>(feriadoservice.guardarferiado(id,feriado) , HttpStatus.OK);
 	}	
+	
+	@GetMapping("/{id}/diaslaboralesporrango")
+	public ResponseEntity<Map<String, Object>> listardiasporrango(@PathVariable Long id,			
+			@RequestParam(value = "fecha1") String fecha1,
+			@RequestParam(value = "fecha2") String fecha2) throws IOException, JSONException, Exception{
+		return new ResponseEntity<Map<String, Object>>(diaservice.listarferiados(id, fecha1, fecha2)  , HttpStatus.OK);
+	}		
 	
 }
