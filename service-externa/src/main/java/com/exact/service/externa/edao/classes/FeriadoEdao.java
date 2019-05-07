@@ -6,6 +6,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
@@ -51,5 +52,18 @@ public class FeriadoEdao implements IFeriadoEdao{
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
 		return CommonUtils.jsonArrayToMap(responseJson);
+	}
+
+	@Override
+	public Map<String, Object> guardar(String feriado) throws IOException, JSONException, Exception {
+		HttpPost httpost = new HttpPost(feriadosPath + path);
+		StringEntity entity = new StringEntity(feriado);
+		httpost.setEntity(entity);
+		httpost.setHeader("Accept", "application/json");
+		httpost.setHeader("Content-type", "application/json");
+		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		
+		return CommonUtils.jsonToMap(responseJson);
 	}
 }
