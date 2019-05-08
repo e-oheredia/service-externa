@@ -40,14 +40,14 @@ public class AmbitoController {
 	
 	@Autowired
 	IDiaService diaservice;
-	
+	/*
 	@GetMapping
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listarAmbitos(), HttpStatus.OK);
-	}
+	}*/
 	
-	@GetMapping("/diaslaborables")
-	public ResponseEntity<Iterable<Map<String, Object>>> listarDias() throws IOException, JSONException, Exception {
+	@GetMapping()
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAmbitos() throws IOException, JSONException, Exception {
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listardiaslaborables(), HttpStatus.OK);
 	}
 	
@@ -78,7 +78,7 @@ public class AmbitoController {
 		}
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/{id}/subambitos")
 	public ResponseEntity<String> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

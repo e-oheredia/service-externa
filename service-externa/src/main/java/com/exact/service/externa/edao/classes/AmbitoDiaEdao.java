@@ -45,9 +45,9 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	private final String path = "/ambitos";
 	
+	private final String path2 = "/subambitos";
 	
 	private final String subpath = "/diaslaborales";
-	
 	
 	private final String subpath2 = "/horaslaborales";
 	
@@ -131,4 +131,68 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 		JSONObject responseJson = new JSONObject(response);		
 		return CommonUtils.jsonToMap(responseJson);
 	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarSubAmbitos() throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(ambitosPath + path2);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarSubAmbitosActivosByAmbitoId(Long id)
+			throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(ambitosPath + path +"/"+ id +path2);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
+
+	@Override
+	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(ambitosPath + path2 +"/activos");
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
+
+	@Override
+	public Map<String, Object> guardarSubAmbito(String subambito)
+			throws ClientProtocolException, java.io.IOException, JSONException {
+		HttpPost httpost = new HttpPost(ambitosPath + path2);
+		StringEntity entity = new StringEntity(subambito);
+		httpost.setEntity(entity);
+		httpost.setHeader("Accept", "application/json");
+		httpost.setHeader("Content-type", "application/json");
+		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		
+		return CommonUtils.jsonToMap(responseJson);
+	}
+
+	@Override
+	public Map<String, Object> modificarSubAmbito(Long id, String subambito) throws java.io.IOException, JSONException {
+		HttpPut httput = new HttpPut(ambitosPath + path2+ "/"+ id);
+		StringEntity entity = new StringEntity(subambito);
+		httput.setEntity(entity);
+		httput.setHeader("Accept", "application/json");
+		httput.setHeader("Content-type", "application/json");
+		CloseableHttpResponse httpResponse = requester.requestPut(httput);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		 	
+		return CommonUtils.jsonToMap(responseJson);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
