@@ -17,4 +17,6 @@ public interface IAmbitoEdao  {
 	public Map<String, Object> guardarSubAmbito(String ambito) throws ClientProtocolException, IOException, JSONException;
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	  
 	
+	
+	
 }
