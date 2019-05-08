@@ -36,6 +36,10 @@ public class FeriadoService  implements IFeriadoService{
 	public Iterable<Map<String, Object>> listarferiados() throws IOException, JSONException {
 		return feriadoedao.listarAll();
 	}
+	@Override
+	public Map<String, Object> guardarferiados(String feriado) throws io.jsonwebtoken.io.IOException, Exception {
+		return feriadoedao.guardar(feriado) ;
+	}
 
 	
 }
