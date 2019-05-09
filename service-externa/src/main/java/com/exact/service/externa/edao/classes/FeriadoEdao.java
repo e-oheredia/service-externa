@@ -1,7 +1,10 @@
 package com.exact.service.externa.edao.classes;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import com.exact.service.externa.controller.FeriadoController;
 import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
 import com.exact.service.externa.request.IRequester;
 import com.exact.service.externa.utils.CommonUtils;
@@ -33,9 +37,12 @@ public class FeriadoEdao implements IFeriadoEdao{
 	private IRequester requester;
 	
 	private final String path = "/feriados";	
+	private static final Log Logger = LogFactory.getLog(FeriadoEdao.class);
+
 
 	@Override
 	public Map<String, Object> Eliminar(Long id ) throws IOException, JSONException, Exception {
+		HashMap<String,Object> message = new HashMap<>();
 		HttpDelete httdel = new HttpDelete(feriadosPath+"/"+path+"/"+ id);
 		httdel.setHeader("Accept", "application/json");
 		httdel.setHeader("Content-type", "application/json");
