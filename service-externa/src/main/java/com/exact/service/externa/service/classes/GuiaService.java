@@ -16,6 +16,7 @@ import static com.exact.service.externa.enumerator.AmbitoEnum.LIMA;
 
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -122,6 +123,8 @@ public class GuiaService implements IGuiaService{
 	@Autowired
 	ISubambitoPlazoDistribucionDao subambitoplazodao;
 
+	@Autowired
+	IAmbitoDiasEdao ambitodiasdao;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -494,8 +497,8 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
-			fechaLimite=getFechaLimite(guia);
-			guia.setFechaLimite(fechaLimite);
+			//fechaLimite=getFechaLimite(guia);
+			//guia.setFechaLimite(fechaLimite);
 		}
 
 		return guiasParaProveedorList;	
@@ -996,13 +999,17 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException {
+	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException {
 	
 		SubambitoPlazoDistribucion subambito = subambitoplazodao.getPlazoDistribucionBySubambitoId(1L, guia.getPlazoDistribucion().getId());
 		SeguimientoGuia sg = guia.getSeguimientoGuiaByEstadoId(GUIA_ENVIADO);
 		Calendar calendar = Calendar.getInstance();
+		Calendar envio = Calendar.getInstance();
+		envio.setTime(sg.getFecha());
 		calendar.setTime(sg.getFecha());
 		calendar.add(Calendar.HOUR_OF_DAY, subambito.getTiempoEnvio());
+		int dias = calendar.get(Calendar.DAY_OF_MONTH) - envio.get(Calendar.DAY_OF_MONTH);
+		ambitodiasdao.listarFechaLimite(1L, envio.getTime().toString(), dias);
 		return calendar.getTime();
 	}
 	
