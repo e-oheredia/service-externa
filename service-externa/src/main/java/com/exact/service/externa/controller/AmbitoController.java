@@ -53,7 +53,17 @@ public class AmbitoController {
 	
 	@PutMapping("/{id}/diaslaborables")
 	public ResponseEntity<Map<String, Object>> ModificarDias(@PathVariable Long id,@RequestBody String ambito) throws IOException, JSONException, Exception {
-		return new ResponseEntity<Map<String, Object>>(ambitoService.modificarAmbito(id,ambito), HttpStatus.OK);
+	
+		Map<String,Object> subAmbito = ambitoService.modificarAmbito(id,ambito);
+		
+		int rpta = (int) subAmbito.get("responsecode");
+		
+		if(rpta==400) {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+		}else {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+		} 
+		
 	}
 	
 	@GetMapping("/subambitos")
