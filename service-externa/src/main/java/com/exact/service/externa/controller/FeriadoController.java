@@ -58,7 +58,20 @@ public class FeriadoController {
 	
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> guardar(@RequestBody String feriado) throws io.jsonwebtoken.io.IOException, Exception{
-		return new ResponseEntity<Map<String, Object>>(feriadoservice.guardarferiados(feriado) , HttpStatus.OK);
+		
+		Map<String,Object> subAmbito = feriadoservice.guardarferiados(feriado);
+		
+		int rpta = (int) subAmbito.get("responsecode");
+		
+		if(rpta==400) {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+		}else {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+		} 
+		
+		
 	}
 	
+
+
 }
