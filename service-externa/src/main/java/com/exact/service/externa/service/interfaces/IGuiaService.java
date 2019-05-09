@@ -32,5 +32,6 @@ public interface IGuiaService {
 	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
 	Iterable<Documento> listarDocumentosPorGuiaId(Long guiaId) throws ClientProtocolException, IOException, JSONException, Exception;
 	Map<Integer,String> cargarResultadosDevolucion(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception;
+	Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException;
 
 }

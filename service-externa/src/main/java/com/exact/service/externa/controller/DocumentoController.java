@@ -400,4 +400,22 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/{id}/documentoguia")
+	public ResponseEntity<String> listarDocumentosPorGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
+		Iterable<Documento> documentos = documentoService.listarDocumentosByGuia(id);
+		List<Documento> documentosGuia = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(documentosGuia.size()==0) {
+			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS PARA ESTA GUIA", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosGuia,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }

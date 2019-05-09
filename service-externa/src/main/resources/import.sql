@@ -96,7 +96,6 @@ INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (1, N
 INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (2, N'APROBADA')
 INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (3, N'DENEGADA')
 SET IDENTITY_INSERT [dbo].[estado_autorizado] OFF
-
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (1, 2)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (2, 1)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (3, 1)
@@ -118,6 +117,11 @@ INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion
 INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 3)
 INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 4)
 INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
+INSERT [dbo].[subambito_plazo_distribucion] ([subambito_id], [plazo_distribucion_id], [tiempo_envio]) VALUES (1, 1, 96)
+INSERT [dbo].[subambito_plazo_distribucion] ([subambito_id], [plazo_distribucion_id], [tiempo_envio]) VALUES (1, 2, 72)
+INSERT [dbo].[subambito_plazo_distribucion] ([subambito_id], [plazo_distribucion_id], [tiempo_envio]) VALUES (1, 3, 48)
+INSERT [dbo].[subambito_plazo_distribucion] ([subambito_id], [plazo_distribucion_id], [tiempo_envio]) VALUES (1, 4, 24)
+INSERT [dbo].[subambito_plazo_distribucion] ([subambito_id], [plazo_distribucion_id], [tiempo_envio]) VALUES (1, 5, 4)
 
 SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
 INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (1, N'ENVIO REGULAR')
