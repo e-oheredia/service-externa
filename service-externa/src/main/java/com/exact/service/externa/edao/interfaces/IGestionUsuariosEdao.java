@@ -15,6 +15,6 @@ public interface IGestionUsuariosEdao {
 	public String obtenerCorreoAutorizador(Long idVerificador, String header) throws ParseException, IOException,JSONException ;
 	public String findPerfil(Long usuarioId, String header) throws ParseException, IOException,JSONException ;
 	public String obtenerNombreUsuario(Long usuarioId, String header) throws ParseException, IOException,JSONException ;
-	
+	public String obtenerCorreoUTD(String header) throws ParseException, IOException,JSONException ;
 	
 }

@@ -132,6 +132,7 @@ public class EnvioService implements IEnvioService {
 
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
 		String ruta = "autorizaciones";
+		String correos = null;
 
 		for (Documento documento : envio.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
@@ -151,8 +152,17 @@ public class EnvioService implements IEnvioService {
 		tipoEnvio.setId(ENVIO_REGULAR);
 		envio.setTipoEnvio(tipoEnvio);
 		
+		if(envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId()==EXPRESS && file==null) {
+			correos = gestionUsuarioEdao.obtenerCorreoUTD(header);
+			Documento documentoCreado = envio.getDocumentos().iterator().next();
+			String nombre = envio.getBuzon().get("nombre").toString();
+			@SuppressWarnings("unchecked")
+			Map<String,Object> area = (Map<String, Object>) envio.getBuzon().get("area");
+			String texto="Se ha creado un envio con autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre+" de la "
+					+ "sede " +envio.getSede().get("nombre")+ " y area " +area.get("nombre")+ " con tipo de servicio "+ envio.getPlazoDistribucion().getNombre();
+			mailDao.enviarMensaje(correos, mailSubject, texto);
+		}
 		if (file != null) {
-			String correos = null;
 			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 			List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 			SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
@@ -206,8 +216,6 @@ public class EnvioService implements IEnvioService {
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
-			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeDao.listarSedesDespacho();
-			List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 			for (Envio envio : enviosNoAutorizadosActivos) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 				int i = 0;
@@ -226,24 +234,6 @@ public class EnvioService implements IEnvioService {
 					}
 					j++;
 				}
-				int k = 0;
-				while (k < sedes.size()) {
-					if (envio.getSedeId()== Long.valueOf(sedes.get(k).get("id").toString())) {
-						envio.setSede(sedes.get(k));
-						break;
-					}
-					k++;
-				}
-				
-				int m = 0;
-				while (m < productos.size()) {
-					if (envio.getProductoId().longValue() == Long.valueOf(productos.get(m).get("id").toString())) {
-						envio.setProducto(productos.get(m));
-						break;
-					}
-					m++;
-				}
-
 			}
 		}
 		return enviosNoAutorizadosActivos;

@@ -48,7 +48,7 @@ public class AreaPlazoDistribucion implements Serializable {
 		this.areaId=Long.valueOf(area.get("id").toString());
 		this.area = area;
 	}
-	
+
 
 
 	/**

@@ -58,5 +58,15 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 		return response;
 		
 	}
+	
+	@Override
+	public String obtenerCorreoUTD(String header) throws ParseException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil"+ "/correoutd");
+		httpGet.addHeader("Authorization", header);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		return response;
+		
+	}
 
 }

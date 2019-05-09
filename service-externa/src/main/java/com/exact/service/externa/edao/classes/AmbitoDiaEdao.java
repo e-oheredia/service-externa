@@ -3,11 +3,13 @@ package com.exact.service.externa.edao.classes;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -187,7 +189,19 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 		return CommonUtils.jsonToMap(responseJson);
 	}
 	
-	
+	@Override
+	public Map<String, Object> listarFechaLimite(Long id, String fecha, int dia) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
+		String dias = String.valueOf(dia);
+		URI uri = new URIBuilder(ambitosPath + path +"/"+ id +"/fechalimite") 
+			    .addParameter("fecha", fecha) 
+			    .addParameter("dia", dias)
+			    .build();
+		HttpGet httpGet = new HttpGet(uri);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		
+		return CommonUtils.jsonToMap(responseJson);
+	}
 	
 	
 	
