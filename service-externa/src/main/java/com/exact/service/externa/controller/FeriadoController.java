@@ -1,8 +1,11 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.service.interfaces.IFeriadoService;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 @RequestMapping("/feriados")
@@ -24,10 +28,26 @@ public class FeriadoController {
 	@Autowired
 	IFeriadoService feriadoservice;
 	
+	private static final Log Logger = LogFactory.getLog(FeriadoController.class);
+
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) throws io.jsonwebtoken.io.IOException, Exception{
-		return new ResponseEntity<Map<String, Object>>(feriadoservice.eliminar(id), HttpStatus.OK);
+		Logger.info("ddaas");
+		//Map<String, Object> respuesta = new HashMap<String, Object>();
+		
+		Map<String,Object> subAmbito = feriadoservice.eliminar(id);
+		
+		int rpta = (int) subAmbito.get("responsecode");
+		
+		if(rpta==400) {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+		}else {
+			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+		} 
 	}
+	
+	
 	
 	
 	@GetMapping
