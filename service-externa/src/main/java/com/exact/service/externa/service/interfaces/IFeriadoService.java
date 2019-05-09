@@ -14,4 +14,9 @@ public interface IFeriadoService {
 	public Map<String, Object> guardarferiado(Long id, String feriado) throws IOException, JSONException;
 
 	public Iterable<Map<String, Object>> listarferiados() throws IOException, JSONException;
+	
+	
+	public Map<String, Object> guardarferiados(String feriado) throws IOException, JSONException, io.jsonwebtoken.io.IOException, Exception;
+
+		
 }

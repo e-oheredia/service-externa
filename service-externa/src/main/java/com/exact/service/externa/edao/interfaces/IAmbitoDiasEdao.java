@@ -2,6 +2,7 @@ package com.exact.service.externa.edao.interfaces;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -28,4 +29,19 @@ public interface IAmbitoDiasEdao {
 
 	public Map<String, Object> guardarferiado(Long id, String feriado) 
 			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;	
+	
+	public Map<String, Object> listardias(Long ambitoid,String fecha1,String fecha2)
+			throws ClientProtocolException, IOException, JSONException, URISyntaxException;
+
+	public Iterable<Map<String, Object>> listarSubAmbitos() throws IOException, JSONException;
+	
+	public Iterable<Map<String, Object>> listarSubAmbitosActivosByAmbitoId(Long id) throws IOException, JSONException;
+	
+	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws IOException, JSONException;
+	
+	public Map<String, Object> guardarSubAmbito(String ambito) throws ClientProtocolException, IOException, JSONException;
+	
+	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	
+	
+	
 }

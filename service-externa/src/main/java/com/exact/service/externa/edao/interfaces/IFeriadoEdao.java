@@ -12,4 +12,7 @@ public interface IFeriadoEdao {
 	public Map<String, Object> Eliminar(Long id) throws IOException, JSONException, Exception;
 
 	Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException, java.io.IOException;
+	
+	public Map<String, Object> guardar(String feriado) throws IOException, JSONException, Exception;
+
 }
