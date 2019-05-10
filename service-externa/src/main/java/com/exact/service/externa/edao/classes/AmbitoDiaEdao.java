@@ -199,7 +199,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 		HttpGet httpGet = new HttpGet(uri);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
+		JSONObject responseJson = new JSONObject(response);		 	
 		return CommonUtils.jsonToMap(responseJson);
 	}
 	
