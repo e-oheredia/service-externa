@@ -2,6 +2,7 @@ package com.exact.service.externa.service.interfaces;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,6 @@ public interface IGuiaService {
 	Iterable<Guia> listarGuiasBloques(Long usuario_Id,String matricula) throws IOException, Exception;
 	Iterable<Documento> listarDocumentosPorGuiaId(Long guiaId) throws ClientProtocolException, IOException, JSONException, Exception;
 	Map<Integer,String> cargarResultadosDevolucion(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception;
-	Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException , URISyntaxException;
+	Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException , URISyntaxException, ParseException;
 
 }
