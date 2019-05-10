@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -60,6 +61,48 @@ public class Guia implements Serializable{
 	@Column(name="tipo_clasificacion_id")
 	private Long tipoClasificacionId;
 	
+	@Transient
+	@JsonFormat
+	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
+	private Date fechaLimite;
+	
+	@Column(name="ambito_id")
+	private Long ambitoId;
+	
+	@Transient
+	private Map<String, Object> ambito;
+	
+	public Long getAmbitoId() {
+		return ambitoId;
+	}
+
+
+	public void setAmbitoId(Long ambitoId) {
+		this.ambitoId = ambitoId;
+	}
+
+
+	public Map<String, Object> getAmbito() {
+		return ambito;
+	}
+
+
+	public void setAmbito(Map<String, Object> ambito) {
+		this.ambitoId = Long.valueOf(ambito.get("id").toString());
+		this.ambito = ambito;
+	}
+
+
+	public Date getFechaLimite() {
+		return fechaLimite;
+	}
+
+
+	public void setFechaLimite(Date fechaLimite) {
+		this.fechaLimite = fechaLimite;
+	}
+
+
 	public Long getProductoId() {
 		return productoId;
 	}
@@ -177,7 +220,7 @@ public class Guia implements Serializable{
 
 
 
-	@Column(name="cantidad_documentos")
+	@Transient
 	private int cantidadDocumentos;
 	
 
@@ -326,6 +369,11 @@ public class Guia implements Serializable{
 	public SeguimientoGuia getUltimoSeguimientoGuia() {
 		return (this.getSeguimientosGuia().stream().max(Comparator.comparing(SeguimientoGuia::getFecha))
 		.orElseThrow(NoSuchElementException::new));		
+	}
+	
+	@JsonIgnore
+	public SeguimientoGuia getSeguimientoGuiaByEstadoId(Long estadoId) {
+		return (this.getSeguimientosGuia().stream().filter(sg -> sg.getEstadoGuia().getId()==estadoId).findFirst()).get();	
 	}
 	
 

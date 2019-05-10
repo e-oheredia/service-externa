@@ -727,6 +727,12 @@ public class DocumentoService implements IDocumentoService {
 		return documentoDao.save(documento);
 	}
 
+	@Override
+	public Iterable<Documento> listarDocumentosByGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException {
+		return documentoDao.findDocumentosByGuiaId(guiaId);
+	
+	}
+
 
 
 }

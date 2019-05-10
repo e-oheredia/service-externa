@@ -11,21 +11,26 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGAD
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
+import static com.exact.service.externa.enumerator.AmbitoEnum.LIMA;
 
 
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,11 +54,14 @@ import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
+import com.exact.service.externa.dao.ISubambitoPlazoDistribucionDao;
+import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
+import com.exact.service.externa.entity.SubambitoPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
@@ -113,6 +121,12 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	ISeguimientoDocumentoDao seguimientoDocumentodao;
+	
+	@Autowired
+	ISubambitoPlazoDistribucionDao subambitoplazodao;
+
+	@Autowired
+	IAmbitoDiasEdao ambitodiasdao;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -178,7 +192,6 @@ public class GuiaService implements IGuiaService{
 		TipoGuia tipoGuia = new TipoGuia();
 		tipoGuia.setId(GUIA_REGULAR);
 		guia.setTipoGuia(tipoGuia);
-		int cont=0;
 		Iterable<Documento> documentos = documentoService.listarDocumentosGuiaPorCrear(guia, matricula);
 		List<Documento> documentosList = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosList.isEmpty()) {
@@ -199,12 +212,11 @@ public class GuiaService implements IGuiaService{
 			documentoGuia.setValidado(false);
 			documentoGuia.setId(documentoGuiaId);
 			documentosGuiaList.add(documentoGuia);
-			//cont++;
+			
 		}		
 		
 		Set<DocumentoGuia> dg = new HashSet<DocumentoGuia>(documentosGuiaList);
 		guia.setDocumentosGuia(dg);
-		
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
 		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
 		EstadoGuia estadoGuia = new EstadoGuia();		
@@ -218,7 +230,6 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuiaList.add(seguimientoGuia);
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
-		guia.setCantidadDocumentos(cont);
 		guia.setSeguimientosGuia(sg);
 		
 		guiaDao.save(guia);
@@ -293,7 +304,7 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
 		guiaEnviada.setSeguimientosGuia(sg);
-		
+		guiaEnviada.setAmbitoId(LIMA);
 		Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
 		List<DocumentoGuia> listDG = new ArrayList<>(lista);
 		for (DocumentoGuia dg : listDG) {
@@ -384,9 +395,8 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-
 		for(Guia guia : guiasParaProveedorList) {
-			
+			Date fechaLimite= null;
 			int entregados =0;
 			int rezagados =0;
 			int nodistri =0;
@@ -488,7 +498,10 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
-			
+			if(guia.getAmbitoId()!=null) {
+				fechaLimite=getFechaLimite(guia);
+				guia.setFechaLimite(fechaLimite);
+			}
 		}
 
 		return guiasParaProveedorList;	
@@ -559,7 +572,7 @@ public class GuiaService implements IGuiaService{
 		Guia guia = guiaDao.findBynumeroGuia(numeroguia);
 		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-		
+		Date fechaLimite= null;
 		if(guia==null) {
 			return null;
 		}
@@ -589,8 +602,11 @@ public class GuiaService implements IGuiaService{
 			}
 			n++;
 		}
-		
-		
+		if(guia.getAmbitoId()!=null) {
+			fechaLimite=getFechaLimite(guia);
+			guia.setFechaLimite(fechaLimite);
+		}
+		guia.setCantidadDocumentos(guia.getDocumentosGuia().size());
 		
 		return guia;
 	}
@@ -602,6 +618,7 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		Date dateI= null;
 		Date dateF= null;
+		int cont=0;
 		try {
 			dateI = dt.parse(fechaIni);
 			dateF = dt.parse(fechaFin); 
@@ -616,6 +633,7 @@ public class GuiaService implements IGuiaService{
 			List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
 			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 			for(Guia guia : guias) {
+				Date fechaLimite= null;
 				int i=0;
 				while(i < sedes.size()) {
 					if(guia.getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
@@ -642,8 +660,12 @@ public class GuiaService implements IGuiaService{
 					}
 					n++;
 				}
+				if(guia.getAmbitoId()!=null) {
+					fechaLimite=getFechaLimite(guia);
+					guia.setFechaLimite(fechaLimite);
+				}
 				
-				
+				guia.setCantidadDocumentos(guia.getDocumentosGuia().size());
 				
 			}
 			return guias;
@@ -987,7 +1009,26 @@ public class GuiaService implements IGuiaService{
 		return map;
 
 	}
-	
-	
 
+	@Override
+	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
+		SubambitoPlazoDistribucion subambito = subambitoplazodao.getPlazoDistribucionBySubambitoId(1L, guia.getPlazoDistribucion().getId());
+		SeguimientoGuia sg = guia.getSeguimientoGuiaByEstadoId(GUIA_ENVIADO);
+		Calendar calendar = Calendar.getInstance();
+		Calendar envio = Calendar.getInstance();
+		envio.setTime(sg.getFecha());
+		calendar.setTime(sg.getFecha());
+		calendar.add(Calendar.HOUR_OF_DAY, subambito.getTiempoEnvio());
+		int dias = calendar.get(Calendar.DAY_OF_MONTH) - envio.get(Calendar.DAY_OF_MONTH);
+		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(1L,envio.getTime().toString(),dias);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
+		Date fechaLimite = null;
+		try {
+			fechaLimite = format.parse(fecha.get("fechaLimite").toString());
+		} catch (Exception e) {
+			return null;
+		}
+		return fechaLimite;
+	}
+	
 }

@@ -3,6 +3,7 @@ package com.exact.service.externa.edao.interfaces;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -43,5 +44,6 @@ public interface IAmbitoDiasEdao {
 	
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	
 	
+	public Map<String, Object> listarFechaLimite (Long ambitoId, String fecha, int dia )  throws IOException, JSONException, URISyntaxException;	
 	
 }
