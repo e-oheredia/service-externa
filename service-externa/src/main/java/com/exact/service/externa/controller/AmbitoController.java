@@ -77,30 +77,45 @@ public class AmbitoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<String> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
+	public ResponseEntity<Map<String, Object>> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		try {
 			Map<String,Object> subAmbito = ambitoService.guardarSubAmbito(subambito);
-			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+			int rpta = (int) subAmbito.get("responsecode");
+			
+			if(rpta==400) {
+				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+			}else {
+				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+			} 
 		} catch (Exception e) {
-			return  new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return  new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PutMapping("/{id}/subambitos")
-	public ResponseEntity<String> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
+	public ResponseEntity<Map<String, Object>> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		try {
 			Map<String,Object> subAmbito = ambitoService.modificarSubAmbito(id, subambito);
-			return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
+			
+			int rpta = (int) subAmbito.get("responsecode");
+			
+			if(rpta==400) {
+				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+			}else {
+				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+			} 
+			
+			//return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
 		} catch (Exception e) {
-			return  new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return  new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 		
 	}
-	
+		
 	@GetMapping("/{id}/diaslaborales")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarDiasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
 		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listardiaslaborales(id) , HttpStatus.OK);

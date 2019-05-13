@@ -153,6 +153,9 @@ public class EnvioController {
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
 		Envio envioModificado = envioService.modificaPlazo(id, plazo,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
+		if(envioModificado==null) {
+			return new ResponseEntity<String>("NO SE PUEDE MODIFICAR EL MISMO PLAZO", HttpStatus.BAD_REQUEST);
+		}
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");

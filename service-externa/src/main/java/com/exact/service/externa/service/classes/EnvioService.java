@@ -415,9 +415,13 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
+	@Transactional
 	public Envio modificaPlazo(Long idEnvio, PlazoDistribucion plazo, Long idUsuario, String header) throws ParseException, IOException, JSONException {
 		Envio envioBD = envioDao.findEnvioConAutorizacion(idEnvio);
 		if(envioBD == null) {
+			return null;
+		}
+		if(envioBD.getPlazoDistribucion().getId()==plazo.getId()) {
 			return null;
 		}
 		envioBD.setPlazoDistribucion(plazo);
