@@ -67,29 +67,45 @@ public class Guia implements Serializable{
 	private Date fechaLimite;
 	
 	@Column(name="ambito_id")
-	private Long ambitoId;
+	private Long regionId;
 	
 	@Transient
-	private Map<String, Object> ambito;
+	private Map<String, Object> Region;
 	
-	public Long getAmbitoId() {
-		return ambitoId;
+
+
+
+	public Long getRegionId() {
+		return regionId;
 	}
 
 
-	public void setAmbitoId(Long ambitoId) {
-		this.ambitoId = ambitoId;
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
 
-
+	
+	
+	/*
 	public Map<String, Object> getAmbito() {
 		return ambito;
 	}
 
 
 	public void setAmbito(Map<String, Object> ambito) {
-		this.ambitoId = Long.valueOf(ambito.get("id").toString());
+		this.regionId = Long.valueOf(ambito.get("id").toString());
 		this.ambito = ambito;
+	}*/
+
+
+	public Map<String, Object> getRegion() {
+		return Region;
+	}
+
+
+	public void setRegion(Map<String, Object> region) {
+		this.regionId = Long.valueOf(region.get("id").toString());
+		this.Region = region;
 	}
 
 

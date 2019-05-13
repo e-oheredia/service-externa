@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.edao.interfaces.IAmbitoEdao;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
 
@@ -18,57 +18,57 @@ public class AmbitoService implements IAmbitoService{
 	IAmbitoEdao ambitoEdao;
 	
 	@Autowired
-	IAmbitoDiasEdao ambitoEdaos;
+	IRegionEdao RegionEdao;
 
-	
+	/*
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitos() throws Exception {
-		return ambitoEdaos.listarAmbitos();
+		return RegionEdao.listarAmbitos();
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitos() throws IOException, JSONException {
-		return ambitoEdaos.listarSubAmbitos();
+		return RegionEdao.listarSubAmbitos();
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitosByAmbitoId(Long id) throws IOException, JSONException {
-		return ambitoEdaos.listarSubAmbitosActivosByAmbitoId(id);
+		return RegionEdao.listarSubAmbitosActivosByAmbitoId(id);
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws IOException, JSONException {
-		return ambitoEdaos.listarSubAmbitosActivos();
+		return RegionEdao.listarSubAmbitosActivos();
 	}
 
 	@Override
 	public Map<String, Object> guardarSubAmbito(String ambito) throws IOException, JSONException {
-		return ambitoEdaos.guardarSubAmbito(ambito);
+		return RegionEdao.guardarSubAmbito(ambito);
 	}
 
 	@Override
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException {
-		return ambitoEdaos.modificarSubAmbito(id, ambito);
+		return RegionEdao.modificarSubAmbito(id, ambito);
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listardiaslaborables() throws Exception {
-		return ambitoEdaos.listarAmbitos();
+		return RegionEdao.listarAmbitos();
 	}
 
 	@Override
 	public Map<String, Object> modificarAmbito(Long id, String ambito) throws IOException, JSONException {
-		return ambitoEdaos.modificarAmbito(id, ambito);
+		return RegionEdao.modificarAmbito(id, ambito);
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listardiaslaborales(Long id) throws IOException, JSONException, Exception {
-		return ambitoEdaos.listardiaslaborales(id) ;
+		return RegionEdao.listardiaslaborales(id) ;
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarhoraslaborales(Long id) throws IOException, JSONException, Exception {
-		return ambitoEdaos.listarhoraslaborales(id) ;
+		return RegionEdao.listarhoraslaborales(id) ;
 	}
-
+*/
 }

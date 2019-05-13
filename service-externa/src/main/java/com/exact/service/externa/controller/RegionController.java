@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
-import com.exact.service.externa.service.interfaces.IAmbitoDiaService;
+import com.exact.service.externa.service.interfaces.IRegionService;
 import com.exact.service.externa.service.interfaces.IAmbitoService;
 import com.exact.service.externa.service.interfaces.IDiaService;
 import com.exact.service.externa.service.interfaces.IFeriadoService;
@@ -26,14 +26,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
-@RequestMapping("/ambitos")
-public class AmbitoController {
+@RequestMapping("/regiones")
+public class RegionController {
 	
 	@Autowired
 	IAmbitoService ambitoService;
 	
 	@Autowired
-	IAmbitoDiaService ambitodiaservice;
+	IRegionService regionservice;
 	
 	@Autowired
 	IFeriadoService feriadoservice;
@@ -47,66 +47,66 @@ public class AmbitoController {
 	}*/
 	
 	@GetMapping()
-	public ResponseEntity<Iterable<Map<String, Object>>> listarAmbitos() throws IOException, JSONException, Exception {
-		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listardiaslaborables(), HttpStatus.OK);
+	public ResponseEntity<Iterable<Map<String, Object>>> listarRegiones() throws IOException, JSONException, Exception {
+		return new ResponseEntity<Iterable<Map<String, Object>>>(regionservice.listardiaslaborables(), HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}/diaslaborables")
 	public ResponseEntity<Map<String, Object>> ModificarDias(@PathVariable Long id,@RequestBody String ambito) throws IOException, JSONException, Exception {
 	
-		Map<String,Object> subAmbito = ambitoService.modificarAmbito(id,ambito);
+		Map<String,Object> Ambito = regionservice.modificarRegion(id,ambito);
 		
-		int rpta = (int) subAmbito.get("responsecode");
+		int rpta = (int) Ambito.get("responsecode");
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
 		} 
 		
 	}
 	
-	@GetMapping("/subambitos")
-	public ResponseEntity<Iterable<Map<String, Object>>> listarAllSubAmbitos() throws IOException, JSONException, Exception {
-		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listarSubAmbitos(), HttpStatus.OK);
+	@GetMapping("/ambitos")
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
+		return new ResponseEntity<Iterable<Map<String, Object>>>(regionservice.listarAmbitos(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/{id}/subambitos/activos")
-	public ResponseEntity<Iterable<Map<String, Object>>> listarSubAmbitosActivosByAmbitoId(@PathVariable Long id) throws IOException, JSONException, Exception{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitoService.listarSubAmbitosByAmbitoId(id) , HttpStatus.OK);
+	@GetMapping("/{id}/ambitos/activos")
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAmbitosActivosByAmbitoId(@PathVariable Long id) throws IOException, JSONException, Exception{
+		return new ResponseEntity<Iterable<Map<String, Object>>>(regionservice.listarAmbitosByAmbitoId(id) , HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> guardarSubAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
+	public ResponseEntity<Map<String, Object>> guardarAmbito(@RequestBody String subambito) throws IOException, JSONException, Exception{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		try {
-			Map<String,Object> subAmbito = ambitoService.guardarSubAmbito(subambito);
-			int rpta = (int) subAmbito.get("responsecode");
+			Map<String,Object> Ambito = regionservice.guardarAmbito(subambito);
+			int rpta = (int) Ambito.get("responsecode");
 			
 			if(rpta==400) {
-				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
 			}else {
-				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+				return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
 			} 
 		} catch (Exception e) {
 			return  new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@PutMapping("/{id}/subambitos")
-	public ResponseEntity<Map<String, Object>> modificarSubAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
+	@PutMapping("/{id}/ambitos")
+	public ResponseEntity<Map<String, Object>> modificarAmbito(@PathVariable Long id, @RequestBody String subambito) throws IOException, JSONException, Exception{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		try {
-			Map<String,Object> subAmbito = ambitoService.modificarSubAmbito(id, subambito);
+			Map<String,Object> Ambito = regionservice.modificarAmbito(id, subambito);
 			
-			int rpta = (int) subAmbito.get("responsecode");
+			int rpta = (int) Ambito.get("responsecode");
 			
 			if(rpta==400) {
-				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
 			}else {
-				return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+				return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
 			} 
 			
 			//return new ResponseEntity<String>(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(subAmbito) , HttpStatus.OK);
@@ -118,12 +118,12 @@ public class AmbitoController {
 		
 	@GetMapping("/{id}/diaslaborales")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarDiasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listardiaslaborales(id) , HttpStatus.OK);
+		return new ResponseEntity<Iterable<Map<String, Object>>>(regionservice.listardiaslaborales(id) , HttpStatus.OK);
 	}	
 	
 	@GetMapping("/{id}/horaslaborales")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarHorasLaborales(@PathVariable Long id) throws IOException, JSONException, Exception{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(ambitodiaservice.listarhoraslaborales(id) , HttpStatus.OK);
+		return new ResponseEntity<Iterable<Map<String, Object>>>(regionservice.listarhoraslaborales(id) , HttpStatus.OK);
 	}		
 	
 	@PostMapping("/{id}/feriados")

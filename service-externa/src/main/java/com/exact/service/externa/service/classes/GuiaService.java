@@ -11,7 +11,7 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGAD
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
-import static com.exact.service.externa.enumerator.AmbitoEnum.LIMA;
+import static com.exact.service.externa.enumerator.RegionEnum.LIMA;
 
 
 
@@ -55,7 +55,7 @@ import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.dao.ISubambitoPlazoDistribucionDao;
-import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
@@ -126,7 +126,7 @@ public class GuiaService implements IGuiaService{
 	ISubambitoPlazoDistribucionDao subambitoplazodao;
 
 	@Autowired
-	IAmbitoDiasEdao ambitodiasdao;
+	IRegionEdao ambitodiasdao;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -304,7 +304,7 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
 		guiaEnviada.setSeguimientosGuia(sg);
-		guiaEnviada.setAmbitoId(LIMA);
+		guiaEnviada.setRegionId(LIMA);
 		Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
 		List<DocumentoGuia> listDG = new ArrayList<>(lista);
 		for (DocumentoGuia dg : listDG) {
@@ -498,7 +498,7 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
-			if(guia.getAmbitoId()!=null) {
+			if(guia.getRegionId()!=null) {
 				fechaLimite=getFechaLimite(guia);
 				guia.setFechaLimite(fechaLimite);
 			}
@@ -602,7 +602,7 @@ public class GuiaService implements IGuiaService{
 			}
 			n++;
 		}
-		if(guia.getAmbitoId()!=null) {
+		if(guia.getRegionId()!=null) {
 			fechaLimite=getFechaLimite(guia);
 			guia.setFechaLimite(fechaLimite);
 		}
@@ -660,7 +660,7 @@ public class GuiaService implements IGuiaService{
 					}
 					n++;
 				}
-				if(guia.getAmbitoId()!=null) {
+				if(guia.getRegionId()!=null) {
 					fechaLimite=getFechaLimite(guia);
 					guia.setFechaLimite(fechaLimite);
 				}

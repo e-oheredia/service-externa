@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-public interface IAmbitoDiasEdao {
+public interface IRegionEdao {
 	
 	public Iterable<Map<String, Object>> listarAmbitos() throws  Exception;
 
