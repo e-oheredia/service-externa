@@ -6,5 +6,5 @@ public interface IDocumentoGuiaService {
 
 	DocumentoGuia validarDocumentoGuia(Long guiaId, Long documentoId, Long usuarioId) ;	
 	DocumentoGuia desvalidarDocumento(Long documentoId);	
-	
+	DocumentoGuia listarDocumentoGuiaPorDocId(Long documentoId);
 }

@@ -896,6 +896,7 @@ public class GuiaService implements IGuiaService{
 				j++;
 			}
 			guia.setSede(sede);
+			guia.setCantidadDocumentos(guia.getDocumentosGuia().size());
 		}
 		return guiasBloque;
 	}
