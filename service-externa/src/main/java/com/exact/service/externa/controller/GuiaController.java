@@ -410,7 +410,7 @@ public class GuiaController {
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("{id}/documentosguia")
+	@GetMapping("{id}/documentos")
 	public ResponseEntity<String> listarDocumentosPorGuiaId(@PathVariable Long id) throws Exception{
 		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
 		CommonUtils cu = new CommonUtils();
