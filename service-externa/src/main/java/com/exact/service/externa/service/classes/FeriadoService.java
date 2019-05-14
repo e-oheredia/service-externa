@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.service.interfaces.IFeriadoService;
@@ -20,7 +20,7 @@ public class FeriadoService  implements IFeriadoService{
 	IFeriadoEdao feriadoedao;
 	
 	@Autowired
-	IAmbitoDiasEdao ambitoedao;
+	IRegionEdao ambitoedao;
 	
 	@Override
 	public Map<String, Object> eliminar(Long id) throws io.jsonwebtoken.io.IOException, Exception {
