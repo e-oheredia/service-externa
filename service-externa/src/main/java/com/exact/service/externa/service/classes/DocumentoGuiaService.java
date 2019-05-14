@@ -51,11 +51,7 @@ public class DocumentoGuiaService implements IDocumentoGuiaService{
 		return documentoGuiaDao.save(documentoGuia);
 	}
 
-	@Override
-	public DocumentoGuia listarDocumentoGuiaPorDocId(Long documentoId) {
-		DocumentoGuia documentoGuia = documentoGuiaDao.findByDocumentoId(documentoId);
-		return documentoGuia;
-	}
+
 	
 	
 
