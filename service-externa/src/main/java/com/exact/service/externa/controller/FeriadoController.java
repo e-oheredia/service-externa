@@ -36,14 +36,14 @@ public class FeriadoController {
 		Logger.info("ddaas");
 		//Map<String, Object> respuesta = new HashMap<String, Object>();
 		
-		Map<String,Object> subAmbito = feriadoservice.eliminar(id);
+		Map<String,Object> Ambito = feriadoservice.eliminar(id);
 		
-		int rpta = (int) subAmbito.get("responsecode");
+		int rpta = (int) Ambito.get("responsecode");
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
 		} 
 	}
 	
@@ -59,14 +59,14 @@ public class FeriadoController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> guardar(@RequestBody String feriado) throws io.jsonwebtoken.io.IOException, Exception{
 		
-		Map<String,Object> subAmbito = feriadoservice.guardarferiados(feriado);
+		Map<String,Object> Ambito = feriadoservice.guardarferiados(feriado);
 		
-		int rpta = (int) subAmbito.get("responsecode");
+		int rpta = (int) Ambito.get("responsecode");
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(subAmbito, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
 		} 
 		
 		

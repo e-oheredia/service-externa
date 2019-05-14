@@ -8,14 +8,14 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.service.interfaces.IDiaService;
 
 @Service
 public class DiaService implements IDiaService {
 
 	@Autowired
-	IAmbitoDiasEdao ambitodias;
+	IRegionEdao ambitodias;
 
 	@Override
 	public Map<String, Object>  listarferiados(Long id, String fecha1, String fecha2)

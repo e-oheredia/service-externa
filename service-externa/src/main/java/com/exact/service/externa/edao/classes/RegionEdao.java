@@ -28,26 +28,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.exact.service.externa.edao.interfaces.IAmbitoDiasEdao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.request.IRequester;
 import com.exact.service.externa.utils.CommonUtils;
 
 import io.jsonwebtoken.io.IOException;
 
 @Repository
-public class AmbitoDiaEdao implements IAmbitoDiasEdao {
+public class RegionEdao implements IRegionEdao {
 
 	@Value("${service.dias-laborales}")
-	private String ambitosPath;
+	private String regionesPath;
 	
 	
 	@Autowired
 	private IRequester requester;
 	
 
-	private final String path = "/ambitos";
+	private final String path = "/regiones";
 	
-	private final String path2 = "/subambitos";
+	private final String path2 = "/ambitos";
 	
 	private final String subpath = "/diaslaborales";
 	
@@ -61,7 +61,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitos() throws Exception{
-		HttpGet httpGet = new HttpGet(ambitosPath + path);
+		HttpGet httpGet = new HttpGet(regionesPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -71,7 +71,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Iterable<Map<String, Object>> listardiaslaborales(Long ambitoid)
 			throws ClientProtocolException, java.io.IOException, JSONException {
-		HttpGet httpGet = new HttpGet(ambitosPath + path + "/" + ambitoid.toString() + subpath);
+		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -81,7 +81,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Iterable<Map<String, Object>> listarhoraslaborales(Long ambitoid)
 			throws ClientProtocolException, java.io.IOException, JSONException {
-		HttpGet httpGet = new HttpGet(ambitosPath + path + "/" + ambitoid.toString() + subpath2);
+		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -96,7 +96,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	
 	@Override
 	public Map<String, Object> modificarAmbito(Long id, String ambito) throws IOException, JSONException, ClientProtocolException, java.io.IOException {
-		HttpPut httput = new HttpPut(ambitosPath+"/"+path+"/"+ id);
+		HttpPut httput = new HttpPut(regionesPath+"/"+path+"/"+ id);
 		StringEntity entity = new StringEntity(ambito);
 		httput.setEntity(entity);
 		httput.setHeader("Accept", "application/json");
@@ -109,7 +109,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	@Override
 	public Map<String, Object> guardarferiado(Long id,String feriado) throws IOException, JSONException, java.io.IOException {
-		HttpPost httpost = new HttpPost(ambitosPath +path+"/" +id+subpath3);
+		HttpPost httpost = new HttpPost(regionesPath +path+"/" +id+subpath3);
 		StringEntity entity = new StringEntity(feriado);
 		httpost.setEntity(entity);
 		httpost.setHeader("Accept", "application/json");
@@ -123,7 +123,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Map<String, Object> listardias(Long ambitoid, String fecha1, String fecha2)
 			throws ClientProtocolException, java.io.IOException, JSONException, URISyntaxException {
-		URI uri = new URIBuilder(ambitosPath+"/"+path+"/"+ ambitoid+subpath4) 
+		URI uri = new URIBuilder(regionesPath+"/"+path+"/"+ ambitoid+subpath4) 
 			    .addParameter("fecha1", fecha1) 
 			    .addParameter("fecha2", fecha2) 
 			    .build();
@@ -136,7 +136,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitos() throws java.io.IOException, JSONException {
-		HttpGet httpGet = new HttpGet(ambitosPath + path2);
+		HttpGet httpGet = new HttpGet(regionesPath + path2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -146,7 +146,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitosActivosByAmbitoId(Long id)
 			throws java.io.IOException, JSONException {
-		HttpGet httpGet = new HttpGet(ambitosPath + path +"/"+ id +path2);
+		HttpGet httpGet = new HttpGet(regionesPath + path +"/"+ id +path2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -155,7 +155,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws java.io.IOException, JSONException {
-		HttpGet httpGet = new HttpGet(ambitosPath + path2 +"/activos");
+		HttpGet httpGet = new HttpGet(regionesPath + path2 +"/activos");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		JSONArray responseJson = new JSONArray(response);		
@@ -165,7 +165,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Map<String, Object> guardarSubAmbito(String subambito)
 			throws ClientProtocolException, java.io.IOException, JSONException {
-		HttpPost httpost = new HttpPost(ambitosPath + path2);
+		HttpPost httpost = new HttpPost(regionesPath + path2);
 		StringEntity entity = new StringEntity(subambito);
 		httpost.setEntity(entity);
 		httpost.setHeader("Accept", "application/json");
@@ -178,7 +178,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 
 	@Override
 	public Map<String, Object> modificarSubAmbito(Long id, String subambito) throws java.io.IOException, JSONException {
-		HttpPut httput = new HttpPut(ambitosPath + path2+ "/"+ id);
+		HttpPut httput = new HttpPut(regionesPath + path2+ "/"+ id);
 		StringEntity entity = new StringEntity(subambito);
 		httput.setEntity(entity);
 		httput.setHeader("Accept", "application/json");
@@ -192,7 +192,7 @@ public class AmbitoDiaEdao implements IAmbitoDiasEdao {
 	@Override
 	public Map<String, Object> listarFechaLimite(Long id, String fecha, int dia) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
 		String dias = String.valueOf(dia);
-		URI uri = new URIBuilder(ambitosPath + path +"/"+ id +"/fechalimite") 
+		URI uri = new URIBuilder(regionesPath + path +"/"+ id +"/fechalimite") 
 			    .addParameter("fecha", fecha) 
 			    .addParameter("dia", dias)
 			    .build();
