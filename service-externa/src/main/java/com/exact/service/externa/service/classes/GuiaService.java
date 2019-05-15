@@ -304,7 +304,7 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
 		guiaEnviada.setSeguimientosGuia(sg);
-		Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
+    Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
 		List<DocumentoGuia> listDG = new ArrayList<>(lista);
 		for (DocumentoGuia dg : listDG) {
 			List<SeguimientoDocumento> seguimientosDocumento = new ArrayList<SeguimientoDocumento>();
@@ -497,8 +497,9 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
+
 			if(guia.getUltimoSeguimientoGuia().getId()>=GUIA_ENVIADO) {
-				fechaLimite=getFechaLimite(guia);
+        fechaLimite=getFechaLimite(guia);
 				guia.setFechaLimite(fechaLimite);
 			}
 		}

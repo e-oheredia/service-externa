@@ -66,8 +66,9 @@ public class Guia implements Serializable{
 	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fechaLimite;
 	
+
 	@Column(name="region_id")
-	private Long regionId;
+  private Long regionId;
 	
 	@Transient
 	private Map<String, Object> Region;
