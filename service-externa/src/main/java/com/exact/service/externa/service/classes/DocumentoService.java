@@ -622,6 +622,11 @@ public class DocumentoService implements IDocumentoService {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin,estadoDocumentoId);
 		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 
+		if(documentosVolu.isEmpty()) {
+			return null;
+		}
+		
+		
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarAll();
 		

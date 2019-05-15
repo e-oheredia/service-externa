@@ -6,31 +6,32 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class SubambitoPlazoDistribucionId implements Serializable {
+public class RegionPlazoDistribucionId implements Serializable {
 
 
-	@Column(name="subambito_id")
-	private Long subambitoId;
+	@Column(name="region_id")
+	private Long regionId;
 	
 	@Column(name="plazo_distribucion_id")
 	private Long plazoDistribucionId;
 
-	public SubambitoPlazoDistribucionId(Long subambitoId, Long plazoDistribucion) {
+	public RegionPlazoDistribucionId(Long regionId, Long plazoDistribucion) {
 		super();
-		this.subambitoId = subambitoId;
+		this.regionId = regionId;
 		this.plazoDistribucionId = plazoDistribucion;
 	}
 
-	public SubambitoPlazoDistribucionId() {
+	public RegionPlazoDistribucionId() {
 		super();
 	}
 
-	public Long getSubambitoId() {
-		return subambitoId;
+	
+	public Long getRegionId() {
+		return regionId;
 	}
 
-	public void setSubambitoId(Long subambitoId) {
-		this.subambitoId = subambitoId;
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
 
 	public Long getPlazoDistribucionId() {
