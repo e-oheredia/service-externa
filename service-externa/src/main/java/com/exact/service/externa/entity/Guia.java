@@ -66,7 +66,7 @@ public class Guia implements Serializable{
 	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fechaLimite;
 	
-	@Column(name="ambito_id")
+	@Column(name="region_id")
 	private Long regionId;
 	
 	@Transient
@@ -389,7 +389,11 @@ public class Guia implements Serializable{
 	
 	@JsonIgnore
 	public SeguimientoGuia getSeguimientoGuiaByEstadoId(Long estadoId) {
-		return (this.getSeguimientosGuia().stream().filter(sg -> sg.getEstadoGuia().getId()==estadoId).findFirst()).get();	
+		Optional<SeguimientoGuia> sgs =  (this.getSeguimientosGuia().stream().filter(sg -> sg.getEstadoGuia().getId()==estadoId).findFirst());	
+		if(sgs.isPresent()) {
+			return sgs.get();
+		}
+		return null;
 	}
 	
 

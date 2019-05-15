@@ -319,6 +319,9 @@ public class DocumentoController {
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 		{
 			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF,estado);
+			if(documentosUbcp==null) {
+				return new ResponseEntity<String>("no existen documentos", HttpStatus.BAD_REQUEST);
+			}
 			CommonUtils cu = new CommonUtils();	
 			Map<String, String> filter = new HashMap<String, String>();
 			filter.put("envioFilter", "documentos");

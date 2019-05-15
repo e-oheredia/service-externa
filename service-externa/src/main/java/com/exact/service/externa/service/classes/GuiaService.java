@@ -54,14 +54,14 @@ import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
-import com.exact.service.externa.dao.ISubambitoPlazoDistribucionDao;
+import com.exact.service.externa.dao.IRegionPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
-import com.exact.service.externa.entity.SubambitoPlazoDistribucion;
+import com.exact.service.externa.entity.RegionPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Envio;
@@ -123,7 +123,7 @@ public class GuiaService implements IGuiaService{
 	ISeguimientoDocumentoDao seguimientoDocumentodao;
 	
 	@Autowired
-	ISubambitoPlazoDistribucionDao subambitoplazodao;
+	IRegionPlazoDistribucionDao subambitoplazodao;
 
 	@Autowired
 	IRegionEdao ambitodiasdao;
@@ -304,7 +304,6 @@ public class GuiaService implements IGuiaService{
 		
 		Set<SeguimientoGuia> sg = new HashSet<SeguimientoGuia>(seguimientoGuiaList);
 		guiaEnviada.setSeguimientosGuia(sg);
-		guiaEnviada.setRegionId(LIMA);
 		Set<DocumentoGuia> lista = guiaEnviada.getDocumentosGuia();
 		List<DocumentoGuia> listDG = new ArrayList<>(lista);
 		for (DocumentoGuia dg : listDG) {
@@ -498,7 +497,7 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
-			if(guia.getRegionId()!=null) {
+			if(guia.getUltimoSeguimientoGuia().getId()>=GUIA_ENVIADO) {
 				fechaLimite=getFechaLimite(guia);
 				guia.setFechaLimite(fechaLimite);
 			}
@@ -1013,17 +1012,20 @@ public class GuiaService implements IGuiaService{
 
 	@Override
 	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
-		SubambitoPlazoDistribucion subambito = subambitoplazodao.getPlazoDistribucionBySubambitoId(1L, guia.getPlazoDistribucion().getId());
+		Date fechaLimite = null;
+		RegionPlazoDistribucion regionplazo = subambitoplazodao.getPlazoDistribucionBySubambitoId(guia.getRegionId(), guia.getPlazoDistribucion().getId());
 		SeguimientoGuia sg = guia.getSeguimientoGuiaByEstadoId(GUIA_ENVIADO);
+		if(sg==null) {
+			return fechaLimite;
+		}
 		Calendar calendar = Calendar.getInstance();
 		Calendar envio = Calendar.getInstance();
 		envio.setTime(sg.getFecha());
 		calendar.setTime(sg.getFecha());
-		calendar.add(Calendar.HOUR_OF_DAY, subambito.getTiempoEnvio());
+		calendar.add(Calendar.HOUR_OF_DAY, regionplazo.getTiempoEnvio());
 		int dias = calendar.get(Calendar.DAY_OF_MONTH) - envio.get(Calendar.DAY_OF_MONTH);
-		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(1L,envio.getTime().toString(),dias);
+		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),envio.getTime().toString(),dias);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
-		Date fechaLimite = null;
 		try {
 			fechaLimite = format.parse(fecha.get("fechaLimite").toString());
 		} catch (Exception e) {
