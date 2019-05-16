@@ -28,9 +28,7 @@ public class Inconsistencia implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "incosistencia_id")
 	private Long id;
-	
-	@Column(name = "documento_autogenerado")
-	private String documentoAutogenerado;
+
 	@Column(name = "razon_social")
 	private String razonSocial;
 	private String contacto;
@@ -42,13 +40,23 @@ public class Inconsistencia implements Serializable{
 	private String telefono;
 	@Column(name = "numero_documento")
 	private String numeroDocumento;
+	private String resumen;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="envio_id")
-	@JsonFilter("envioFilter")
-	@JsonProperty("envio")
-	private Envio envio;
+	@Column(name="envio_id")
+	private Long envio;
 	
+	
+
+	public String getResumen() {
+		return resumen;
+	}
+
+
+
+	public void setResumen(String resumen) {
+		this.resumen = resumen;
+	}
+
 
 
 	public Long getId() {
@@ -57,13 +65,13 @@ public class Inconsistencia implements Serializable{
 
 	
 
-	public Envio getEnvio() {
+	public Long getEnvio() {
 		return envio;
 	}
 
 
 
-	public void setEnvio(Envio envio) {
+	public void setEnvio(Long envio) {
 		this.envio = envio;
 	}
 
@@ -71,18 +79,6 @@ public class Inconsistencia implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-
-
-	public String getDocumentoAutogenerado() {
-		return documentoAutogenerado;
-	}
-
-
-
-	public void setDocumentoAutogenerado(String documentoAutogenerado) {
-		this.documentoAutogenerado = documentoAutogenerado;
 	}
 
 

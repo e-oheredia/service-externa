@@ -24,8 +24,8 @@ public class InconsistenciaService implements IInconsistenciaService{
 	@Override
 	public void guardarInconsistencias(List<Inconsistencia> inconsistencias, EnvioMasivo envio) {
 		
-		for (Inconsistencia iconsistente : inconsistencias) {
-			iconsistente.setEnvio(envio);
+		for (Inconsistencia iconsistente : inconsistencias) {	
+			iconsistente.setEnvio(envio.getId());
 			inconsistenciaDao.saveAll(inconsistencias);
 		}
 		
