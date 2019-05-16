@@ -2,6 +2,7 @@ package com.exact.service.externa.controller;
 
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +33,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.classes.DocumentoService;
+import com.exact.service.externa.service.classes.GuiaService;
 import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,6 +48,12 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 @RestController
 @RequestMapping("/documentos")
 public class DocumentoController {
+	
+	
+	private static final Log Logger = LogFactory.getLog(DocumentoController.class);
+	
+	@Autowired
+	private GuiaService guiaservice;
 	
 	@Autowired
 	private DocumentoService documentoService;
@@ -293,13 +304,16 @@ public class DocumentoController {
 	
 	
 	@GetMapping("/documentosvolumen")
-	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws ClientProtocolException, IOException, JSONException, ParseException, URISyntaxException 
 	{ 
+		Logger.info("FECHA INI : "+ fechaini);
+		Logger.info("FECHA FIN : "+ fechafin);
 		
 		if(fechaini=="" || fechafin=="") 
 		{
-			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST  );
 		}
+		
 		
 		if(estado==null) {
 			return new ResponseEntity<String>("NO SE ENCUENTRA ESTADO", HttpStatus.BAD_REQUEST);
@@ -308,7 +322,6 @@ public class DocumentoController {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateI= null;
 		Date dateF= null;
-		
 		try {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
@@ -318,10 +331,22 @@ public class DocumentoController {
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 		{
+		
 			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF,estado);
+			//List<Documento> documentosVolu = StreamSupport.stream(documentosUbcp.spliterator(), false).collect(Collectors.toList());
+			
 			if(documentosUbcp==null) {
-				return new ResponseEntity<String>("no existen documentos", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<String>("no existen documentos", HttpStatus.OK);
 			}
+			
+			for(Documento documento : documentosUbcp) {
+				for(DocumentoGuia documentoguia :documento.getDocumentosGuia()) {
+					Guia guia = documentoguia.getGuia();
+					guia.setFechaLimite(guiaservice.getFechaLimite(guia));
+					documentoguia.setGuia(guia);	
+				}	
+			}	
+			
 			CommonUtils cu = new CommonUtils();	
 			Map<String, String> filter = new HashMap<String, String>();
 			filter.put("envioFilter", "documentos");
@@ -332,6 +357,7 @@ public class DocumentoController {
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 		}
+		
 		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 	}
 	
