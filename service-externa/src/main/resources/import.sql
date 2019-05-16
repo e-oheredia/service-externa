@@ -30,7 +30,6 @@ SET IDENTITY_INSERT [dbo].[tipo_servicio] ON
 
 INSERT [dbo].[tipo_servicio] ([tipo_servicio_id], [activo], [nombre]) VALUES (1, 1, N'DISTRIBUCIÓN')
 SET IDENTITY_INSERT [dbo].[tipo_servicio] OFF
---SET IDENTITY_INSERT [dbo].[envio] ON 
 
 SET IDENTITY_INSERT [dbo].[proveedor] ON 
 

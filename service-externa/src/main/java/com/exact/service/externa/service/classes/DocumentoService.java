@@ -13,6 +13,8 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,6 +67,7 @@ import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
+import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 @Service
@@ -110,6 +113,8 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	IEstadoDocumentoDao estadoDocumentodao;
 
+	@Autowired
+	IGuiaService guiaservice;
 	
 	@Override
 	@Transactional
@@ -547,7 +552,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int m = 0; 
 			while(m < productos.size()) {
-				if (documento.getEnvio().getTipoClasificacionId()== Long.valueOf(productos.get(m).get("id").toString())) {
+				if (documento.getEnvio().getProductoId()== Long.valueOf(productos.get(m).get("id").toString())) {
 					documento.getEnvio().setProducto(productos.get(m));
 					break;
 				}
@@ -556,7 +561,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int n = 0; 
 			while(n < tipoDocumentos.size()) {
-				if (documento.getEnvio().getProductoId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
+				if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
 					documento.getEnvio().setClasificacion(tipoDocumentos.get(n));
 					break;
 				}
@@ -617,11 +622,20 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin,Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin,Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin,estadoDocumentoId);
 		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 
+		for(Documento documento : documentosVolu) {
+		for(DocumentoGuia documentoguia :documento.getDocumentosGuia()) {
+			Guia guia = documentoguia.getGuia();
+			guia.setFechaLimite(guiaservice.getFechaLimite(guia));
+			documentoguia.setGuia(guia);	
+		}	
+	}
+		
+		
 		if(documentosVolu.isEmpty()) {
 			return null;
 		}

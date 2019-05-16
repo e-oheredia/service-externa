@@ -339,13 +339,13 @@ public class DocumentoController {
 				return new ResponseEntity<String>("no existen documentos", HttpStatus.OK);
 			}
 			
-			for(Documento documento : documentosUbcp) {
-				for(DocumentoGuia documentoguia :documento.getDocumentosGuia()) {
-					Guia guia = documentoguia.getGuia();
-					guia.setFechaLimite(guiaservice.getFechaLimite(guia));
-					documentoguia.setGuia(guia);	
-				}	
-			}	
+//			for(Documento documento : documentosUbcp) {
+//				for(DocumentoGuia documentoguia :documento.getDocumentosGuia()) {
+//					Guia guia = documentoguia.getGuia();
+//					guia.setFechaLimite(guiaservice.getFechaLimite(guia));
+//					documentoguia.setGuia(guia);	
+//				}	
+//			}	
 			
 			CommonUtils cu = new CommonUtils();	
 			Map<String, String> filter = new HashMap<String, String>();

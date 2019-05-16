@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 	@Inheritance(
 	    strategy = InheritanceType.JOINED
 	)
+@JsonFilter("EnvioFilter")
 public class Envio implements Serializable {	
 	
 	@Id
@@ -79,6 +80,7 @@ public class Envio implements Serializable {
 	private Set<SeguimientoAutorizado> seguimientoAutorizado;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
+	@JsonProperty("inconsistencias")
 	private Set<Inconsistencia> inconsistencias;
 	
 	public Set<SeguimientoAutorizado> getSeguimientosAutorizado() {

@@ -53,11 +53,15 @@ public class EnvioMasivoController {
 		String header = req.getHeader("Authorization");
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
 		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file,datosUsuario.get("matricula").toString() ,header);
+		if(envioMasivoRegistrado==null) {
+			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
+		}
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
@@ -88,6 +92,9 @@ public class EnvioMasivoController {
 		EnvioMasivo envioBloque = mapper.readValue(envioJsonString, EnvioMasivo.class);		
 		String header = req.getHeader("Authorization");
 		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, datosUsuario.get("matricula").toString(),header);
+		if(envioBloqueNuevo==null) {
+			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
+		}
 		guiaService.crearGuiaBloque(envioBloqueNuevo, Long.valueOf(datosUsuario.get("idUsuario").toString()), codigoGuia, proveedorId,  datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -95,6 +102,7 @@ public class EnvioMasivoController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");		
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
