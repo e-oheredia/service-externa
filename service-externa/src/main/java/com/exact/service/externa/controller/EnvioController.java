@@ -30,9 +30,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.Inconsistencia;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import com.exact.service.externa.service.interfaces.IInconsistenciaService;
 import com.exact.service.externa.utils.CommonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -50,6 +52,9 @@ public class EnvioController {
 	
 	@Autowired
 	IGuiaService guiaService;
+	
+	@Autowired
+	IInconsistenciaService inconsistenciaService;
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
@@ -66,6 +71,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -84,6 +90,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -101,6 +108,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioDenegado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -114,6 +122,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosNoAutorizados(), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -129,6 +138,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString =  cu.filterListaObjetoJson(envioService.listarEnviosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -142,6 +152,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioService.listarEnviosAutorizacion(fechaini,fechafin), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -165,6 +176,41 @@ public class EnvioController {
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioModificado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/enviosinconsistencias")
+	public ResponseEntity<String> listarEnviosInconsistencia(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws Exception {
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		Iterable<Envio> enviosInconsistencia = envioService.listarEnviosInconsistencias(fechaini, fechafin);
+		if(enviosInconsistencia==null) {
+			 return new ResponseEntity<String>("NO EXISTEN ENVIOS CON INCONSISTENCIAS", HttpStatus.BAD_REQUEST);
+		}
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(enviosInconsistencia, filter);
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/inconsistencia")
+	public ResponseEntity<String> listarInconsistenciaPorEnvioId(@PathVariable Long id) throws Exception {
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		Iterable<Inconsistencia> inconsistencias = inconsistenciaService.listarInconsistenciasPorEnvioId(id);
+		if(inconsistencias==null) {
+			return new ResponseEntity<String>("NO EXISTEN INCONSISTENCIAS PARA ESTE ENVIO", HttpStatus.BAD_REQUEST);
+		}
+		filter.put("documentosFilter", "envio");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(inconsistencias, filter);
+	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 

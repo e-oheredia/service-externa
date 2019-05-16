@@ -547,7 +547,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int m = 0; 
 			while(m < productos.size()) {
-				if (documento.getEnvio().getTipoClasificacionId()== Long.valueOf(productos.get(m).get("id").toString())) {
+				if (documento.getEnvio().getProductoId()== Long.valueOf(productos.get(m).get("id").toString())) {
 					documento.getEnvio().setProducto(productos.get(m));
 					break;
 				}
@@ -556,7 +556,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int n = 0; 
 			while(n < tipoDocumentos.size()) {
-				if (documento.getEnvio().getProductoId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
+				if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
 					documento.getEnvio().setClasificacion(tipoDocumentos.get(n));
 					break;
 				}
