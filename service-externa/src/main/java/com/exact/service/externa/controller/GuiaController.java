@@ -331,6 +331,7 @@ public class GuiaController {
 			filter.put("documentoFilter", "documentosGuia");
 			filter.put("documentosGuiaFilter", "guia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			filter.put("GuiaFilter", "documentosGuia");	
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(guia,filter);
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -440,22 +441,6 @@ public class GuiaController {
 		}
 		respuesta.put("mensaje", rpta);	
 		return new ResponseEntity<Map<String, Object>>(respuesta,status);
-	}
-	
-	
-	@GetMapping("{id}/documentoguia")
-	public ResponseEntity<String> listarDocumentoGuiaPorDocumentoId(@PathVariable Long id) throws Exception{
-		DocumentoGuia documentoGuia = documentoGuiaService.listarDocumentoGuiaPorDocId(id);
-		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentoFilter", "documentosGuia");
-		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		filter.put("GuiaFilter", "documentosGuia");	
-		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterObjetoJson(documentoGuia,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

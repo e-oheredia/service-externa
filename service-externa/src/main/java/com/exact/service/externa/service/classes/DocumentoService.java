@@ -547,7 +547,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int m = 0; 
 			while(m < productos.size()) {
-				if (documento.getEnvio().getTipoClasificacionId()== Long.valueOf(productos.get(m).get("id").toString())) {
+				if (documento.getEnvio().getProductoId()== Long.valueOf(productos.get(m).get("id").toString())) {
 					documento.getEnvio().setProducto(productos.get(m));
 					break;
 				}
@@ -556,7 +556,7 @@ public class DocumentoService implements IDocumentoService {
 			
 			int n = 0; 
 			while(n < tipoDocumentos.size()) {
-				if (documento.getEnvio().getProductoId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
+				if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tipoDocumentos.get(n).get("id").toString())) {
 					documento.getEnvio().setClasificacion(tipoDocumentos.get(n));
 					break;
 				}
@@ -622,6 +622,11 @@ public class DocumentoService implements IDocumentoService {
 		Iterable<Documento> documentos = documentoDao.listarDocumentosParaVolumen(fechaIni, fechaFin,estadoDocumentoId);
 		List<Documento> documentosVolu = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 
+		if(documentosVolu.isEmpty()) {
+			return null;
+		}
+		
+		
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarAll();
 		

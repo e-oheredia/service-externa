@@ -16,9 +16,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 	@Inheritance(
 	    strategy = InheritanceType.JOINED
 	)
+@JsonFilter("EnvioFilter")
 public class Envio implements Serializable {	
 	
 	@Id
@@ -74,12 +79,24 @@ public class Envio implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
 	private Set<SeguimientoAutorizado> seguimientoAutorizado;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
+	@JsonProperty("inconsistencias")
+	private Set<Inconsistencia> inconsistencias;
+	
 	public Set<SeguimientoAutorizado> getSeguimientosAutorizado() {
 		return seguimientoAutorizado;
 	}
 
 	public void setSeguimientosAutorizado(Set<SeguimientoAutorizado> seguimientosAutorizado) {
 		this.seguimientoAutorizado = seguimientosAutorizado;
+	}
+
+	public Set<Inconsistencia> getInconsistencias() {
+		return inconsistencias;
+	}
+
+	public void setInconsistencias(Set<Inconsistencia> inconsistencias) {
+		this.inconsistencias = inconsistencias;
 	}
 
 	public TipoEnvio getTipoEnvio() {

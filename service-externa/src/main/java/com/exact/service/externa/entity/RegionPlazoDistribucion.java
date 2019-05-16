@@ -14,20 +14,20 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.exact.service.externa.entity.id.SubambitoPlazoDistribucionId;
+import com.exact.service.externa.entity.id.RegionPlazoDistribucionId;
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Entity
-@Table(name="subambito_plazo_distribucion")
-public class SubambitoPlazoDistribucion implements Serializable {
+@Table(name="region_plazo_distribucion")
+public class RegionPlazoDistribucion implements Serializable {
 
 	@EmbeddedId
-	private SubambitoPlazoDistribucionId id;
+	private RegionPlazoDistribucionId id;
 	
 
-	@MapsId("subambitoId")
-	@JoinColumn(name="subambito_id")
-	private Long subambito;
+	@MapsId("regionId")
+	@JoinColumn(name="region_id")
+	private Long region;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@MapsId("plazoDistribucionId")
@@ -38,26 +38,25 @@ public class SubambitoPlazoDistribucion implements Serializable {
 	private int tiempoEnvio;
 
 	
-	public SubambitoPlazoDistribucionId getId() {
+	public RegionPlazoDistribucionId getId() {
 		return id;
 	}
 
 
 
-	public void setId(SubambitoPlazoDistribucionId id) {
+	public void setId(RegionPlazoDistribucionId id) {
 		this.id = id;
 	}
 
 
-
-	public Long getSubambito() {
-		return subambito;
+	public Long getRegion() {
+		return region;
 	}
 
 
 
-	public void setSubambito(Long subambito) {
-		this.subambito = subambito;
+	public void setRegion(Long region) {
+		this.region = region;
 	}
 
 
