@@ -331,6 +331,7 @@ public class GuiaController {
 			filter.put("documentoFilter", "documentosGuia");
 			filter.put("documentosGuiaFilter", "guia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+			filter.put("GuiaFilter", "documentosGuia");	
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(guia,filter);
 			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);

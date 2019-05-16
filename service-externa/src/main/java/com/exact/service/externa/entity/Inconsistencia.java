@@ -1,6 +1,7 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -28,16 +31,17 @@ public class Inconsistencia implements Serializable{
 	
 	@Column(name = "documento_autogenerado")
 	private String documentoAutogenerado;
-	@Column(name = "razon_social_destino")
-	private String razonSocialDestino;
-	@Column(name = "contacto_destino")
-	private String contactoDestino;
+	@Column(name = "razon_social")
+	private String razonSocial;
+	private String contacto;
 	private String departamento;
 	private String provincia;
 	private String distrito;
 	private String direccion;
 	private String referencia;
 	private String telefono;
+	@Column(name = "numero_documento")
+	private String numeroDocumento;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="envio_id")
@@ -45,6 +49,8 @@ public class Inconsistencia implements Serializable{
 	@JsonProperty("envio")
 	private Envio envio;
 	
+
+
 	public Long getId() {
 		return id;
 	}
@@ -80,27 +86,38 @@ public class Inconsistencia implements Serializable{
 	}
 
 
-
-	public String getRazonSocialDestino() {
-		return razonSocialDestino;
+	public String getRazonSocial() {
+		return razonSocial;
 	}
 
 
 
-	public void setRazonSocialDestino(String razonSocialDestino) {
-		this.razonSocialDestino = razonSocialDestino;
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
 	}
 
 
 
-	public String getContactoDestino() {
-		return contactoDestino;
+	public String getContacto() {
+		return contacto;
 	}
 
 
 
-	public void setContactoDestino(String contactoDestino) {
-		this.contactoDestino = contactoDestino;
+	public void setContacto(String contacto) {
+		this.contacto = contacto;
+	}
+
+
+
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+
+
+
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
 	}
 
 

@@ -21,4 +21,5 @@ public interface IEnvioService {
 	Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception;
 	Iterable<Envio> listarEnviosAutorizacion(String fechaIni, String fechaFin) throws IOException, Exception; 
 	Envio modificaPlazo(Long idEnvio, PlazoDistribucion plazo, Long idUsuario, String header) throws ParseException, IOException, JSONException;
+	Iterable<Envio> listarEnviosInconsistencias(String fechaIni, String fechaFin) throws IOException, Exception; 
 }

@@ -54,6 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
+import com.exact.service.externa.dao.IInconsistenciaDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
@@ -125,6 +126,9 @@ public class EnvioService implements IEnvioService {
 	
 	@Autowired
 	IPlazoDistribucionDao plazoDistribucionDao;
+	
+	@Autowired
+	IInconsistenciaDao inconsistenciaDao;
 
 	@Override
 	@Transactional
@@ -447,6 +451,31 @@ public class EnvioService implements IEnvioService {
 		
 		return envioDao.save(envioBD);
 		
+	}
+
+	@Override
+	public Iterable<Envio> listarEnviosInconsistencias(String fechaIni, String fechaFin) throws IOException, Exception {
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateI= null;
+		Date dateF= null;
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
+			return null;
+		}
+		Iterable<Envio> enviosInconsistencias =null;
+		List<Envio> enviosInconsistenciaslst = null;
+		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
+			enviosInconsistencias = envioDao.listarEnviosInconsistencias(dateI, dateF);
+			enviosInconsistenciaslst = StreamSupport.stream(enviosInconsistencias.spliterator(),false).collect(Collectors.toList());
+			if(enviosInconsistenciaslst.isEmpty()) {
+				return null;
+			}
+		}else {
+			return null;
+		}
+			return enviosInconsistenciaslst;
 	}
 
 }

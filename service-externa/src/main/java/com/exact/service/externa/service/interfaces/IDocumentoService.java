@@ -1,6 +1,8 @@
 package com.exact.service.externa.service.interfaces;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
@@ -29,7 +31,7 @@ public interface IDocumentoService {
 	Documento recepcionarDocumentoDevuelto(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws IOException, Exception;
 	Documento listarDocumentoUTD(String autogenerado) throws ClientProtocolException, IOException, JSONException, Exception;
-	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin, Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin, Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException;
 	Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 	Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Documento guardarCodigoDevolucion(Long documentoId, String codigoDev) throws ClientProtocolException, IOException, JSONException;

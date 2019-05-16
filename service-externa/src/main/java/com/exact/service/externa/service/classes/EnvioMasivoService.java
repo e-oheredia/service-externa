@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IEnvioMasivoDao;
+import com.exact.service.externa.dao.IInconsistenciaDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
 import com.exact.service.externa.edao.interfaces.IGestionUsuariosEdao;
@@ -44,6 +45,7 @@ import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoAutorizado;
 import com.exact.service.externa.entity.EstadoDocumento;
+import com.exact.service.externa.entity.Inconsistencia;
 import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoEnvio;
@@ -95,6 +97,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	@Autowired
 	IGestionUsuariosEdao gestionUsuarioEdao;
 	
+	
+	@Autowired
+	IInconsistenciaDao inconsistenciaEdao;
 
 	@Override
 	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file,String matricula ,String header)
@@ -102,6 +107,10 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();	
 		String ruta ="autorizaciones";
+		
+		if(envioMasivo.getDocumentos().isEmpty()) {
+			return null;
+		}
 		
 		for (Documento documento: envioMasivo.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
@@ -130,6 +139,16 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		}
 		
 		envioMasivo.setTipoEnvio(tipoEnvio);
+		
+		if(envioMasivo.getInconsistencias()!=null) {
+			List<Inconsistencia> inconsistencialst = new ArrayList<>();
+			for(Inconsistencia inconsistencia : envioMasivo.getInconsistencias()) {
+				inconsistencia.setEnvio(envioMasivo);
+				inconsistencialst.add(inconsistencia);
+			}
+			inconsistenciaEdao.saveAll(inconsistencialst);
+		}
+		
 		
 		if (file != null) {
 			String correos = null;
@@ -169,7 +188,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
 		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
 		
-		if (enviosCreadosList.size() != 0) {
+		if (!enviosCreadosList.isEmpty()) {
 			List<Long> distritoIds = new ArrayList<Long>();
 			enviosCreadosList.stream().forEach(envioCreado -> {
 				envioCreado.getDocumentos().stream().forEach(documento -> {

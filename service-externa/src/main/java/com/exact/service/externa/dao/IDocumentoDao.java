@@ -19,7 +19,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public String getMaxDocumentoAutogenerado();
 	
 	@Query("FROM Documento d WHERE d.envio IN (SELECT e FROM Envio e WHERE "
-			+ " (e.plazoDistribucion.id = ?1 AND e.tipoServicio.id =?2 AND e.productoId =?3 AND e.tipoClasificacionId=?4 AND e.tipoSeguridad.id = ?5 AND e.sedeId=?6 AND e.tipoEnvio.id=1) OR "
+			+ "(e.plazoDistribucion.id = ?1 AND e.tipoServicio.id =?2 AND e.productoId =?3 AND e.tipoClasificacionId=?4 AND e.tipoSeguridad.id = ?5 AND e.sedeId=?6 AND e.tipoEnvio.id=1) OR "
 			+ "e IN (SELECT sa.envio FROM SeguimientoAutorizado sa WHERE sa.id = (SELECT MAX(sa2.id) FROM SeguimientoAutorizado sa2 WHERE sa2.envio.id=e.id) AND sa.estadoAutorizado.id=2) ) AND "
 			+ "d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 "
 			+ "WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 2) AND "
