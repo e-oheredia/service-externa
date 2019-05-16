@@ -61,7 +61,9 @@ public class FeriadoController {
 		
 		Map<String,Object> Ambito = feriadoservice.guardarferiados(feriado);
 		
+		
 		int rpta = (int) Ambito.get("responsecode");
+		
 		
 		if(rpta==400) {
 			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);

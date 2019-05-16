@@ -31,7 +31,6 @@ SET IDENTITY_INSERT [dbo].[tipo_servicio] ON
 INSERT [dbo].[tipo_servicio] ([tipo_servicio_id], [activo], [nombre]) VALUES (1, 1, N'DISTRIBUCIÓN')
 SET IDENTITY_INSERT [dbo].[tipo_servicio] OFF
 
-
 SET IDENTITY_INSERT [dbo].[proveedor] ON 
 
 INSERT [dbo].[proveedor] ([proveedor_id], [activo], [nombre]) VALUES (1, 1, N'DOCFLOW')
@@ -136,3 +135,4 @@ INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], 
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [tiempo_envio]) VALUES (4, 1, 24)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [tiempo_envio]) VALUES (5, 1, 4)
 INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
+

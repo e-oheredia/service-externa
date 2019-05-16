@@ -139,17 +139,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		}
 		
 		envioMasivo.setTipoEnvio(tipoEnvio);
-		
-		if(envioMasivo.getInconsistencias()!=null) {
-			List<Inconsistencia> inconsistencialst = new ArrayList<>();
-			for(Inconsistencia inconsistencia : envioMasivo.getInconsistencias()) {
-				inconsistencia.setEnvio(envioMasivo);
-				inconsistencialst.add(inconsistencia);
-			}
-			inconsistenciaEdao.saveAll(inconsistencialst);
-		}
-		
-		
+	
 		if (file != null) {
 			String correos = null;
 			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
@@ -180,7 +170,18 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
 			envioMasivo.setSeguimientosAutorizado(sa);
 		}		
-		return envioMasivoDao.save(envioMasivo);
+		EnvioMasivo envioMasivoCreado = envioMasivoDao.save(envioMasivo);
+		
+		if(!envioMasivo.getInconsistencias().isEmpty()) {
+			List<Inconsistencia> inconsistencialst = new ArrayList<>();
+			for(Inconsistencia inconsistencia : envioMasivo.getInconsistencias()) {
+				inconsistencia.setEnvio(envioMasivoCreado.getId());
+				inconsistencialst.add(inconsistencia);
+			}
+			inconsistenciaEdao.saveAll(inconsistencialst);
+		}
+		
+		return envioMasivoCreado;
 	}
 	@Override	
 	public Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
