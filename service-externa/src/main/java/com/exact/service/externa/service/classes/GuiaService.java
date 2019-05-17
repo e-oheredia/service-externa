@@ -497,9 +497,9 @@ public class GuiaService implements IGuiaService{
 			guia.setCantidadRezagados(rezagados);
 			guia.setCantidadDocumentos(cont);
 			guia.setCantidadValidados(validados);
-
+			
 			if(guia.getUltimoSeguimientoGuia().getId()>=GUIA_ENVIADO) {
-        fechaLimite=getFechaLimite(guia);
+				fechaLimite=getFechaLimite(guia);
 				guia.setFechaLimite(fechaLimite);
 			}
 		}
@@ -618,7 +618,7 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		Date dateI= null;
 		Date dateF= null;
-		int cont=0;
+		
 		try {
 			dateI = dt.parse(fechaIni);
 			dateF = dt.parse(fechaFin); 
@@ -747,7 +747,7 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuiaList.add(seguimientoGuia);
 		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
 		guia.setSeguimientosGuia(sg);
-		
+		guia.setRegionId(LIMA);
 		guiaDao.save(guia);
 		
 		return guia;
