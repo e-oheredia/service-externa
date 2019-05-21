@@ -172,9 +172,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		}		
 		EnvioMasivo envioMasivoCreado = envioMasivoDao.save(envioMasivo);
 		
-		if(!envioMasivo.getInconsistencias().isEmpty()) {
+		if(!envioMasivo.getInconsistenciasDocumento().isEmpty()) {
 			List<Inconsistencia> inconsistencialst = new ArrayList<>();
-			for(Inconsistencia inconsistencia : envioMasivo.getInconsistencias()) {
+			for(Inconsistencia inconsistencia : envioMasivo.getInconsistenciasDocumento()) {
 				inconsistencia.setEnvio(envioMasivoCreado.getId());
 				inconsistencialst.add(inconsistencia);
 			}
