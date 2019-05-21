@@ -475,7 +475,22 @@ public class EnvioService implements IEnvioService {
 		}else {
 			return null;
 		}
-			return enviosInconsistenciaslst;
+		
+		List<Long> buzonIds = enviosInconsistenciaslst.stream().map(Envio::getBuzonId).collect(Collectors.toList());
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+
+		for(Envio envio : enviosInconsistenciaslst) {
+			int i = 0;
+			while (i < buzones.size()) {
+				if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					envio.setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+		}
+		
+		return enviosInconsistenciaslst;
 	}
 
 }

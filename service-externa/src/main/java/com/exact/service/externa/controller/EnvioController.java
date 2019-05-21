@@ -173,6 +173,7 @@ public class EnvioController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		filter.put("EnvioFilter", "inconsistencias");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioModificado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);

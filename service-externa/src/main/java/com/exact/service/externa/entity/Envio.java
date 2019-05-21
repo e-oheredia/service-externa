@@ -77,26 +77,26 @@ public class Envio implements Serializable {
 	private TipoEnvio tipoEnvio;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
-	private Set<SeguimientoAutorizado> seguimientoAutorizado;
+	private Set<SeguimientoAutorizado> seguimientosAutorizado;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "envio")
-	@JsonProperty("inconsistencias")
-	private Set<Inconsistencia> inconsistencias;
+	@JsonProperty("inconsistenciasDocumento")
+	private Set<Inconsistencia> inconsistenciasDocumento;
 	
 	public Set<SeguimientoAutorizado> getSeguimientosAutorizado() {
-		return seguimientoAutorizado;
+		return seguimientosAutorizado;
 	}
 
 	public void setSeguimientosAutorizado(Set<SeguimientoAutorizado> seguimientosAutorizado) {
-		this.seguimientoAutorizado = seguimientosAutorizado;
+		this.seguimientosAutorizado = seguimientosAutorizado;
 	}
 
-	public Set<Inconsistencia> getInconsistencias() {
-		return inconsistencias;
+	public Set<Inconsistencia> getInconsistenciasDocumento() {
+		return inconsistenciasDocumento;
 	}
 
-	public void setInconsistencias(Set<Inconsistencia> inconsistencias) {
-		this.inconsistencias = inconsistencias;
+	public void setInconsistenciasDocumento(Set<Inconsistencia> inconsistenciasDocumento) {
+		this.inconsistenciasDocumento = inconsistenciasDocumento;
 	}
 
 	public TipoEnvio getTipoEnvio() {
@@ -157,13 +157,6 @@ public class Envio implements Serializable {
 		this.sedeId = Long.valueOf(sede.get("id").toString());
 		this.sede = sede;
 	}
-
-//	@PrePersist
-//	public void prePersist() {
-//		if (rutaAutorizacion == null || rutaAutorizacion.isEmpty()) {
-//			this.autorizado = true;
-//		}
-//	}	
 	
 	public Long getId() {
 		return id;
@@ -183,18 +176,7 @@ public class Envio implements Serializable {
 	public void setRutaAutorizacion(String rutaAutorizacion) {
 		this.rutaAutorizacion = rutaAutorizacion;
 	}
-//	public boolean isAutorizado() {
-//		return autorizado;
-//	}
-//	public void setAutorizado(boolean autorizado) {
-//		this.autorizado = autorizado;
-//	}
-//	public Long getTipoDocumentoId() {
-//		return tipoDocumentoId;
-//	}
-//	public void setTipoDocumentoId(Long tipoDocumentoId) {
-//		this.tipoDocumentoId = tipoDocumentoId;
-//	}
+
 	public PlazoDistribucion getPlazoDistribucion() {
 		return plazoDistribucion;
 	}
