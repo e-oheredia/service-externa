@@ -190,7 +190,7 @@ public class RegionEdao implements IRegionEdao {
 	}
 	
 	@Override
-	public Map<String, Object> listarFechaLimite(Long id, String fecha, int dia) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
+	public Map<String, Object> listarFechaLimite(Long id, String fecha, double dia) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
 		String dias = String.valueOf(dia);
 		URI uri = new URIBuilder(regionesPath + path +"/"+ id +"/fechalimite") 
 			    .addParameter("fecha", fecha) 

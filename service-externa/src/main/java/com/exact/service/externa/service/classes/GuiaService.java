@@ -12,6 +12,10 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 import static com.exact.service.externa.enumerator.RegionEnum.LIMA;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
+import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
+
 
 
 
@@ -1014,18 +1018,21 @@ public class GuiaService implements IGuiaService{
 	@Override
 	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		Date fechaLimite = null;
+		double horas = 0.0;
 		RegionPlazoDistribucion regionplazo = subambitoplazodao.getPlazoDistribucionBySubambitoId(guia.getRegionId(), guia.getPlazoDistribucion().getId());
 		SeguimientoGuia sg = guia.getSeguimientoGuiaByEstadoId(GUIA_ENVIADO);
+		Long tipoPlazo = guia.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
 		if(sg==null) {
 			return fechaLimite;
 		}
-		Calendar calendar = Calendar.getInstance();
 		Calendar envio = Calendar.getInstance();
 		envio.setTime(sg.getFecha());
-		calendar.setTime(sg.getFecha());
-		calendar.add(Calendar.HOUR_OF_DAY, regionplazo.getTiempoEnvio());
-		int dias = calendar.get(Calendar.DAY_OF_MONTH) - envio.get(Calendar.DAY_OF_MONTH);
-		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),envio.getTime().toString(),dias);
+		if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
+			horas = (Math.ceil(regionplazo.getTiempoEnvio()/24.0))*24;
+		}else if(tipoPlazo==EXPRESS) {
+			horas = (double) regionplazo.getTiempoEnvio();
+		}
+		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),envio.getTime().toString(),horas);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
 		try {
 			fechaLimite = format.parse(fecha.get("fechaLimite").toString());
