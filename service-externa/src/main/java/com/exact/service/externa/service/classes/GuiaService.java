@@ -1014,7 +1014,7 @@ public class GuiaService implements IGuiaService{
 		return map;
 
 	}
-
+	
 	@Override
 	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		Date fechaLimite = null;
@@ -1026,6 +1026,7 @@ public class GuiaService implements IGuiaService{
 			return fechaLimite;
 		}
 		Calendar envio = Calendar.getInstance();
+		
 		envio.setTime(sg.getFecha());
 		if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
 			horas = (Math.ceil(regionplazo.getTiempoEnvio()/24.0))*24;
