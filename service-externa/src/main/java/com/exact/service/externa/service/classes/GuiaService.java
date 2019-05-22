@@ -1032,10 +1032,13 @@ public class GuiaService implements IGuiaService{
 		}else if(tipoPlazo==EXPRESS) {
 			horas = (double) regionplazo.getTiempoEnvio();
 		}
-		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),envio.getTime().toString(),horas);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
+		Date utilDate = envio.getTime();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),format.format(utilDate).toString(),horas);
 		try {
-			fechaLimite = format.parse(fecha.get("fechaLimite").toString());
+			fechaLimite = format2.parse(fecha.get("fechaLimite").toString());
 		} catch (Exception e) {
 			return null;
 		}
