@@ -61,7 +61,7 @@ public class EnvioMasivoController {
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		filter.put("EnvioFilter", "inconsistencias");
+		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
@@ -79,7 +79,7 @@ public class EnvioMasivoController {
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		filter.put("EnvioFilter", "inconsistencias");
+		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -103,7 +103,7 @@ public class EnvioMasivoController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");		
-		filter.put("EnvioFilter", "inconsistencias");
+		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
