@@ -301,6 +301,10 @@ INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], 
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (3, 1, NULL, 48)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (4, 1, NULL, 24)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (5, 1, NULL, 4)
+INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (6, 1, NULL, 2)
+INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (7, 1, NULL, 2)
+
+
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (1, 2)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (2, 1)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [plazo_distribucion_id]) VALUES (3, 1)
