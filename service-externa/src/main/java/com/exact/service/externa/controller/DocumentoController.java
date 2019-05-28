@@ -447,4 +447,42 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
+	@GetMapping("/documentosrecepcion")
+	public ResponseEntity<String> listarDocumentosaRecepcionar(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Iterable<Documento> documentos = documentoService.listarDocumentosRecepcion(datosUsuario.get("matricula").toString());
+		if(documentos==null) {
+			return new ResponseEntity<String>("NO EXISTEN DOCUMENTOS PARA RECEPCIONAR", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterListaObjetoJson(documentos,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/listarecepcion")
+	public ResponseEntity<String> listarDocumentoRecepcionado(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Documento documento = documentoService.listarDocumentoaRecepcionar(id, datosUsuario.get("matricula").toString());
+		if(documento==null) {
+			return new ResponseEntity<String>("NO SE PUEDE RECEPCIONAR EL DOCUMENTO", HttpStatus.NOT_FOUND);
+		}
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
 }

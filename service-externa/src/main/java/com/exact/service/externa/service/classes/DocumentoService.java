@@ -752,6 +752,41 @@ public class DocumentoService implements IDocumentoService {
 	
 	}
 
+	@Override
+	public Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException {
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		Iterable<Documento> documentosBD = documentoDao.listarDocumentosParaRecepcionar(Long.valueOf(sede.get("id").toString()));
+		List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+		List<Long> buzonIds = new ArrayList();
+		
+		for (Documento documento : documentolst) {
+			buzonIds.add(documento.getEnvio().getBuzonId());
+		}
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		for (Documento documento : documentolst) {
+			int i = 0; 
+			while(i < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(i));
+					break;
+				}
+				i++;
+			}
+		}
+		
+		return documentolst;
+	}
+
+	@Override
+	public Documento listarDocumentoaRecepcionar(Long documentoId, String matricula) throws ClientProtocolException, IOException, JSONException {
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		Documento documento = documentoDao.findDocumentoaRecepcionar(documentoId,Long.valueOf(sede.get("id").toString()));
+		if(documento==null) {
+			return null;
+		}
+		return documento;
+	}
+
 
 
 }
