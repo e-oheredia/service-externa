@@ -36,6 +36,7 @@ import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.TipoDevolucion;
 import com.exact.service.externa.service.classes.DocumentoService;
 import com.exact.service.externa.service.classes.GuiaService;
 import com.exact.service.externa.utils.CommonUtils;
@@ -483,6 +484,25 @@ public class DocumentoController {
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@PutMapping("{id}/recepcion")
+	public ResponseEntity<String> recepcionCargosDocumentos(@PathVariable Long id, @RequestBody List<TipoDevolucion> tiposDevolucion,Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		CommonUtils cu = new CommonUtils();
+		Documento documento = documentoService.recepcionDocumento(id, Long.valueOf(datosUsuario.get("idUsuario").toString()),tiposDevolucion);
+		if(documento==null) {
+			return new ResponseEntity<String>("NO SE PUDO RECEPCIONAR", HttpStatus.BAD_REQUEST);
+		}
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentosGuiaFilter", "documento");
+		filter.put("guiaFilter","documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		///////////////////////////////////////////////////////////
+		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
 	}
 	
 }

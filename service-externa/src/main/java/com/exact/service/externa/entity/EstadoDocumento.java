@@ -49,6 +49,21 @@ public class EstadoDocumento implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "estadoDocumento")
 	private Set<MotivoEstado> motivos;
 	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="resultado_tipo_devolucion", joinColumns = { @JoinColumn(name = "estado_documento_id") },
+    inverseJoinColumns = { @JoinColumn(name = "tipo_devolucion_id") })
+	private Set<TipoDevolucion> tiposDevolucion;
+	
+	
+	
+	public Set<TipoDevolucion> getTiposDevolucion() {
+		return tiposDevolucion;
+	}
+
+	public void setTiposDevolucion(Set<TipoDevolucion> tiposDevolucion) {
+		this.tiposDevolucion = tiposDevolucion;
+	}
+
 	public Set<EstadoDocumento> getEstadosDocumentoPermitidos() {
 		return estadosDocumentoPermitidos;
 	}

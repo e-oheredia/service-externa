@@ -17,6 +17,7 @@ import org.json.JSONException;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
+import com.exact.service.externa.entity.TipoDevolucion;
 
 public interface IDocumentoService {
 
@@ -38,4 +39,5 @@ public interface IDocumentoService {
 	Iterable<Documento> listarDocumentosByGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento listarDocumentoaRecepcionar(Long documentoId, String matricula) throws ClientProtocolException, IOException, JSONException;
+	Documento recepcionDocumento(Long documentoId, Long idUsuario, List<TipoDevolucion> tiposDevolucion) throws ClientProtocolException, IOException, JSONException;
 }
