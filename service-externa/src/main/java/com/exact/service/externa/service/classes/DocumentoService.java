@@ -9,6 +9,7 @@ import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 
@@ -64,6 +65,7 @@ import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
+import com.exact.service.externa.entity.TipoDevolucion;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
@@ -785,6 +787,36 @@ public class DocumentoService implements IDocumentoService {
 			return null;
 		}
 		return documento;
+	}
+
+	@Override
+	public Documento recepcionDocumento(Long documentoId, Long idUsuario, List<TipoDevolucion> tiposDevolucion) throws ClientProtocolException, IOException, JSONException {
+		
+		Documento documento = documentoDao.findById(documentoId).orElse(null);
+		if(documento==null) {
+			return null;
+		}
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
+		
+		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO && sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=NO_DISTRIBUIBLE) {
+			return null;
+		}
+		Set<TipoDevolucion> tipodevolucion = new HashSet<TipoDevolucion>(tiposDevolucion);
+		documento.setTiposDevolucion(tipodevolucion);
+		EstadoDocumento estado = new EstadoDocumento();
+		estado.setId(RECEPCIONADO);
+		SeguimientoDocumento sdocumento = new SeguimientoDocumento();
+		sdocumento.setUsuarioId(idUsuario);
+		sdocumento.setEstadoDocumento(estado);
+		sdocumento.setLinkImagen(sdMax.getLinkImagen());
+		sdocumento.setDocumento(documento);
+		seguimientosDocumentolst.add(sdocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		return documentoDao.save(documento);
 	}
 
 

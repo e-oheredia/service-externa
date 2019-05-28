@@ -249,6 +249,13 @@ INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (2, N'REZ
 INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (3, N'DENUNCIA')
 SET IDENTITY_INSERT [dbo].[tipo_devolucion] OFF
 INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
+INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (1, 4)
+INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (1, 5)
+INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (2, 5)
+INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (2, 6)
+INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (3, 6)
+
+
 
 
 
