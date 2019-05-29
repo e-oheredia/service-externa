@@ -7,12 +7,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.dao.IAreaPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IAreaEdao;
+import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IAreaPlazoDistribucionService;
 
@@ -24,15 +28,30 @@ public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionServi
 	@Autowired
 	IAreaEdao areaEdao;
 	
+	@Autowired
+	IHandleFileEdao handleFileEdao;
+	
 	@Override
 	public AreaPlazoDistribucion listarById(Long id) {
 		return areaPlazoDistribucionDao.getPlazoDistribucionIdByAreaId(id);
 	}
 	
 	@Override
-	public AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion) {
+	public AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion, MultipartFile file) throws IOException {
 		if (areaPlazoDistribucionDao.existsById(areaPlazoDistribucion.getAreaId())) {
-			return areaPlazoDistribucionDao.save(areaPlazoDistribucion);
+			String ruta = "autorizaciones";
+			if(file!=null) {
+				String rutaAutorizacion = file.toString() + "."
+						+ FilenameUtils.getExtension(file.getOriginalFilename());
+				areaPlazoDistribucion.setRutaAutorizacion(rutaAutorizacion);
+				MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
+						file.getContentType(), file.getInputStream());
+				if (handleFileEdao.upload(multipartFile,ruta) != 1) {
+					return null;
+				}
+				return areaPlazoDistribucionDao.save(areaPlazoDistribucion);
+			}
+			return null;
 		}
 		return null;
 	}
