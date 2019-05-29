@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
@@ -35,12 +37,12 @@ public class AreaController {@Autowired
 
 	@PutMapping("/{id}/plazosdistribucion")
 	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody PlazoDistribucion plazoDistribucion) {
+			@RequestBody PlazoDistribucion plazoDistribucion, @RequestParam MultipartFile file) throws IOException {
 		AreaPlazoDistribucion areaPlazoDistribucion = new AreaPlazoDistribucion();
 		areaPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		areaPlazoDistribucion.setAreaId(id);
 		AreaPlazoDistribucion areaPlazoDistribucionActualizado = areaPlazoDistribucionService
-				.actualizar(areaPlazoDistribucion);
+				.actualizar(areaPlazoDistribucion,file);
 		return new ResponseEntity<PlazoDistribucion>(
 				areaPlazoDistribucionActualizado == null ? null
 						: areaPlazoDistribucionActualizado.getPlazoDistribucion(),
