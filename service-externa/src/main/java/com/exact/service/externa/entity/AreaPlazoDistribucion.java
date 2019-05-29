@@ -27,8 +27,16 @@ public class AreaPlazoDistribucion implements Serializable {
 	private PlazoDistribucion plazoDistribucion;
 	@Transient
 	private Map<String, Object> area;
+	@Column(name="ruta_autorizacion")
+	private String rutaAutorizacion;
 	
 	
+	public String getRutaAutorizacion() {
+		return rutaAutorizacion;
+	}
+	public void setRutaAutorizacion(String rutaAutorizacion) {
+		this.rutaAutorizacion = rutaAutorizacion;
+	}
 	public PlazoDistribucion getPlazoDistribucion() {
 		return plazoDistribucion;
 	}

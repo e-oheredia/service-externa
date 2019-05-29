@@ -6,12 +6,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.dao.IBuzonPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
+import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.service.interfaces.IBuzonPlazoDistribucionService;
 
@@ -24,15 +28,30 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	@Autowired
 	IBuzonEdao buzonEdao;
 	
+	@Autowired
+	IHandleFileEdao handleFileEdao;
+	
 	@Override
 	public BuzonPlazoDistribucion listarById(Long id) {
 		return buzonPlazoDistribucionDao.getPlazoDistribucionIdByBuzonId(id);
 	}
 	
 	@Override
-	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion) {
+	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion, MultipartFile file) throws IOException  {
 		if (buzonPlazoDistribucionDao.existsById(buzonPlazoDistribucion.getBuzonId())) {
-			return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
+			String ruta ="Autorizaciones";
+			if(file!=null) {
+				String rutaAutorizacion = file.toString() + "."
+						+ FilenameUtils.getExtension(file.getOriginalFilename());
+				buzonPlazoDistribucion.setRutaAutorizacion(rutaAutorizacion);
+				MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
+						file.getContentType(), file.getInputStream());
+				if (handleFileEdao.upload(multipartFile,ruta) != 1) {
+					return null;
+				}
+				return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
+			}
+			return null;
 		}
 		return null;
 		

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
@@ -46,12 +48,12 @@ public class BuzonController {
 
 	@PutMapping("/{id}/plazosdistribucion")
 	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody PlazoDistribucion plazoDistribucion) {
+			@RequestBody PlazoDistribucion plazoDistribucion, @RequestParam MultipartFile file) throws IOException {
 		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
 		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		buzonPlazoDistribucion.setBuzonId(id);
 		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
-				.actualizar(buzonPlazoDistribucion);
+				.actualizar(buzonPlazoDistribucion,file);
 		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
