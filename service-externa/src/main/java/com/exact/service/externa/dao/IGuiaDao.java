@@ -72,5 +72,12 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 			+ "SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("
 			+ "SELECT MAX(sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = d.id) AND sg.estadoGuia.id=4)")
 	public Iterable<Guia> listarGuiasCompletadas();	
+
+	@Query("FROM Guia g WHERE g.numeroGuia=?1 AND g IN (SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("
+			+ "SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = g.id) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3))")
+	public Guia findBynumeroGuiaActiva(String numeroGuia);
 	
+	@Query("FROM Guia g WHERE g IN (SELECT sg.guia FROM SeguimientoGuia sg "
+			+ "WHERE sg.id = (SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id=g.id) AND (cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date)) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3))")
+	public Iterable<Guia> listarGuiasActivasPorFechas(Date fechaIni, Date fechaFin);
 }

@@ -15,6 +15,8 @@ import static com.exact.service.externa.enumerator.RegionEnum.LIMA;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
+import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_ACTIVA;
+import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_NORMAL;
 
 
 
@@ -572,14 +574,19 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Guia listarPorNumeroGuia(String numeroguia) throws ClientProtocolException, IOException, JSONException, Exception {
-		Guia guia = guiaDao.findBynumeroGuia(numeroguia);
-		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
-		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-		Date fechaLimite= null;
+	public Guia listarPorNumeroGuia(String numeroguia, Long verificador) throws ClientProtocolException, IOException, JSONException, Exception {
+		Guia guia = null;
+		if(verificador==GUIA_ACTIVA) {
+			guia = guiaDao.findBynumeroGuiaActiva(numeroguia);
+		}else if(verificador==GUIA_NORMAL) {
+			guia = guiaDao.findBynumeroGuia(numeroguia);
+		}
 		if(guia==null) {
 			return null;
 		}
+		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
+		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
+		Date fechaLimite= null;
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		for(int i=0;i<sedes.size();i++) {
 			if(guia.getSedeId()==Long.valueOf(sedes.get(i).get("id").toString())) {
@@ -616,7 +623,7 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin) throws ClientProtocolException, IOException, JSONException, Exception {
+	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin, Long verificador) throws ClientProtocolException, IOException, JSONException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
@@ -630,7 +637,12 @@ public class GuiaService implements IGuiaService{
 			return null;
 		}
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
-			Iterable<Guia> guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF);
+			Iterable<Guia> guiasBD = null;
+			if(verificador==GUIA_ACTIVA) {
+				guiasBD = guiaDao.listarGuiasActivasPorFechas(dateI, dateF);
+			}else if(verificador==GUIA_NORMAL) {
+				guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF);
+			}
 			if(guiasBD==null) {
 				return null;
 			}
