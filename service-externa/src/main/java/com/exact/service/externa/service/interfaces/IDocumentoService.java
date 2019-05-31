@@ -35,7 +35,7 @@ public interface IDocumentoService {
 	Iterable<Documento> listarDocumentosParaVolumen(Date fechaIni, Date fechaFin, Long estadoDocumentoId) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException;
 	Iterable<Documento> listarCargos(Date fechaIni, Date fechaFin) throws ClientProtocolException, IOException, JSONException;
 	Documento cambiarEstadoDocumento(Long id, SeguimientoDocumento sd, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
-	Documento guardarCodigoDevolucion(Long documentoId, String codigoDev) throws ClientProtocolException, IOException, JSONException;
+	Documento guardarCodigoDevolucion(Long documentoId, String codigoDev, Long idUsuario) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosByGuia(Long guiaId) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento listarDocumentoaRecepcionar(Long documentoId, String matricula) throws ClientProtocolException, IOException, JSONException;
