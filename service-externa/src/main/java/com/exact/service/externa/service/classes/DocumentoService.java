@@ -10,6 +10,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 
@@ -746,7 +747,7 @@ public class DocumentoService implements IDocumentoService {
 		Documento documento = documentoBD.get();
 		documento.setCodigoDevolucion(codigoDev);
 		EstadoDocumento estadoDocumento = new EstadoDocumento();
-		estadoDocumento.setId(RECEPCIONADO);
+		estadoDocumento.setId(CERRADO);
 		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
 		SeguimientoDocumento sdocumento = new SeguimientoDocumento();
 		sdocumento.setUsuarioId(idUsuario);
