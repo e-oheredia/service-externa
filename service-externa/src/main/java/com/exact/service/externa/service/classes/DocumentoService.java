@@ -735,7 +735,7 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Documento guardarCodigoDevolucion(Long documentoId, String codigoDev) throws ClientProtocolException, IOException, JSONException {
+	public Documento guardarCodigoDevolucion(Long documentoId, String codigoDev, Long idUsuario) throws ClientProtocolException, IOException, JSONException {
 		if(codigoDev==null) {
 			return null;
 		}
@@ -745,6 +745,18 @@ public class DocumentoService implements IDocumentoService {
 		}
 		Documento documento = documentoBD.get();
 		documento.setCodigoDevolucion(codigoDev);
+		EstadoDocumento estadoDocumento = new EstadoDocumento();
+		estadoDocumento.setId(RECEPCIONADO);
+		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdocumento = new SeguimientoDocumento();
+		sdocumento.setUsuarioId(idUsuario);
+		sdocumento.setEstadoDocumento(estadoDocumento);
+		sdocumento.setDocumento(documento);
+		seguimientosDocumentolst.add(sdocumento);
+		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		documento.setSeguimientosDocumento(sd);
+		
 		return documentoDao.save(documento);
 	}
 
