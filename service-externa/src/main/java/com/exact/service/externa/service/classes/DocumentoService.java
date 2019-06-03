@@ -68,6 +68,7 @@ import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.TipoDevolucion;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
+import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
@@ -116,6 +117,9 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	IEstadoDocumentoDao estadoDocumentodao;
 
+	@Autowired
+	IDocumentoReporteService documentoReporteservice;
+	
 	@Autowired
 	IGuiaService guiaservice;
 	
@@ -266,20 +270,24 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	@Transactional()
-	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException {	
+	public Map<Integer,String> cargarResultados(List<Documento> documentosExcelList, Long usuarioId) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {	
 		
 		
 		Map<Integer,String> map = new HashMap<Integer,String>();
 		
-		List<String> autogeneradoList = new ArrayList<String>();		
+		List<String> autogeneradoList = new ArrayList<String>();
+		
+		List<Long> guiaids = new ArrayList();
 		
 		for(Documento documento : documentosExcelList) {
 			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
 		
+		
 		Guia guia = guiadao.findGuiabyAutogenerado(documentosExcelList.get(0).getDocumentoAutogenerado());
 		
 		List<Documento> documentosBDList = StreamSupport.stream(documentoDao.findAllByDocumentoAutogeneradoIn(autogeneradoList).spliterator(), false).collect(Collectors.toList());	 
+		
 		
 
 		if (documentosBDList.size()==0) {
@@ -289,7 +297,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		
 		for(Documento documento : documentosExcelList) {					
-			
+			int i=0;
 			Optional<Documento> d = documentosBDList.stream().filter(a -> a.getDocumentoAutogenerado().equals(documento.getDocumentoAutogenerado())).findFirst();
 			
 			
@@ -347,6 +355,12 @@ public class DocumentoService implements IDocumentoService {
 					map.put(7, "EL MOTIVO NO CORRESPONDE A EL ESTADO INGRESADO");
 				}
 			}
+			
+			
+			for (DocumentoGuia dg : documentoBD.getDocumentosGuia()) {
+				guiaids.add(dg.getGuia().getId());
+			}
+			guiaids = guiaids.stream().distinct().collect(Collectors.toList());
 			SeguimientoDocumento seguimientoDocumentoNuevo = new SeguimientoDocumento();
 			seguimientoDocumentoNuevo.setDocumento(documentoBD);
 			seguimientoDocumentoNuevo.setObservacion(seguimientoDocumentoExcel.getObservacion());
@@ -361,7 +375,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		
 		documentoDao.saveAll(documentosBDList);		
-		
+		documentoReporteservice.actualizarDocumentosPorResultado(documentosBDList, guiaids);
 		boolean rpta = guiadao.existeDocumentosPendientes(guia.getId());
 		if(!rpta) {
 			List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
@@ -829,7 +843,12 @@ public class DocumentoService implements IDocumentoService {
 		
 		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
 		documento.setSeguimientosDocumento(sd);
-		return documentoDao.save(documento);
+		Documento documentoguardado = documentoDao.save(documento);
+		
+		documentoReporteservice.actualizarDocumentosRecepcionados(documentoguardado.getId());
+		
+		return documentoguardado;
+		
 	}
 
 
