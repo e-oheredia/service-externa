@@ -39,9 +39,9 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	@Override
 	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion, MultipartFile file) throws IOException  {
 		if (buzonPlazoDistribucionDao.existsById(buzonPlazoDistribucion.getBuzonId())) {
-			String ruta ="Autorizaciones";
+			String ruta ="asignaciones";
 			if(file!=null) {
-				String rutaAutorizacion = file.toString() + "."
+				String rutaAutorizacion = buzonPlazoDistribucion.getBuzonId().toString() + "."
 						+ FilenameUtils.getExtension(file.getOriginalFilename());
 				buzonPlazoDistribucion.setRutaAutorizacion(rutaAutorizacion);
 				MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,

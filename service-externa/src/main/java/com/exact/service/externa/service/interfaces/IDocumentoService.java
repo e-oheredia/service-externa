@@ -24,7 +24,7 @@ public interface IDocumentoService {
 	int custodiarDocumentos(Iterable<Documento> documentos, Long usuarioId);
 	Iterable<Documento> listarDocumentosGuiaPorCrear(Guia guia, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Iterable<Documento> listarDocumentosPorEstado()throws ClientProtocolException, IOException, JSONException;
-	Map<Integer,String> cargarResultados(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException;
+	Map<Integer,String> cargarResultados(List<Documento> documentos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException;
 	Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws IOException, Exception;
 	Iterable<Documento> listarDocumentosEntregados(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionarDocumentoEntregado(Long id, Long idUsuario) throws ClientProtocolException, IOException, JSONException;

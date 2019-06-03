@@ -39,9 +39,9 @@ public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionServi
 	@Override
 	public AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion, MultipartFile file) throws IOException {
 		if (areaPlazoDistribucionDao.existsById(areaPlazoDistribucion.getAreaId())) {
-			String ruta = "autorizaciones";
+			String ruta = "asignaciones";
 			if(file!=null) {
-				String rutaAutorizacion = file.toString() + "."
+				String rutaAutorizacion = areaPlazoDistribucion.getAreaId().toString() + "."
 						+ FilenameUtils.getExtension(file.getOriginalFilename());
 				areaPlazoDistribucion.setRutaAutorizacion(rutaAutorizacion);
 				MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
