@@ -255,9 +255,3 @@ INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_document
 INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (2, 5)
 INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (2, 6)
 INSERT [dbo].[resultado_tipo_devolucion] ([tipo_devolucion_id], [estado_documento_id]) VALUES (3, 6)
-
-
-
-
-
-
