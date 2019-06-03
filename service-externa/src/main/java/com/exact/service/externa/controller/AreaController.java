@@ -3,6 +3,8 @@ package com.exact.service.externa.controller;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +40,7 @@ public class AreaController {@Autowired
 
 	@PutMapping("/{id}/plazosdistribucion")
 	public ResponseEntity<PlazoDistribucion> actualizarBuzonPlazoDistribucion(@PathVariable Long id,
-			@RequestBody PlazoDistribucion plazoDistribucion, @RequestParam MultipartFile file) throws IOException {
+			@RequestPart("plazoDistribucion") @Valid PlazoDistribucion plazoDistribucion, @RequestPart("file") MultipartFile file) throws IOException {
 		AreaPlazoDistribucion areaPlazoDistribucion = new AreaPlazoDistribucion();
 		areaPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		areaPlazoDistribucion.setAreaId(id);

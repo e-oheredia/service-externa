@@ -81,6 +81,7 @@ import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.TipoGuia;
 import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoGuiaService;
+import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
@@ -133,6 +134,9 @@ public class GuiaService implements IGuiaService{
 
 	@Autowired
 	IRegionEdao ambitodiasdao;
+	
+	@Autowired
+	IDocumentoReporteService documentoreporteservice;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -322,7 +326,8 @@ public class GuiaService implements IGuiaService{
 			dg.getDocumento().setSeguimientosDocumento(sd);
 		}
 		
-		 guiaDao.save(guiaEnviada);
+		 Guia guiacreada = guiaDao.save(guiaEnviada);
+		 documentoreporteservice.insertarDocumentosReporte(guiacreada);
 		 
 		 return 1;
 		
