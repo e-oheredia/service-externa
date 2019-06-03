@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.service.interfaces.IReporteService;
@@ -23,9 +24,12 @@ public class ReporteController {
 	
 	
 	@GetMapping("/volumen/curier")
-	public ResponseEntity< Map<String, Float>> findSedeByMatricula(@PathVariable String matricula)
+	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
-		Map<String, Float> reportecurier = reporteservice.volumenbycurier();
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<String, Float> reportecurier = reporteservice.volumenbycurier(fechaini, fechafin);
 		return new ResponseEntity<Map<String, Float> >(reportecurier,HttpStatus.OK);
 	}
 	

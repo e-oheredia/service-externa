@@ -7,6 +7,6 @@ import org.json.JSONException;
 
 public interface IReporteService {
 	
-	public Map<String, Float> volumenbycurier() throws IOException, JSONException;
+	public Map<String, Float> volumenbycurier(String fechaini,String fechainifin) throws IOException, JSONException;
 
 }
