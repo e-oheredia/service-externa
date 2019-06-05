@@ -814,8 +814,9 @@ public class GuiaService implements IGuiaService{
 			dg.getDocumento().setSeguimientosDocumento(sd);
 		}
 		
-		return guiaDao.save(guiaBloque);
-		
+		Guia guiacreada = guiaDao.save(guiaBloque);
+		documentoreporteservice.insertarDocumentosReporte(guiacreada);
+		return guiacreada;
 		
 	}
 
