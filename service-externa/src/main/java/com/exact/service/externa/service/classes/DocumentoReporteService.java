@@ -59,7 +59,7 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 		
 		for (DocumentoGuia dg : guia.getDocumentosGuia()) {
 		
-			Documento documentoBD = dg.getDocumento();
+			Documento documentoBD = dg.getDocumento() ;
 			DocumentoReporte documentoReporte = new DocumentoReporte();
 			Map<String, Object> buzon = buzonEdao.listarById(documentoBD.getEnvio().getBuzonId());
 			Map<String, Object> area = (Map<String, Object>) buzon.get("area");

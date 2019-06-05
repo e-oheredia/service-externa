@@ -15,13 +15,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
+import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 
 @RestController
-@RequestMapping("/eficiencia")
-public class ReporteEficienciaController {
+@RequestMapping("/reportes")
+public class ReporteController {
 
 	@Autowired
 	IReporteEficienciaService reporteEficienciaservice;
+	
+	@Autowired
+	IReporteVolumenService reporteservice;
+	
+	
+	@GetMapping("/volumen/curier")
+	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
+			throws IOException, JSONException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Long,Map<String, Float>> reportecurier = reporteservice.volumenbycurier(fechaini, fechafin);
+		return new ResponseEntity<Map<Long,Map<String, Float>>>(reportecurier,HttpStatus.OK);
+	}
+
 	
 	@GetMapping
 	public ResponseEntity<Map<Long, Map<String, Integer>>> calculaPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
@@ -40,5 +56,15 @@ public class ReporteEficienciaController {
 		return new ResponseEntity<Map<Long, Map<String, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
 		
 	}
+	
+	@GetMapping("/volumen/utd")
+	public ResponseEntity<?> porcentajeporvolumenutd(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
+			throws IOException, JSONException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Long,Map<String, Float>> reportecurier = reporteservice.volumenbyutd(fechaini, fechafin);
+		return new ResponseEntity<Map<Long,Map<String, Float>>>(reportecurier,HttpStatus.OK);
+	}	
 	
 }

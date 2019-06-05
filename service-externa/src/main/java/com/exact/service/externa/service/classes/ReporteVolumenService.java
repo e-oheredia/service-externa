@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IProveedorDao;
+import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
+import com.exact.service.externa.service.interfaces.ISedeService;
 
 @Service
 public class ReporteVolumenService implements IReporteVolumenService {
@@ -30,6 +32,9 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	@Autowired
 	IProveedorDao proveedordao;
 
+	@Autowired	
+	ISedeEdao sedeEdao;
+	
 	@Override
 	public Map<Long,Map<String, Float>> volumenbycurier(String fechaIni,String fechaFin) throws IOException, JSONException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -67,6 +72,48 @@ public class ReporteVolumenService implements IReporteVolumenService {
 			multiMap.put(pro.getId(),m );
 		}
 		return multiMap;
+	}
+
+	@Override
+	public Map<Long, Map<String, Float>> volumenbyutd(String fechaIni, String fechaFin)
+			throws IOException, JSONException {
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Map<Long,Map<String, Float>> multiMap = new HashMap<>();
+
+		Date dateI= null;
+		Date dateF= null;
+		
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
+			return null;
+		}
+		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		List<DocumentoReporte> reportes = new ArrayList<>();
+		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
+		int cantidadtotal = reportes.size();		
+		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
+		Iterable<Map<String, Object>> sedes = sedeEdao.listarSedesDespacho();
+		
+		for (Map<String, Object> sede : sedes) {
+			int cantidadsede=0;
+			 		
+			Map<String, Float> m = new HashMap<String, Float>();
+			for (DocumentoReporte entidad : reportes) {
+				if (entidad.getSedeId()  == sede.get("id") ) {
+					cantidadsede++;	
+				}
+			}
+			float porcentaje=(float)cantidadsede/cantidadtotal;
+			m.put("cantidad", (float) cantidadsede);
+			m.put("porcentaje", (float)porcentaje*100);
+			multiMap.put((Long) sede.get("id") , m );
+		}
+		
+		
+		
+		return null;
 	}
 
 }
