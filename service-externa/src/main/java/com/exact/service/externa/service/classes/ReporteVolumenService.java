@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,10 +19,10 @@ import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.Proveedor;
-import com.exact.service.externa.service.interfaces.IReporteService;
+import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 
 @Service
-public class ReporteService implements IReporteService {
+public class ReporteVolumenService implements IReporteVolumenService {
 
 	@Autowired
 	IDocumentoReporteDao reportedao;
@@ -30,8 +31,9 @@ public class ReporteService implements IReporteService {
 	IProveedorDao proveedordao;
 
 	@Override
-	public Map<String, Float> volumenbycurier(String fechaIni,String fechaFin) throws IOException, JSONException {
+	public Map<Long,Map<String, Float>> volumenbycurier(String fechaIni,String fechaFin) throws IOException, JSONException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		Map<Long,Map<String, Float>> multiMap = new HashMap<>();
 
 		Date dateI= null;
 		Date dateF= null;
@@ -46,23 +48,25 @@ public class ReporteService implements IReporteService {
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		int cantidadtotal = reportes.size();
-		float porcentaje = 0;
-		Map<String, Float> m = new HashMap<String, Float>();
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
+		
 		for (Proveedor pro : proveedores) {
 			int cantidadproveedor=0;
+			 		
+			Map<String, Float> m = new HashMap<String, Float>();
 			for (DocumentoReporte entidad : reportes) {
 				if (entidad.getProveedorId() == pro.getId()) {
 					cantidadproveedor++;	
 				}
 			}
-			porcentaje=(cantidadproveedor/cantidadtotal)*100;
-			m.put(pro.getNombre(),porcentaje );
+			float porcentaje=(float)cantidadproveedor/cantidadtotal;
+			m.put("cantidad", (float) cantidadproveedor);
+			m.put("porcentaje", (float)porcentaje*100);
+			multiMap.put(pro.getId(),m );
 		}
-
-		return m;
+		return multiMap;
 	}
 
 }
