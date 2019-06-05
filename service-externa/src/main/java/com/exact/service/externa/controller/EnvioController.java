@@ -2,6 +2,7 @@ package com.exact.service.externa.controller;
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,12 +182,20 @@ public class EnvioController {
 	
 	@GetMapping("/enviosinconsistencias")
 	public ResponseEntity<String> listarEnviosInconsistencia(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws Exception {
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
-		Iterable<Envio> enviosInconsistencia = envioService.listarEnviosInconsistencias(fechaini, fechafin);
-		if(enviosInconsistencia==null) {
-			 return new ResponseEntity<String>("NO EXISTEN ENVIOS CON INCONSISTENCIAS", HttpStatus.BAD_REQUEST);
+		if(formatoDelTexto.parse(fechaini).compareTo(formatoDelTexto.parse(fechafin))>0) {
+			 return new ResponseEntity<String>("El rango de fechas es incorrecto", HttpStatus.BAD_REQUEST);
 		}
+		Map<String, String> filter = new HashMap<String, String>();
+
+		Iterable<Envio> enviosInconsistencia = envioService.listarEnviosInconsistencias(fechaini, fechafin);
+
+		
+//		if(enviosInconsistencia==null) {
+//			 return new ResponseEntity<String>("NO EXISTEN ENVIOS CON INCONSISTENCIAS", HttpStatus.OK);
+//		}
+		
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");

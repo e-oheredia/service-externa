@@ -7,10 +7,13 @@ import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
+import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IGuiaDao;
+import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.DocumentoReporte;
+import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
@@ -47,14 +50,19 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 	@Autowired
 	IDocumentoGuiaDao documentoGuiadao;
 	
+	@Autowired
+	IBuzonEdao buzonEdao;
+	
 	@Override
-	public void insertarDocumentosReporte(Guia guia) {
+	@SuppressWarnings("unchecked")
+	public void insertarDocumentosReporte(Guia guia) throws IOException, JSONException {
 		
 		for (DocumentoGuia dg : guia.getDocumentosGuia()) {
 		
-			Documento documentoBD = dg.getDocumento();
+			Documento documentoBD = dg.getDocumento() ;
 			DocumentoReporte documentoReporte = new DocumentoReporte();
-			
+			Map<String, Object> buzon = buzonEdao.listarById(documentoBD.getEnvio().getBuzonId());
+			Map<String, Object> area = (Map<String, Object>) buzon.get("area");
 			documentoReporte.setProveedorId(guia.getProveedor().getId());
 			documentoReporte.setEstadoDocumento(documentoBD.getUltimoSeguimientoDocumento().getEstadoDocumento().getId());
 			documentoReporte.setPlazoId(guia.getPlazoDistribucion().getId());
@@ -62,7 +70,8 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 			documentoReporte.setDocumentoId(documentoBD.getId());
 			documentoReporte.setTiempoEntrega(FALTA_ENTREGA);
 			documentoReporte.setEstadoCargo(NO_GENERADO);
-			
+			documentoReporte.setSedeId(guia.getSedeId());
+			documentoReporte.setArea(area.get("nombre").toString());
 			documentoreporteDao.save(documentoReporte);
 		}
 	}
