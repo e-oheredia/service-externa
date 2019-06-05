@@ -69,4 +69,11 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		return multiMap;
 	}
 
+	@Override
+	public Map<Long, Map<String, Float>> volumenbyutd(String fechaini, String fechainifin)
+			throws IOException, JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -52,7 +52,7 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 		
 		for (DocumentoGuia dg : guia.getDocumentosGuia()) {
 		
-			Documento documentoBD = dg.getDocumento();
+			Documento documentoBD = dg.getDocumento() ;
 			DocumentoReporte documentoReporte = new DocumentoReporte();
 			
 			documentoReporte.setProveedorId(guia.getProveedor().getId());
