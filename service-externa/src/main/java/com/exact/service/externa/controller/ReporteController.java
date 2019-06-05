@@ -57,4 +57,14 @@ public class ReporteController {
 		
 	}
 	
+	@GetMapping("/volumen/utd")
+	public ResponseEntity<?> porcentajeporvolumenutd(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
+			throws IOException, JSONException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Long,Map<String, Float>> reportecurier = reporteservice.volumenbyutd(fechaini, fechafin);
+		return new ResponseEntity<Map<Long,Map<String, Float>>>(reportecurier,HttpStatus.OK);
+	}	
+	
 }
