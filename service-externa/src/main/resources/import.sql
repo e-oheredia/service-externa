@@ -1,5 +1,5 @@
 USE [db_externa_core]
-
+GO
 SET IDENTITY_INSERT [dbo].[tipo_plazo_distribucion] ON 
 
 INSERT [dbo].[tipo_plazo_distribucion] ([tipo_plazo_distribucion_id], [nombre]) VALUES (1, N'REGULAR')
@@ -303,7 +303,7 @@ INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (97, CAST(N'2019-06-04T09:31:03.6110000' AS DateTime2), NULL, NULL, 1, 5, 3, NULL)
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (98, CAST(N'2019-06-04T09:31:03.6120000' AS DateTime2), NULL, NULL, 1, 8, 3, NULL)
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (99, CAST(N'2019-06-04T09:31:03.6120000' AS DateTime2), NULL, NULL, 1, 6, 3, NULL)
-
+GO
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (100, CAST(N'2019-06-04T09:31:03.6120000' AS DateTime2), NULL, NULL, 1, 7, 3, NULL)
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (101, CAST(N'2019-06-04T09:31:05.0050000' AS DateTime2), NULL, NULL, 1, 32, 3, NULL)
 INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (102, CAST(N'2019-06-04T09:31:05.0060000' AS DateTime2), NULL, NULL, 1, 30, 3, NULL)
