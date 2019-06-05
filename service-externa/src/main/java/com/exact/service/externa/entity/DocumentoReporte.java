@@ -41,12 +41,47 @@ public class DocumentoReporte implements Serializable{
 	@Column(name="estado_cargo")
 	private Long estadoCargo;
 	
+	@Column(name="sede_id")
+	private Long sedeId;
+	
+	@Column(name="area_nombre")
+	private String area;
+	
 	@Column(nullable = false)
 	@JsonFormat
     (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fecha;
 	
 	
+
+
+	public String getArea() {
+		return area;
+	}
+
+
+
+
+	public void setArea(String area) {
+		this.area = area;
+	}
+
+
+
+
+	public Long getSedeId() {
+		return sedeId;
+	}
+
+
+
+
+	public void setSedeId(Long sedeId) {
+		this.sedeId = sedeId;
+	}
+
+
+
 
 	public Date getFecha() {
 		return fecha;

@@ -13,7 +13,7 @@ import com.exact.service.externa.entity.Guia;
 
 public interface IDocumentoReporteService {
 	
-	void insertarDocumentosReporte(Guia guia);
+	void insertarDocumentosReporte(Guia guia) throws IOException, JSONException;
 	void actualizarDocumentosPorResultado(List<Documento> lstdocumento, List<Long> guiaIds) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException ;
 	void actualizarDocumentosRecepcionados(Long documentoId);
 
