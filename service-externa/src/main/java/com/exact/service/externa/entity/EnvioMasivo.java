@@ -23,9 +23,7 @@ public class EnvioMasivo extends Envio {
 		this.masivoAutogenerado = masivoAutogenerado;
 	}
 	
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 }
