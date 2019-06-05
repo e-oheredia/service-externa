@@ -39,8 +39,8 @@ public class ReporteController {
 	}
 
 	
-	@GetMapping
-	public ResponseEntity<Map<Long, Map<String, Integer>>> calculaPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	@GetMapping("/eficiencia/porcourier")
+	public ResponseEntity<Map<Long, Map<String, Integer>>> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
@@ -48,8 +48,8 @@ public class ReporteController {
 		
 	}
 	
-	@GetMapping("/porplazo")
-	public ResponseEntity<Map<Long, Map<String, Map<Long, Integer>>>> calculadentrofueraplazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	@GetMapping("/eficiencia/courierporplazo")
+	public ResponseEntity<Map<Long, Map<String, Map<Long, Integer>>>> eficienciaPorCourierPorPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
 		Map<Long, Map<String, Map<Long, Integer>>> cantidades = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
