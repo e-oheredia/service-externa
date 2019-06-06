@@ -128,10 +128,8 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 									
 								}else {
 									cantidadfueraplazo++;
-									
 								}
 							}
-							
 						}
 					}
 					cantidadDentroFuera.put("dentroplazo",cantidaddentroplazo);

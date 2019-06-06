@@ -81,11 +81,11 @@ public class ReporteController {
 	}
 	
 	@GetMapping("/cargos/devolucionportipo")
-	public ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-		Map<Long, Map<Long, Map<Long, Integer>>> cantidades = new HashMap<>();
+		Map<Long, Map<Long, Map<String, Integer>>> cantidades = new HashMap<>();
 		cantidades=cargoservice.devolucionPorTipo(fechaini, fechafin);
-		return new ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
+		return new ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>>(cantidades, HttpStatus.OK);
 		
 	}
 	

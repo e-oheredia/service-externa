@@ -8,6 +8,6 @@ import io.jsonwebtoken.io.IOException;
 
 public interface ICargosService {
 	
-	Map<Long, Map<Long, Map<Long, Integer>>> devolucionPorTipo(String fechaIni,String fechaFin) throws IOException, JSONException;
+	Map<Long, Map<Long, Map<String, Integer>>> devolucionPorTipo(String fechaIni,String fechaFin) throws IOException, JSONException;
 
 }
