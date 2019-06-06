@@ -18,4 +18,5 @@ public interface IEstadoDocumentoDao extends CrudRepository<EstadoDocumento,Long
 	public EstadoDocumento buscarpordocumento(Long id);
 	
 	
+	
 }
