@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -234,6 +235,15 @@ public class Documento implements Serializable {
 	public SeguimientoDocumento getUltimoSeguimientoDocumento() {
 		return (this.getSeguimientosDocumento().stream().max(Comparator.comparing(SeguimientoDocumento::getFecha))
 		.orElseThrow(NoSuchElementException::new));		
+	}
+	
+	@JsonIgnore
+	public SeguimientoDocumento getSeguimientoDocumentoByEstadoId(Long estadoId) {
+		Optional<SeguimientoDocumento> sd =  (this.getSeguimientosDocumento().stream().filter(sg -> sg.getEstadoDocumento().getId()==estadoId).findFirst());	
+		if(sd.isPresent()) {
+			return sd.get();
+		}
+		return null;
 	}
 
 	/**

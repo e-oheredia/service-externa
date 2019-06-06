@@ -10,6 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.exact.service.externa.entity.Documento;
+import com.exact.service.externa.entity.TipoDevolucion;
 
 
 @Repository
@@ -90,5 +91,8 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6)) AND d.id=?1 AND d.envio.sedeId=?2")
 	public Documento findDocumentoaRecepcionar(Long documentoId, Long sedeId);
 	
+	
+	@Query("SELECT d.tiposDevolucion FROM Documento d WHERE d.id=?1")
+	public Iterable<TipoDevolucion> findTiposDevolucionByDocumentoId(Long documentoId);
 
 }

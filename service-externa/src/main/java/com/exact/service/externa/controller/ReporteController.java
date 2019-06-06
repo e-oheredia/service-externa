@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.service.interfaces.ICargosService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorVolumenService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
@@ -32,6 +34,9 @@ public class ReporteController {
 	
 	@Autowired
 	IReporteIndicadorVolumenService indicadorservice;
+
+	ICargosService cargoservice;
+
 	
 	@GetMapping("/volumen/curier")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
@@ -44,8 +49,8 @@ public class ReporteController {
 	}
 
 	
-	@GetMapping
-	public ResponseEntity<Map<Long, Map<String, Integer>>> calculaPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	@GetMapping("/eficiencia/porcourier")
+	public ResponseEntity<Map<Long, Map<String, Integer>>> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
@@ -53,12 +58,12 @@ public class ReporteController {
 		
 	}
 	
-	@GetMapping("/porplazo")
-	public ResponseEntity<Map<Long, Map<String, Map<Long, Integer>>>> calculadentrofueraplazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	@GetMapping("/eficiencia/courierporplazo")
+	public ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>> eficienciaPorCourierPorPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-		Map<Long, Map<String, Map<Long, Integer>>> cantidades = new HashMap<>();
+		Map<Long, Map<Long, Map<String, Integer>>> cantidades = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
-		return new ResponseEntity<Map<Long, Map<String, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
+		return new ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>>(cantidades, HttpStatus.OK);
 		
 	}
 	
@@ -104,5 +109,23 @@ public class ReporteController {
 		Map<Integer, Map<Integer, Integer>> reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin); 
 		return new ResponseEntity<Map<Integer, Map<Integer, Integer>>>(reportecurier,HttpStatus.OK);
 	}	
+	
+	@GetMapping("/eficiencia/{id}/detalleporcourier")
+	public ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>> detalleEficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
+		
+		Map<Long, Map<Long, Map<Long, Integer>>> cantidades = new HashMap<>();
+		cantidades=reporteEficienciaservice.detalleEficienciaPorCourier(fechaini, fechafin, id);
+		return new ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/cargos/devolucionportipo")
+	public ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+		
+		Map<Long, Map<Long, Map<Long, Integer>>> cantidades = new HashMap<>();
+		cantidades=cargoservice.devolucionPorTipo(fechaini, fechafin);
+		return new ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
+		
+	}
 	
 }
