@@ -45,6 +45,7 @@ public class ReporteEficaciaService implements IReporteEficaciaService {
 	public Map<Integer, Map<Integer, Integer>> eficaciaporproveedor(String fechaIni, String fechaFin)
 			throws IOException, JSONException {
 		
+		int rpta=0;
 		Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
 
 		Date dateI= null;
@@ -73,35 +74,32 @@ public class ReporteEficaciaService implements IReporteEficaciaService {
 			int cantidadpendiente=0;
 			
 			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-			
 			for (DocumentoReporte entidad : reportes) {
 				
 				if (entidad.getProveedorId() == pro.getId()) {
-					
-//					switch (feriado.validar(id, fecha1, fecha2)) {
-//					case 1:
-//						rpta = SINFECHA;
-//						break;
-//					case 2:
-//						rpta = DUPLICADOS;
-//						break;
-//					case 3:
-//						rpta = FECHAINCORRECTA;
-//						break;
-//					case 4:
-//						rpta = FINALINICIO;
-//						break;
-//					case 5:
-//						rpta = NOEXISTE;
-//						break;
-//					}		
-					
+					switch ((int) (long)entidad.getEstadoDocumento() ) {
+					case 3:
+						cantidadpendiente++;
+						break;
+					case 4:
+						cantidadentregado++;
+						break;
+					case 5:
+						cantidadrezagado++;
+						break;
+					case 6:
+						cantidadnodistribuible++;
+						break;
+					}	
 				}
+			
+			}
+			
 			m.put((int) (long)ENTREGADO, cantidadentregado);
 			m.put((int) (long)REZAGADO, cantidadrezagado);
 			m.put((int) (long)NO_DISTRIBUIBLE, cantidadnodistribuible);
 			m.put((int) (long)PENDIENTE_ENTREGA, cantidadpendiente);
-			}
+			
 			
 			multiMap.put((int) (long)pro.getId(), m );
 			
