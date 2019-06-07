@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.exact.service.externa.service.interfaces.ICargosService;
 import com.exact.service.externa.service.interfaces.IReporteEficaciaService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
+import com.exact.service.externa.service.interfaces.IReporteIndicadorEficacia;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorVolumenService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 
@@ -40,6 +41,9 @@ public class ReporteController {
 
 	@Autowired
 	IReporteEficaciaService eficaciaservice;
+	
+	@Autowired
+	IReporteIndicadorEficacia indicadoreficaciaservice;
 	
 	@GetMapping("/volumen/curier")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
@@ -123,6 +127,26 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer, Map<Integer, Map<Integer, Integer>>>>(reportecurier,HttpStatus.OK);
 	}		
 	
+	@GetMapping("/indicadoreficacia/tabla1")
+	public ResponseEntity<?> indicadoreficacia(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
+			throws IOException, JSONException, NumberFormatException, ParseException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Integer, Map<Integer, Float>> reportecurier = indicadoreficaciaservice.indicadorgrafico(fechaini, fechafin); 
+		return new ResponseEntity<Map<Integer, Map<Integer, Float>>>(reportecurier,HttpStatus.OK);
+	}	
+	
+	
+	@GetMapping("/indicadoreficacia/tabla2")
+	public ResponseEntity<?> indicadoreficacia2(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
+			throws IOException, JSONException, NumberFormatException, ParseException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Integer, Map<Integer, Map<Integer, Integer>>> reportecurier = indicadoreficaciaservice.indicadortabla2(fechaini, fechafin); 
+		return new ResponseEntity<Map<Integer, Map<Integer, Map<Integer, Integer>>>>(reportecurier,HttpStatus.OK);
+	}		
 	
 	@GetMapping("/eficiencia/{id}/detalleporcourier")
 	public ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>> detalleEficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
