@@ -153,6 +153,7 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		for (Proveedor pro : proveedores) {
 			Iterable<PlazoDistribucion> pd =plazodao.listarplazosactivos(pro.getId());
 			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+			
 			for (PlazoDistribucion entidad : pd) {
 				int cantidadproveedor=0;
 				for (DocumentoReporte dr : reportes) {
