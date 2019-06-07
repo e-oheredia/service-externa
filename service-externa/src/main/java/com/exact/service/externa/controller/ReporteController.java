@@ -105,12 +105,12 @@ public class ReporteController {
 	
 	@GetMapping("/indicadorvolumen/utds")
 	public ResponseEntity<?> porcentajeporvolumenutds(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
-			throws IOException, JSONException {
+			throws IOException, JSONException, NumberFormatException, ParseException {
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
-		Map<Integer, Map<Integer, Integer>> reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin); 
-		return new ResponseEntity<Map<Integer, Map<Integer, Integer>>>(reportecurier,HttpStatus.OK);
+		Map<Integer,Map<Integer, Integer>>  reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin); 
+		return new ResponseEntity<Map<Integer,Map<Integer, Integer>> >(reportecurier,HttpStatus.OK);
 	}	
 	
 	@GetMapping("/eficiencia/{id}/detalleporcourier")
