@@ -67,43 +67,66 @@ public class ReporteEficaciaService implements IReporteEficaciaService {
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
 		
-		for (Proveedor pro : proveedores) {
-			int cantidadentregado=0;
-			int cantidadrezagado=0;
-			int cantidadnodistribuible=0;
-			int cantidadpendiente=0;
-			
+		List<Long> ids = new ArrayList<>();
+		ids.add(PENDIENTE_ENTREGA);
+		ids.add(ENTREGADO);
+		ids.add(REZAGADO);
+		ids.add(NO_DISTRIBUIBLE);
+		
+		
+//		for (Proveedor pro : proveedores) {
+//			int cantidadentregado=0;
+//			int cantidadrezagado=0;
+//			int cantidadnodistribuible=0;
+//			int cantidadpendiente=0;
+//			
+//			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+//			for (DocumentoReporte entidad : reportes) {
+//				
+//				if (entidad.getProveedorId() == pro.getId()) {
+//					switch ((int) (long)entidad.getEstadoDocumento() ) {
+//					case 3:
+//						cantidadpendiente++;
+//						break;
+//					case 4:
+//						cantidadentregado++;
+//						break;
+//					case 5:
+//						cantidadrezagado++;
+//						break;
+//					case 6:
+//						cantidadnodistribuible++;
+//						break;
+//					}	
+//				}
+//			
+//			}
+//			
+//			m.put((int) (long)ENTREGADO, cantidadentregado);
+//			m.put((int) (long)REZAGADO, cantidadrezagado);
+//			m.put((int) (long)NO_DISTRIBUIBLE, cantidadnodistribuible);
+//			m.put((int) (long)PENDIENTE_ENTREGA, cantidadpendiente);
+//			
+//			
+//			multiMap.put((int) (long)pro.getId(), m );
+//			
+//		}
+		
+		for(Long ides : ids ) {
 			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-			for (DocumentoReporte entidad : reportes) {
-				
-				if (entidad.getProveedorId() == pro.getId()) {
-					switch ((int) (long)entidad.getEstadoDocumento() ) {
-					case 3:
-						cantidadpendiente++;
-						break;
-					case 4:
-						cantidadentregado++;
-						break;
-					case 5:
-						cantidadrezagado++;
-						break;
-					case 6:
-						cantidadnodistribuible++;
-						break;
-					}	
-				}
-			
+			for(Proveedor pro :proveedores) {
+				int cantidadproveedor=0;
+				for (DocumentoReporte dr : reportes) {
+					if (ides == dr.getEstadoDocumento() && pro.getId()==dr.getProveedorId() ) {
+						cantidadproveedor++;	
+					}
+				}				
+				m.put((int) (long)pro.getId() , cantidadproveedor);
 			}
-			
-			m.put((int) (long)ENTREGADO, cantidadentregado);
-			m.put((int) (long)REZAGADO, cantidadrezagado);
-			m.put((int) (long)NO_DISTRIBUIBLE, cantidadnodistribuible);
-			m.put((int) (long)PENDIENTE_ENTREGA, cantidadpendiente);
-			
-			
-			multiMap.put((int) (long)pro.getId(), m );
-			
+			multiMap.put((int) (long) ides, m );
 		}
+		
+		
 		return multiMap;
 	}
 
