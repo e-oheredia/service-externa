@@ -11,6 +11,8 @@ import org.json.JSONException;
 public interface IReporteIndicadorVolumenService {
 	
 	public Map<Integer, Map<Integer, Integer>> IndicadorVolumenGrafico(String fechaini,String fechainifin) throws IOException, JSONException, NumberFormatException, ParseException;
-
+	
+	public Map<Integer, Map<Integer, Map<Integer, Integer>>> IndicadorVolumenTabla2(String fechaini,String fechainifin) throws IOException, JSONException, NumberFormatException, ParseException;
+	
 
 }
