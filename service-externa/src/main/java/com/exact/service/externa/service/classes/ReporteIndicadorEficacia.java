@@ -121,11 +121,12 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 
 
 	@Override
-	public Map<Integer,Map<Integer,  Map<Integer, Integer>>> indicadortabla2(String fechaIni, String fechaFin)
+	public Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> indicadortabla2(String fechaIni, String fechaFin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
 
-		Map<Integer,Map<Integer,  Map<Integer, Integer>>> remultiMap = new HashMap<>();
-		
+		//Map<Integer,Map<Integer,  Map<Integer, Integer>>> remultiMap = new HashMap<>();
+		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> remultiMap = new HashMap<>();
+
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
 		Date dateI= null;
@@ -152,8 +153,8 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		ids.add(REZAGADO);
 		ids.add(NO_DISTRIBUIBLE);
 		
-		
-		
+		int i= 0;
+
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
@@ -162,20 +163,26 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 				.collect(Collectors.toList());
 		Iterable<PlazoDistribucion> pd =plazodao.findAll();
 		for (Proveedor pro : proveedores) {
-			Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
+			Map<Integer,Map<Integer,Map<Integer, Integer>>> multiMap = new HashMap<>();
+			
 			for (Long entidad : ids ) {
-				Map<Integer, Integer> min = new HashMap<Integer, Integer>();
+				Map<Integer, Map<Integer, Integer>> mis = new HashMap<>();
+				i= 0;
 				for(String mesaño : listademeses) {
+					Map<Integer, Integer> min = new HashMap<Integer, Integer>();
 					int cantidadsede=0;
 					for (DocumentoReporte documentoreporte : reportes) {
+
 						if (dt.format(documentoreporte.getFecha()).equals(mesaño) && documentoreporte.getEstadoDocumento()==entidad && documentoreporte.getProveedorId()==pro.getId()) {
 							cantidadsede++;	
 						}
 					}
 					min.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantidadsede);
+					i++;
+					mis.put(i, min);
 				}
 				
-				multiMap.put((int) (long) entidad, min);	
+				multiMap.put((int) (long) entidad, mis);	
 			}
 			
 			remultiMap.put((int) (long)pro.getId(), multiMap );
@@ -187,7 +194,7 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 
 
 	@Override
-	public Map<Integer, Map<Integer, Float>> indicadortabla2cabecera(String fechaIni, String fechaFin)
+	public Map<Integer, Map<Integer, Map<Integer, Float>>> indicadortabla2cabecera(String fechaIni, String fechaFin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
@@ -200,7 +207,8 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		} catch (Exception e) {
 			return null;
 		}
-		Map<Integer, Map<Integer, Float>>  multiMap = new HashMap<>();
+		Map<Integer, Map<Integer, Map<Integer, Float>>>  remultiMap = new HashMap<>();
+		
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
@@ -213,32 +221,80 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
 		int cantidadtotal = reportes.size();		
 	    int i=0;
-		for(String mesaño : listademeses) {
-			int total=0;
-			int entregados=0;
-			float porcentaje=0;
+	    	    	
+		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
+		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
+				.collect(Collectors.toList());
+	    
+	    
+	    
+//		for(String mesaño : listademeses) {
+//
+//			int total=0;
+//			int entregados=0;
+//			float porcentaje=0;
+//
+//			Map<Integer, Float> m = new HashMap<Integer, Float>();
+//			for (DocumentoReporte entidad : reportes) {
+//				
+//				if (dt.format(entidad.getFecha()).equals(mesaño)) {
+//					if(entidad.getEstadoDocumento()==ENTREGADO) {
+//					entregados++;	
+//					}
+//					total++;	
+//				}
+//				
+//			}
+//			
+//			if(total !=0) {
+//				Logger.info("entro");
+//				porcentaje=(float)entregados/total;
+//			}
+//			Logger.info(porcentaje);
+//			m.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), (float)porcentaje);
+//			i++;
+//			multiMap.put(i, m);
+//		}
+		
+		for(Proveedor pro : proveedores) {
+			Map<Integer, Map<Integer, Float>>  multiMap = new HashMap<>();
+			for(String mesaño : listademeses) {
 
-			Map<Integer, Float> m = new HashMap<Integer, Float>();
-			for (DocumentoReporte entidad : reportes) {
-				if (dt.format(entidad.getFecha()).equals(mesaño)) {
-					if(entidad.getEstadoDocumento()==ENTREGADO) {
-					entregados++;	
+				int total=0;
+				int entregados=0;
+				float porcentaje=0;
+
+				Map<Integer, Float> m = new HashMap<Integer, Float>();
+				for (DocumentoReporte entidad : reportes) {
+					
+					if (dt.format(entidad.getFecha()).equals(mesaño) && entidad.getProveedorId()==pro.getId()) {
+						if(entidad.getEstadoDocumento()==ENTREGADO) {
+						entregados++;	
+						}
+						total++;	
 					}
-					total++;	
+					
 				}
+				
+				if(total !=0) {
+					Logger.info("entro");
+					porcentaje=(float)entregados/total;
+				}
+				Logger.info(porcentaje);
+				m.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), (float)porcentaje);
+				i++;
+				multiMap.put(i, m);
 			}
 			
-			if(total !=0) {
-				Logger.info("entro");
-				porcentaje=(float)entregados/total;
-			}
-			Logger.info(porcentaje);
-			m.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), (float)porcentaje);
-			i++;
-			multiMap.put(i, m);
-		}
-		 return multiMap;		
+			
+			remultiMap.put((int)(long)pro.getId(), multiMap);
 		
+		}
+		
+		
+		
+		 return remultiMap;		
+	
 	}
 
 
