@@ -1,5 +1,7 @@
 package com.exact.service.externa.service.classes;
 
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,9 +130,9 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 
 
 	@Override
-	public Map<Integer,Map<Integer,  Map<Integer, Integer>>> IndicadorVolumenTabla2(String fechaIni, String fechaFin)
+	public Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>  IndicadorVolumenTabla2(String fechaIni, String fechaFin)
 		throws IOException, JSONException, NumberFormatException, ParseException {
-		Map<Integer,Map<Integer,  Map<Integer, Integer>>> remultiMap = new HashMap<>();
+		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> remultiMap = new HashMap<>();
 		
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
@@ -148,7 +152,8 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
-		
+		int i= 0;
+
 		
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
 		List<DocumentoReporte> reportes = new ArrayList<>();
@@ -158,11 +163,16 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 				.collect(Collectors.toList());
 		//Iterable<PlazoDistribucion> pd =plazodao.listarplazosactivos(pro.getId());
 		Iterable<PlazoDistribucion> pd =plazodao.findAll();
+		
+		
 		for (Proveedor pro : proveedores) {
-			Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
+			Map<Integer,Map<Integer,Map<Integer, Integer>>> multiMap = new HashMap<>();
 			for (PlazoDistribucion entidad : pd ) {
-				Map<Integer, Integer> min = new HashMap<Integer, Integer>();
+				i= 0;
+				Map<Integer, Map<Integer, Integer>> mis = new HashMap<>();
 				for(String mesaño : listademeses) {
+					Map<Integer, Integer> min = new HashMap<Integer, Integer>();
+
 					int cantidadsede=0;
 					for (DocumentoReporte documentoreporte : reportes) {
 						if (dt.format(documentoreporte.getFecha()).equals(mesaño) && documentoreporte.getPlazoId()==entidad.getId() && documentoreporte.getProveedorId()==pro.getId()) {
@@ -170,15 +180,76 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 						}
 					}
 					min.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantidadsede);
+					i++;
+					mis.put(i, min);
+
 				}
 				
-				multiMap.put((int) (long) entidad.getId(), min);	
+				multiMap.put((int) (long) entidad.getId(), mis);	
 			}
 			
 			remultiMap.put((int) (long)pro.getId(), multiMap );
 			
 		}
+		
+		
 		return remultiMap;
+	}
+	private static final Log Logger = LogFactory.getLog(DiaService.class);
+
+	@Override
+	public Map<Integer, Map<Integer, Map<Integer, Integer>>> indicadortabla2cabeceravolumen(String fechaIni,
+			String fechaFin) throws IOException, JSONException, NumberFormatException, ParseException {
+
+		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		Date dateI= null;
+		Date dateF= null;
+
+		try {
+			dateI = dt.parse(fechaIni);
+			dateF = dt.parse(fechaFin); 
+		} catch (Exception e) {
+			return null;
+		}
+		int i=0;
+		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		List<DocumentoReporte> reportes = new ArrayList<>();
+		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
+		List<String> listademeses = new ArrayList<>();
+		List<Date> meses = this.getListaEntreFechas2(dateI,dateF);
+		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
+		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
+				.collect(Collectors.toList());
+		Map<Integer, Map<Integer, Map<Integer, Integer>>>  remultiMap = new HashMap<>();
+		for(Date mess : meses) {
+			listademeses.add(dt.format(mess)); 
+		}
+		for(Proveedor pro : proveedores) {
+			Map<Integer, Map<Integer, Integer>>  multiMap = new HashMap<>();
+			
+			for(String mesaño : listademeses) {
+				int entregados=0;
+
+				Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+				for (DocumentoReporte entidad : reportes) {
+					if (dt.format(entidad.getFecha()).equals(mesaño) && entidad.getProveedorId()==pro.getId()) {
+						entregados++;	
+					}
+				}
+				Logger.info(entregados);
+				m.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), entregados);
+				i++;
+				multiMap.put(i, m);
+			}
+			
+			
+			remultiMap.put((int)(long)pro.getId(), multiMap);
+		
+		}
+	
+		 return remultiMap;
+		
 	}
 
 }
