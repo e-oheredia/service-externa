@@ -48,11 +48,17 @@ public class ReporteController {
 	@GetMapping("/volumen/curier")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
+		Map<Integer, Object> nuevo = new HashMap<>();
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
 		Map<Long,Map<String, Float>> reportecurier = reporteservice.volumenbycurier(fechaini, fechafin);
-		return new ResponseEntity<Map<Long,Map<String, Float>>>(reportecurier,HttpStatus.OK);
+		Map<Integer, Map<String, Float>> reportecurier2 = reporteservice.volumenbyutd(fechaini, fechafin);
+		Map<Integer,Map<Integer, Integer>> reportecurier3 = reporteservice.volumenbyplazo(fechaini, fechafin);
+		nuevo.put(1, reportecurier);
+		nuevo.put(2, reportecurier2);
+		nuevo.put(3, reportecurier3);
+		return new ResponseEntity<Map<Integer, Object>>(nuevo,HttpStatus.OK);
 	}
 
 	
@@ -77,9 +83,11 @@ public class ReporteController {
 	@GetMapping("/volumen/porsede")
 	public ResponseEntity<?> porcentajeporvolumenutd(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
+		
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
+		
 		Map<Integer, Map<String, Float>> reportecurier = reporteservice.volumenbyutd(fechaini, fechafin);
 		return new ResponseEntity<Map<Integer, Map<String, Float>>>(reportecurier,HttpStatus.OK);
 	}	
@@ -107,14 +115,20 @@ public class ReporteController {
 	}	
 	
 	
-	@GetMapping("/indicadorvolumen/tabla1")
+	@GetMapping("/indicadorvolumen")
 	public ResponseEntity<?> indicadorvolumentabla3(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
+		Map<Integer, Object> nuevo = new HashMap<>();
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
-		Map<Integer,Map<Integer, Integer>>  reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin); 
-		return new ResponseEntity<Map<Integer,Map<Integer, Integer>> >(reportecurier,HttpStatus.OK);
+		Map<Integer,Map<Integer, Integer>>  reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin);
+		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>   reportecurier2 = indicadorservice.IndicadorVolumenTabla2(fechaini,fechafin);
+		Map<Integer, Map<Integer, Map<Integer, Integer>>> reportecurier3 = indicadorservice.indicadortabla2cabeceravolumen(fechaini, fechafin); 
+		nuevo.put(1, reportecurier);
+		nuevo.put(2, reportecurier2);
+		nuevo.put(3, reportecurier3);
+		return new ResponseEntity<Map<Integer, Object>>(nuevo,HttpStatus.OK);
 	}	
 	
 	@GetMapping("/indicadorvolumen/tabla2")
@@ -127,14 +141,20 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> >(reportecurier,HttpStatus.OK);
 	}		
 	
-	@GetMapping("/indicadoreficacia/tabla1")
+	@GetMapping("/indicadoreficacia")
 	public ResponseEntity<?> indicadoreficacia(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
+		Map<Integer, Object> nuevo = new HashMap<>();
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
-		Map<Integer, Map<Integer, Float>> reportecurier = indicadoreficaciaservice.indicadorgrafico(fechaini, fechafin); 
-		return new ResponseEntity<Map<Integer, Map<Integer, Float>>>(reportecurier,HttpStatus.OK);
+		Map<Integer, Map<Integer, Float>> reportecurier = indicadoreficaciaservice.indicadorgrafico(fechaini, fechafin);
+		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> reportecurier2 = indicadoreficaciaservice.indicadortabla2(fechaini, fechafin); 	
+		Map<Integer, Map<Integer, Map<Integer, Float>>> reportecurier3 = indicadoreficaciaservice.indicadortabla2cabecera(fechaini, fechafin); 
+		nuevo.put(1, reportecurier);
+		nuevo.put(2, reportecurier2);
+		nuevo.put(3, reportecurier3);		
+		return new ResponseEntity<Map<Integer, Object>>(nuevo,HttpStatus.OK);
 	}	
 	
 	
