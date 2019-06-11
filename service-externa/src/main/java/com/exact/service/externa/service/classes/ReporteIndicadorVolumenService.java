@@ -57,7 +57,18 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		}
 		
 		Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
+		
+		
+		if( dtmeses.format(dateI).equals(dtmeses.format(dateF)) ) {
+			
+		}
+		
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		
+		
+		
+		
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
@@ -114,7 +125,7 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 	public List<Date> getListaEntreFechas2(Date fechaInicio, Date fechaFin) {
 
 		Calendar c1 = Calendar.getInstance();
-		c1.setTime(fechaInicio);
+		c1.setTime(fechaInicio);	
 		Calendar c2 = Calendar.getInstance();
 		c2.setTime(fechaFin);
 
