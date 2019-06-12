@@ -37,6 +37,7 @@ public class ReporteController {
 	@Autowired
 	IReporteIndicadorVolumenService indicadorservice;
 
+	@Autowired
 	ICargosService cargoservice;
 
 	@Autowired
