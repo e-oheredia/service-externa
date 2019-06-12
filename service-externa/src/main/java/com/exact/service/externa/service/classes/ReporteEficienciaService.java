@@ -128,10 +128,8 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 									
 								}else {
 									cantidadfueraplazo++;
-									
 								}
 							}
-							
 						}
 					}
 					cantidadDentroFuera.put("dentroplazo",cantidaddentroplazo);
@@ -175,7 +173,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 					Calendar fechaEntrega = Calendar.getInstance();
 					fechaEntrega.setTime(seguimientoDocumento.getFecha());
 				}
-				
+				//faltaprobar
 			}
 		}
 		return cantidadDetalle;

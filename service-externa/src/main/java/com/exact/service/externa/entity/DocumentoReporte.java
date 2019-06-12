@@ -44,8 +44,8 @@ public class DocumentoReporte implements Serializable{
 	@Column(name="sede_id")
 	private Long sedeId;
 	
-	@Column(name="area_nombre")
-	private String area;
+	@Column(name="area_id")
+	private Long area;
 	
 	@Column(nullable = false)
 	@JsonFormat
@@ -54,15 +54,14 @@ public class DocumentoReporte implements Serializable{
 	
 	
 
-
-	public String getArea() {
+	public Long getArea() {
 		return area;
 	}
 
 
 
 
-	public void setArea(String area) {
+	public void setArea(Long area) {
 		this.area = area;
 	}
 

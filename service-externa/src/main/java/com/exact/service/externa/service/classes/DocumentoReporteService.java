@@ -71,7 +71,7 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 			documentoReporte.setTiempoEntrega(FALTA_ENTREGA);
 			documentoReporte.setEstadoCargo(NO_GENERADO);
 			documentoReporte.setSedeId(guia.getSedeId());
-			documentoReporte.setArea(area.get("nombre").toString());
+			documentoReporte.setArea(Long.valueOf(area.get("id").toString()));
 			documentoreporteDao.save(documentoReporte);
 		}
 	}
