@@ -46,7 +46,9 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 	
 	private static final Log Logger = LogFactory.getLog(DiaService.class);
 
-	
+	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
+	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
+
 	@Override
 	public Map<Integer, Map<Integer, Float>> indicadorgrafico(String fechaIni, String fechaFin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
@@ -61,12 +63,42 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		} catch (Exception e) {
 			return null;
 		}
+		
+		
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
+		
 		Map<Integer, Map<Integer, Float>>  multiMap = new HashMap<>();
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		
+		
+		//Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		Iterable<DocumentoReporte> entidades = null;
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
+
+		}
+		
+		
+		
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
+		
+		
+		
 		List<Date> meses = this.getListaEntreFechas2(dateI,dateF);
+		
+		
+		
+		
+		
+		
+		
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
@@ -101,6 +133,13 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		 return multiMap;		
 	}
 
+	public int obtenerUltimoDiaMes(int anio, int mes) {
+		Calendar calendario=Calendar.getInstance();
+		calendario.set(anio, mes, 1);
+		return calendario.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+	
+	
 	
 	
 	public List<Date> getListaEntreFechas2(Date fechaInicio, Date fechaFin) {
@@ -154,9 +193,25 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		ids.add(NO_DISTRIBUIBLE);
 		
 		int i= 0;
+		Iterable<DocumentoReporte> entidades = null;
+		
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
 
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		}
+
+		
 		List<DocumentoReporte> reportes = new ArrayList<>();
+		
+		
+		
+		
+		
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
@@ -208,8 +263,20 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 			return null;
 		}
 		Map<Integer, Map<Integer, Map<Integer, Float>>>  remultiMap = new HashMap<>();
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
 		
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		Iterable<DocumentoReporte> entidades = null;
+		//Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
+
+		}
+		
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
