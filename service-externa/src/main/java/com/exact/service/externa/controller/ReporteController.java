@@ -44,11 +44,16 @@ public class ReporteController {
 
 	
 	@GetMapping("/eficiencia/porcourier")
-	public ResponseEntity<Map<Long, Map<String, Integer>>> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<Map<Integer,Object>> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
+		Map<Long, Map<Long, Map<String, Integer>>> cantidadesPorPlazo = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
-		return new ResponseEntity<Map<Long, Map<String, Integer>>>(cantidades, HttpStatus.OK);
+		cantidadesPorPlazo=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
+		Map<Integer,Object> graficoEficiencia = new HashMap<>();
+		graficoEficiencia.put(1, cantidades);
+		graficoEficiencia.put(2, cantidadesPorPlazo);
+		return new ResponseEntity<Map<Integer,Object>>(graficoEficiencia, HttpStatus.OK);
 		
 	}
 	
@@ -81,12 +86,41 @@ public class ReporteController {
 	}
 	
 	@GetMapping("/cargos/devolucionportipo")
-	public ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<Map<Integer,Object>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-		Map<Long, Map<Long, Map<String, Integer>>> cantidades = new HashMap<>();
-		cantidades=cargoservice.devolucionPorTipo(fechaini, fechafin);
-		return new ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>>(cantidades, HttpStatus.OK);
+		Map<Long, Map<Long, Map<String, Integer>>> cantidadesProveedor = new HashMap<>();
+		Map<Long, Integer> cantidadesPorArea = new HashMap<>();
+		cantidadesProveedor=cargoservice.devolucionPorTipo(fechaini, fechafin);
+		cantidadesPorArea = cargoservice.pendientesCargosPorArea(fechaini, fechafin);
+		
+		Map<Integer,Object> graficoControl = new HashMap<>();
+		graficoControl.put(1, cantidadesProveedor);
+		graficoControl.put(2, cantidadesPorArea);
+		return new ResponseEntity<Map<Integer,Object>>(graficoControl, HttpStatus.OK);
 		
 	}
+	
+	@GetMapping("/cargos/devolucionporarea")
+	public ResponseEntity<Map<Long,Integer>> pendientesDevolucionPorArea(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+		
+		Map<Long,Integer> cantidades = new HashMap<>();
+		cantidades=cargoservice.pendientesCargosPorArea(fechaini,fechafin);
+		return new ResponseEntity<Map<Long,Integer>>(cantidades, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/control/{id}/estado")
+	public ResponseEntity<Map<Integer,Object>> controlCargos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
+		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> controlCargo = new HashMap<>();
+		Map<Long, Map<Integer, Map<Integer, Integer>>> controlPorArea = new HashMap<>();
+		Map<Integer,Object> graficoControl = new HashMap<>();
+		controlCargo=cargoservice.controlCargos(fechaini, fechafin, id);
+		controlPorArea=cargoservice.controlCargosPorAreas(fechaini, fechafin, id);
+		graficoControl.put(1, controlCargo);
+		graficoControl.put(2, controlPorArea);
+		return new ResponseEntity<Map<Integer,Object>>(graficoControl, HttpStatus.OK);
+		
+	}
+	
 	
 }

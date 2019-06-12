@@ -173,7 +173,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 					Calendar fechaEntrega = Calendar.getInstance();
 					fechaEntrega.setTime(seguimientoDocumento.getFecha());
 				}
-				
+				//faltaprobar
 			}
 		}
 		return cantidadDetalle;
