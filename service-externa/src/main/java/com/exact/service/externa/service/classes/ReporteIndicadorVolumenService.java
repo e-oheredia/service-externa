@@ -40,12 +40,18 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 	@Autowired
 	IPlazoDistribucionDao plazodao;
 	
+	private static final Log Logger = LogFactory.getLog(ReporteIndicadorVolumenService.class);
+
+	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
+	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
+
 	
 	@Override
 	public Map<Integer,Map<Integer, Integer>>  IndicadorVolumenGrafico(String fechaIni, String fechaFin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
-		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
+		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+
 		Date dateI= null;
 		Date dateF= null;
 
@@ -58,15 +64,24 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		
 		Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
 		
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
+		Logger.info("NUEVAFECHA : "+ newdatef);
+		Logger.info("NUEVAFECHA : "+dt.format(dateF)+"-"+ultimodia);
 		
-		if( dtmeses.format(dateI).equals(dtmeses.format(dateF)) ) {
-			
+		
+		Iterable<DocumentoReporte> entidades = null;
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
 		}
+		Logger.info("DIA :"+ Integer.parseInt(dtmeses.format(dateI)));
+		Logger.info("AÑO :"+Integer.parseInt(dtaño.format(dateI)));
 		
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
 		
-		
-		
+
 		
 		
 		List<DocumentoReporte> reportes = new ArrayList<>();
@@ -122,6 +137,14 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 //	
 //	
 	
+	public int obtenerUltimoDiaMes(int anio, int mes) {
+		Calendar calendario=Calendar.getInstance();
+		calendario.set(anio, mes, 1);
+		return calendario.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+	
+	
+	
 	public List<Date> getListaEntreFechas2(Date fechaInicio, Date fechaFin) {
 
 		Calendar c1 = Calendar.getInstance();
@@ -164,9 +187,17 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 			listademeses.add(dt.format(mess)); 
 		}
 		int i= 0;
-
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
 		
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		Iterable<DocumentoReporte> entidades = null;
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
+
+		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
@@ -206,7 +237,6 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		
 		return remultiMap;
 	}
-	private static final Log Logger = LogFactory.getLog(DiaService.class);
 
 	@Override
 	public Map<Integer, Map<Integer, Map<Integer, Integer>>> indicadortabla2cabeceravolumen(String fechaIni,
@@ -224,7 +254,18 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 			return null;
 		}
 		int i=0;
-		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+		
+		int ultimodia=obtenerUltimoDiaMes(Integer.parseInt(dtmeses.format(dateI)),Integer.parseInt(dtaño.format(dateI)));
+		Date newdatef = dtcompleta.parse(dt.format(dateF)+"-"+ultimodia);
+		
+		Iterable<DocumentoReporte> entidades = null;
+		
+		if( dt.format(dateI).equals(dt.format(dateF)) ) {
+			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
+		}else {
+			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
+
+		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
