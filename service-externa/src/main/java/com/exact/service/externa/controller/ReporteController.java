@@ -54,6 +54,12 @@ public class ReporteController {
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
 		Map<Integer, Object> nuevo = new HashMap<>();
+		
+			if(reporteservice.validar(fechaini, fechafin)) {
+				return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+			}
+			
+		
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
@@ -68,8 +74,12 @@ public class ReporteController {
 
 	
 	@GetMapping("/eficiencia/porcourier")
-	public ResponseEntity<Map<Integer,Object>> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<?> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
+		
+		if(reporteservice.validar(fechaini, fechafin)) {
+			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		}
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesPorPlazo = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
@@ -117,9 +127,15 @@ public class ReporteController {
 	@GetMapping("/eficacia/proveedor")
 	public ResponseEntity<?> eficaciaporproveedor(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
+		
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
+		
+		if(reporteservice.validar(fechaini, fechafin)) {
+			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		}
+		
 		Map<Integer,Map<Integer, Integer>> reportecurier = eficaciaservice.eficaciaporproveedor(fechaini, fechafin) ;
 		return new ResponseEntity<Map<Integer,Map<Integer, Integer>>>(reportecurier,HttpStatus.OK);
 	}	
@@ -186,9 +202,12 @@ public class ReporteController {
 	}
 	
 	@GetMapping("/cargos/devolucionportipo")
-	public ResponseEntity<Map<Integer,Object>> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<?> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-
+		if(reporteservice.validar(fechaini, fechafin)) {
+			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		}
+		
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesProveedor = new HashMap<>();
 		Map<Long, Integer> cantidadesPorArea = new HashMap<>();
 		cantidadesProveedor=cargoservice.devolucionPorTipo(fechaini, fechafin);
