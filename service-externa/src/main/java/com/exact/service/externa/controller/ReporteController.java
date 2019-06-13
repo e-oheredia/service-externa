@@ -21,6 +21,7 @@ import com.exact.service.externa.service.interfaces.ICargosService;
 import com.exact.service.externa.service.interfaces.IReporteEficaciaService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorEficacia;
+import com.exact.service.externa.service.interfaces.IReporteIndicadorEficienciaService;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorVolumenService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 
@@ -45,6 +46,9 @@ public class ReporteController {
 	
 	@Autowired
 	IReporteIndicadorEficacia indicadoreficaciaservice;
+	
+	@Autowired
+	IReporteIndicadorEficienciaService indicadoreficienciaservice;
 	
 	@GetMapping("/volumen/curier")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
@@ -241,8 +245,21 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer, Map<Integer, Map<Integer, Integer>>>>(reportecurier,HttpStatus.OK);
 	}	
 	
+	@GetMapping("/indicadoreficiencia/graficotabla")
+	public ResponseEntity<?> indicadoreficienciagraficotabala(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin)
+			throws IOException, JSONException, NumberFormatException, ParseException {
+		if(fechaini=="" || fechafin==""){
+			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		}
+		Map<Integer, Map<Integer, Float>> reportegrafico1 = indicadoreficienciaservice.graficoTablaPorcentaje(fechaini, fechafin);
+		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> reportegrafico2 = indicadoreficienciaservice.proveedorPlazoDentroFuera(fechaini, fechafin);
+		Map<Integer,Object> graficoIndicador = new HashMap<>();
+		graficoIndicador.put(1, reportegrafico1);
+		graficoIndicador.put(2, reportegrafico2);
+		return new ResponseEntity<Map<Integer,Object>>(graficoIndicador,HttpStatus.OK);
+	}
 	
-
+	
 	
 	
 }
