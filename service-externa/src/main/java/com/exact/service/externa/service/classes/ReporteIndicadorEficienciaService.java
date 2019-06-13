@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.entity.DocumentoReporte;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorEficienciaService;
 
@@ -100,9 +101,62 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	}
 
 	@Override
-	public Map<Long, Map<Integer, Map<Integer, Map<Long, Map<String, Integer>>>>> proveedorPlazoDentroFuera(String fechaini, String fechafin) throws IOException, NumberFormatException, ParseException {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> proveedorPlazoDentroFuera(String fechaini, String fechafin) throws IOException, NumberFormatException, ParseException {
+		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		Date dateI= null;
+		Date dateF= null;
+
+		try {
+			dateI = dt.parse(fechaini);
+			dateF = dt.parse(fechafin); 
+		} catch (Exception e) {
+			return null;
+		}
+		Iterable<Proveedor> proveedores = proveedorDao.findAll();
+		List<String> listademeses = new ArrayList<>();
+		List<Date> meses = getListaEntreFechas2(dateI,dateF);
+		for(Date mess : meses) {
+			listademeses.add(dt.format(mess)); 
+		}
+		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas(dateI,dateF);
+		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> cantidades = new HashMap<>();
+		
+		for(Proveedor proveedor : proveedores ) {
+			Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> plazoCantidad = new HashMap<>();
+			for(PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
+				Map<Integer, Map<Integer, Map<String, Integer>>> mesesIndex = new HashMap<>();
+				int i=0;
+				for(String mesaño : listademeses) {
+					int cantidadDentroPlazo = 0;
+					int cantidadFueraPlazo = 0;
+					Map<String, Integer> cantidadDentroFuera = new HashMap<>();
+					Map<Integer, Map<String, Integer>> cantidadPorMes = new HashMap<>();
+					for(DocumentoReporte documentoreporte : documentos) {
+						if(proveedor.getId()==documentoreporte.getProveedorId() && plazo.getId()==documentoreporte.getPlazoId()) {
+								if(dt.format(documentoreporte.getFecha()).equals(mesaño)) {
+									if(documentoreporte.getEstadoDocumento()==ENTREGADO) {
+											if(documentoreporte.getTiempoEntrega()==DENTRO_PLAZO) {
+												cantidadDentroPlazo++;
+											}else {
+												cantidadFueraPlazo++;
+											}
+										}
+								}
+						}
+					}
+					i++;
+					cantidadDentroFuera.put("dentroplazo", cantidadDentroPlazo);
+					cantidadDentroFuera.put("fueraplazo", cantidadFueraPlazo);
+					cantidadPorMes.put(Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantidadDentroFuera);
+					mesesIndex.put(i, cantidadPorMes);
+				}
+				plazoCantidad.put(plazo.getId(), mesesIndex);
+				cantidades.put(proveedor.getId(), plazoCantidad);
+			}
+			
+		}
+		return cantidades;
 	}
 
 }

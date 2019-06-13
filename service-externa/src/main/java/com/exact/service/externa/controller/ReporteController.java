@@ -251,8 +251,12 @@ public class ReporteController {
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
-		Map<Integer, Map<Integer, Float>> reportegrafico1 = indicadoreficienciaservice.graficoTablaPorcentaje(fechaini, fechafin); 
-		return new ResponseEntity<Map<Integer, Map<Integer, Float>>>(reportegrafico1,HttpStatus.OK);
+		Map<Integer, Map<Integer, Float>> reportegrafico1 = indicadoreficienciaservice.graficoTablaPorcentaje(fechaini, fechafin);
+		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> reportegrafico2 = indicadoreficienciaservice.proveedorPlazoDentroFuera(fechaini, fechafin);
+		Map<Integer,Object> graficoIndicador = new HashMap<>();
+		graficoIndicador.put(1, reportegrafico1);
+		graficoIndicador.put(2, reportegrafico2);
+		return new ResponseEntity<Map<Integer,Object>>(graficoIndicador,HttpStatus.OK);
 	}
 	
 	

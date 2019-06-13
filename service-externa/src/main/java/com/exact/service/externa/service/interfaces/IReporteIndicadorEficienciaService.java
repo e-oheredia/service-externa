@@ -8,6 +8,6 @@ public interface IReporteIndicadorEficienciaService {
 
 	public Map<Integer,Map<Integer,Float>> graficoTablaPorcentaje(String fechaini,String fechafin)throws IOException, NumberFormatException, ParseException;
 	
-	public Map<Long, Map<Integer,Map<Integer,Map<Long,Map<String,Integer>>>>> proveedorPlazoDentroFuera (String fechaini,String fechafin) throws IOException, NumberFormatException, ParseException;
+	public Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> proveedorPlazoDentroFuera (String fechaini,String fechafin) throws IOException, NumberFormatException, ParseException;
 	
 }
