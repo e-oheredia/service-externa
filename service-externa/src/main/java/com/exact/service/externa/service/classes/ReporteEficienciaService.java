@@ -160,10 +160,12 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		Proveedor proveedor = proveedorDao.findById(proveedorId).orElse(null);
 		for(PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
-			Map<Long, Integer> cantidadPorHoras = new HashMap<>();
-			Map<Long, Map<Long, Integer>> cantidadPlazos = new HashMap<>();
-			int cantidadPlazo =0;
+			Map<Integer, Integer> cantidadTiempoEnvio = new HashMap<>();
+			Map<Long, Map<Integer, Integer>> cantidadPlazo = new HashMap<>();
+			int cantidadPlazos =0;
+			
 			for(DocumentoReporte documentoreporte : documentoslst ) {
+				Map<Long, Map<Integer, Integer>> cantidadPlazso = new HashMap<>();
 				Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
 				SeguimientoDocumento seguimientoDocumento = documento.getSeguimientoDocumentoByEstadoId(ENTREGADO); 
 				if(plazo.getId() == documentoreporte.getPlazoId()) {
@@ -172,9 +174,18 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 					Date fechaLimite = guiaService.getFechaLimite(guia);
 					Calendar fechaEntrega = Calendar.getInstance();
 					fechaEntrega.setTime(seguimientoDocumento.getFecha());
+					
+					
+					
+					
+					
 				}
+				
 				//faltaprobar
 			}
+			
+			
+			
 		}
 		return cantidadDetalle;
 	}
