@@ -18,11 +18,13 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.exact.service.externa.dao.IAreaPlazoDistribucionDao;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.dao.ITipoDevolucionDao;
 import com.exact.service.externa.edao.interfaces.IAreaEdao;
+import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.Proveedor;
@@ -59,6 +61,9 @@ public class CargosService implements ICargosService {
 
 	@Autowired
 	IAreaEdao areaDao;
+	
+	@Autowired
+	IAreaPlazoDistribucionDao areaplazodao;
 
 	@Override
 	public Map<Long, Map<Long, Map<String, Integer>>> devolucionPorTipo(String fechaIni, String fechaFin)
@@ -130,22 +135,24 @@ public class CargosService implements ICargosService {
 		} catch (Exception e) {
 			return null;
 		}
+		
+		
 		Iterable<DocumentoReporte> documentos = documentoReporteDao.buscarvolumenporfechas(dateI, dateF);
 		List<DocumentoReporte> documentolst = StreamSupport.stream(documentos.spliterator(), false)
 				.collect(Collectors.toList());
-		Iterable<Map<String, Object>> areasBD = areaDao.listarAll();
+		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
 		Map<Long, Integer> cantidades = new HashMap<>();
-		for (Map<String, Object> area : areasBD) {
+		for (AreaPlazoDistribucion area : areasBD) {
 
 			int cantidadPorArea = 0;
 			for (DocumentoReporte documentoreporte : documentolst) {
-				if (documentoreporte.getArea() == Long.valueOf(area.get("id").toString())) {
+				if (documentoreporte.getArea() == area.getAreaId()) {
 					if (documentoreporte.getEstadoCargo() == PENDIENTE) {
 						cantidadPorArea++;
 					}
 				}
 			}
-			cantidades.put(Long.valueOf(area.get("id").toString()), cantidadPorArea);
+			cantidades.put(area.getAreaId(), cantidadPorArea);
 		}
 		return cantidades;
 	}
@@ -248,21 +255,21 @@ public class CargosService implements ICargosService {
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
-		Iterable<Map<String, Object>> areasBD = areaDao.listarAll();
+		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
 		List<String> listademeses = new ArrayList<>();
 		List<Date> meses = getListaEntreFechas2(dateI,dateF);
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
 		Map<Long, Map<Integer, Map<Integer, Integer>>> cantidades = new HashMap<>();
-		for (Map<String,Object> area : areasBD) {
+		for (AreaPlazoDistribucion area : areasBD) {
 			int i=0;
 			Map<Integer, Map<Integer, Integer>> mesesArea = new HashMap<>();
 			for(String mesaño : listademeses) {
 				int cantidadArea =0;
 				Map<Integer, Integer> cantArea = new HashMap<>();
 				for (DocumentoReporte documentoreporte : documentos) {
-					if(Long.valueOf(area.get("id").toString())==documentoreporte.getArea()) {
+					if(area.getAreaId()==documentoreporte.getArea()) {
 						if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
 							cantidadArea++;
 					}
@@ -272,7 +279,7 @@ public class CargosService implements ICargosService {
 				cantArea.put(Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantidadArea);
 				mesesArea.put(i, cantArea);
 			}
-			cantidades.put(Long.valueOf(area.get("id").toString()), mesesArea);
+			cantidades.put(area.getAreaId(), mesesArea);
 		}
 		
 		return cantidades;
