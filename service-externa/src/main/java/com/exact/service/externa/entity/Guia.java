@@ -240,6 +240,21 @@ public class Guia implements Serializable{
 	@Transient
 	private int cantidadDocumentos;
 	
+	@Transient
+	private int cantidadDocumentosPendientes;
+	
+	
+	
+
+	public int getCantidadDocumentosPendientes() {
+		return cantidadDocumentosPendientes;
+	}
+
+
+	public void setCantidadDocumentosPendientes(int cantidadDocumentosPendientes) {
+		this.cantidadDocumentosPendientes = cantidadDocumentosPendientes;
+	}
+
 
 	public int getCantidadDocumentos() {
 		return cantidadDocumentos;

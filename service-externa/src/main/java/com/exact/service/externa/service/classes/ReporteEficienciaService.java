@@ -3,11 +3,15 @@ package com.exact.service.externa.service.classes;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -31,6 +35,7 @@ import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
+
 
 import io.jsonwebtoken.io.IOException;
 
@@ -144,8 +149,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 	}
 
 	@Override
-	public Map<Long, Map<Long, Map<Long, Integer>>> detalleEficienciaPorCourier(String fechaIni, String fechaFin,Long proveedorId) throws IOException, JSONException, ClientProtocolException, java.io.IOException, URISyntaxException, ParseException {
+	public Map<Long, Map<String, Integer>> detalleEficienciaPorCourier(String fechaIni, String fechaFin,Long proveedorId) throws IOException, JSONException, ClientProtocolException, java.io.IOException, URISyntaxException, ParseException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Date dateI= null;
 		Date dateF= null;
 		try {
@@ -154,40 +160,54 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		} catch (Exception e) {
 			return null;
 		}
-		Map<Long, Map<Long, Map<Long, Integer>>> cantidadDetalle = new HashMap<>();
 		
 		Iterable<DocumentoReporte> documentos = documentoReporteDao.findDocumentosByProveedorId(dateI, dateF,proveedorId);
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		Proveedor proveedor = proveedorDao.findById(proveedorId).orElse(null);
+		Map<Long, Map<String, Integer>> cantidadDetalle = new HashMap<>();
+		
 		for(PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
 			Map<Integer, Integer> cantidadTiempoEnvio = new HashMap<>();
 			Map<Long, Map<Integer, Integer>> cantidadPlazo = new HashMap<>();
 			int cantidadPlazos =0;
-			
 			for(DocumentoReporte documentoreporte : documentoslst ) {
 				Map<Long, Map<Integer, Integer>> cantidadPlazso = new HashMap<>();
-				Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
-				SeguimientoDocumento seguimientoDocumento = documento.getSeguimientoDocumentoByEstadoId(ENTREGADO); 
 				if(plazo.getId() == documentoreporte.getPlazoId()) {
-					DocumentoGuia dc = documentoguiaDao.findByDocumentoId(documentoreporte.getDocumentoId());
-					Guia guia = guiaDao.findById(dc.getGuia().getId()).orElse(null);
-					Date fechaLimite = guiaService.getFechaLimite(guia);
-					Calendar fechaEntrega = Calendar.getInstance();
-					fechaEntrega.setTime(seguimientoDocumento.getFecha());
+					Long valor = calcularHoras(documentoreporte);
 					
-					
-					
-					
-					
-				}
+				
 				
 				//faltaprobar
 			}
-			
-			
-			
+		}
+		
 		}
 		return cantidadDetalle;
 	}
+	 public static LocalDateTime toLocalDateTime(Calendar calendar) {
+	      if (calendar == null) {
+	          return null;
+	      }
+	      TimeZone tz = calendar.getTimeZone();
+	      ZoneId zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
+	      return LocalDateTime.ofInstant(calendar.toInstant(), zid);
+	  }
+	 
+	 public Long calcularHoras(DocumentoReporte documentoreporte) throws ClientProtocolException, java.io.IOException, JSONException, URISyntaxException, ParseException {
+		 Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
+			SeguimientoDocumento seguimientoDocumento = documento.getSeguimientoDocumentoByEstadoId(ENTREGADO); 
+			DocumentoGuia dc = documentoguiaDao.findByDocumentoId(documentoreporte.getDocumentoId());
+			Guia guia = guiaDao.findById(dc.getGuia().getId()).orElse(null);
+			Date fechaLimite = guiaService.getFechaLimite(guia);
+			Calendar fechalimitecal = Calendar.getInstance();
+			Calendar fechaEntrega = Calendar.getInstance();
+			fechalimitecal.setTime(fechaLimite);
+			fechaEntrega.setTime(seguimientoDocumento.getFecha());
+			LocalDateTime v1 = toLocalDateTime(fechalimitecal);
+			LocalDateTime v2 = toLocalDateTime(fechaEntrega);
+			Duration duration = Duration.between(v1, v2);
+			Long hours = duration.toHours();
+			return hours;
+	 }
 
 }
