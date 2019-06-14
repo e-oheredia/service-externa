@@ -623,8 +623,14 @@ public class GuiaService implements IGuiaService{
 			guia.setFechaLimite(fechaLimite);
 		}
 		guia.setCantidadDocumentos(guia.getDocumentosGuia().size());
-		
+		int cantidadPendientes =0;
+		Iterable<Documento> documentoscnt = documentoDao.listardocumentosPendientes(guia.getId());
+		List<Documento> documentosls = StreamSupport.stream(documentoscnt.spliterator(), false).collect(Collectors.toList());
+		cantidadPendientes=documentosls.size();
+		guia.setCantidadDocumentosPendientes(cantidadPendientes);
 		return guia;
+		
+		
 	}
 
 	@Override
@@ -654,6 +660,7 @@ public class GuiaService implements IGuiaService{
 			List<Guia> guias = StreamSupport.stream(guiasBD.spliterator(), false).collect(Collectors.toList());
 			List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 			for(Guia guia : guias) {
+				int cantidadPendientes =0;
 				Date fechaLimite= null;
 				int i=0;
 				while(i < sedes.size()) {
@@ -687,6 +694,10 @@ public class GuiaService implements IGuiaService{
 				}
 				
 				guia.setCantidadDocumentos(guia.getDocumentosGuia().size());
+				Iterable<Documento> documentoscnt = documentoDao.listardocumentosPendientes(guia.getId());
+				List<Documento> documentosls = StreamSupport.stream(documentoscnt.spliterator(), false).collect(Collectors.toList());
+				cantidadPendientes=documentosls.size();
+				guia.setCantidadDocumentosPendientes(cantidadPendientes);
 				
 			}
 			return guias;

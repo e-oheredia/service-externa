@@ -829,16 +829,17 @@ public class DocumentoService implements IDocumentoService {
 		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO && sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=NO_DISTRIBUIBLE) {
 			return null;
 		}
+		EstadoDocumento estadoDocumento = new EstadoDocumento();
+		estadoDocumento.setId(RECEPCIONADO);
 		Set<TipoDevolucion> tipodevolucion = new HashSet<TipoDevolucion>(tiposDevolucion);
 		documento.setTiposDevolucion(tipodevolucion);
-		EstadoDocumento estado = new EstadoDocumento();
-		estado.setId(RECEPCIONADO);
-		SeguimientoDocumento sdocumento = new SeguimientoDocumento();
-		sdocumento.setUsuarioId(idUsuario);
-		sdocumento.setEstadoDocumento(estado);
-		sdocumento.setLinkImagen(sdMax.getLinkImagen());
-		sdocumento.setDocumento(documento);
-		seguimientosDocumentolst.add(sdocumento);
+		SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento();
+		seguimientoDocumento.setEstadoDocumento(estadoDocumento);
+		seguimientoDocumento.setUsuarioId(idUsuario);
+		seguimientoDocumento.setLinkImagen(sdMax.getLinkImagen());
+		seguimientoDocumento.setDocumento(documento);
+		seguimientoDocumento.setFecha(new Date());
+		seguimientosDocumentolst.add(seguimientoDocumento);
 		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
 		
 		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);

@@ -179,10 +179,10 @@ public class ReporteController {
 	}		
 	
 	@GetMapping("/eficiencia/{id}/detalleporcourier")
-	public ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>> detalleEficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
-		Map<Long, Map<Long, Map<Long, Integer>>> cantidades = new HashMap<>();
+	public ResponseEntity<?> detalleEficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
+		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		cantidades=reporteEficienciaservice.detalleEficienciaPorCourier(fechaini, fechafin, id);
-		return new ResponseEntity<Map<Long, Map<Long, Map<Long, Integer>>>>(cantidades, HttpStatus.OK);
+		return new ResponseEntity<Map<Long, Map<String, Integer>>>(cantidades, HttpStatus.OK);
 	}
 	
 	@GetMapping("/cargos/devolucionportipo")
