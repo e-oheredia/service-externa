@@ -80,6 +80,12 @@ public class CargosService implements ICargosService {
 		Iterable<DocumentoReporte> documentoreportes = documentoReporteDao.findDocumentosByEstadoCargo(dateI, dateF);
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentoreportes.spliterator(), false)
 				.collect(Collectors.toList());
+		
+		if(documentoslst.size()==0) {
+			return null;
+
+		}
+		
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
@@ -140,6 +146,10 @@ public class CargosService implements ICargosService {
 		Iterable<DocumentoReporte> documentos = documentoReporteDao.buscarvolumenporfechas(dateI, dateF);
 		List<DocumentoReporte> documentolst = StreamSupport.stream(documentos.spliterator(), false)
 				.collect(Collectors.toList());
+		if(documentolst.size()==0) {
+			return null;
+
+		}
 		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
 		Map<Long, Integer> cantidades = new HashMap<>();
 		for (AreaPlazoDistribucion area : areasBD) {
@@ -161,12 +171,13 @@ public class CargosService implements ICargosService {
 	public Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> controlCargos(String fechaIni, String fechaFin,
 			Long tipoDevolucionId) throws IOException, JSONException, NumberFormatException, ParseException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
 		Date dateI = null;
 		Date dateF = null;
 		try {
-			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin);
+			dateI = dtdia.parse(fechaIni);
+			dateF = dtdia.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}
@@ -183,6 +194,13 @@ public class CargosService implements ICargosService {
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
+		
+		List<DocumentoReporte> reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+
+		}
+		
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> cantidades = new HashMap<>();
 		
@@ -239,11 +257,13 @@ public class CargosService implements ICargosService {
 	public Map<Long, Map<Integer, Map<Integer, Integer>>> controlCargosPorAreas(String fechaIni, String fechaFin, Long tipoDevolucionId) throws IOException, JSONException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
+
 		Date dateI = null;
 		Date dateF = null;
 		try {
-			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin);
+			dateI = dtdia.parse(fechaIni);
+			dateF = dtdia.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}
@@ -255,6 +275,14 @@ public class CargosService implements ICargosService {
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
+		
+		List<DocumentoReporte> reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+
+		}
+		
+		
 		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
 		List<String> listademeses = new ArrayList<>();
 		List<Date> meses = getListaEntreFechas2(dateI,dateF);
