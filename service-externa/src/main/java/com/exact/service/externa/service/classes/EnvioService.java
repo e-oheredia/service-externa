@@ -395,6 +395,7 @@ public class EnvioService implements IEnvioService {
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		for(Envio envio: lstenvioAutorizaciones) {
+			envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 			int i = 0;
 			while (i < buzones.size()) {
 				if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
