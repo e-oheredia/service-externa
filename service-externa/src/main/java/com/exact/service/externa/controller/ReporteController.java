@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,20 +52,50 @@ public class ReporteController {
 	@Autowired
 	IReporteIndicadorEficienciaService indicadoreficienciaservice;
 	
-	@GetMapping("/volumen/curier")
+	
+	private static final String MALFORMATO = "Ingrese Formato correcto";
+	private static final String SINFECHA = "Ingrese las fechas requeridas";
+	private static final String FINALINICIO = "Ingreso de rangos incorrectos";
+	private static final String RANGOINCORRECTO = "Ingrese un máximo de 13 meses";
+	private static final String CORRECTO = "0";
+	HttpStatus status = HttpStatus.OK;
+	String rpta = "";
+	Map<String, Object> respuesta = new HashMap<String, Object>();
+
+	
+	
+	@GetMapping("/volumen")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
 		Map<Integer, Object> nuevo = new HashMap<>();
 		
-			if(reporteservice.validar(fechaini, fechafin)) {
-				return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,1) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,1)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
 			}
-			
-		
-		if(fechaini=="" || fechafin==""){
-			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
+		
 		Map<Long,Map<String, Float>> reportecurier = reporteservice.volumenbycurier(fechaini, fechafin);
+		if(reportecurier==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		Map<Integer, Map<String, Float>> reportecurier2 = reporteservice.volumenbyutd(fechaini, fechafin);
 		Map<Integer,Map<Integer, Integer>> reportecurier3 = reporteservice.volumenbyplazo(fechaini, fechafin);
 		nuevo.put(1, reportecurier);
@@ -73,16 +105,38 @@ public class ReporteController {
 	}
 
 	
-	@GetMapping("/eficiencia/porcourier")
+	@GetMapping("/eficiencia")
 	public ResponseEntity<?> eficienciaPorCourier(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-		
-		if(reporteservice.validar(fechaini, fechafin)) {
-			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,1) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,1)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.CONFLICT;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
+		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesPorPlazo = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
+		if(cantidades==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		cantidadesPorPlazo=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
 		Map<Integer,Object> graficoEficiencia = new HashMap<>();
 		graficoEficiencia.put(1, cantidades);
@@ -124,19 +178,37 @@ public class ReporteController {
 	}	
 	
 	
-	@GetMapping("/eficacia/proveedor")
+	@GetMapping("/eficacia")
 	public ResponseEntity<?> eficaciaporproveedor(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
 		
-		if(fechaini=="" || fechafin==""){
-			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
-		}
-		
-		if(reporteservice.validar(fechaini, fechafin)) {
-			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,1) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,1)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
 		
 		Map<Integer,Map<Integer, Integer>> reportecurier = eficaciaservice.eficaciaporproveedor(fechaini, fechafin) ;
+		if(reportecurier==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		return new ResponseEntity<Map<Integer,Map<Integer, Integer>>>(reportecurier,HttpStatus.OK);
 	}	
 	
@@ -145,10 +217,32 @@ public class ReporteController {
 	public ResponseEntity<?> indicadorvolumentabla3(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
 		Map<Integer, Object> nuevo = new HashMap<>();
-		if(fechaini=="" || fechafin==""){
-			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,2)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
 		Map<Integer,Map<Integer, Integer>>  reportecurier = indicadorservice.IndicadorVolumenGrafico(fechaini, fechafin);
+		if(reportecurier==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>   reportecurier2 = indicadorservice.IndicadorVolumenTabla2(fechaini,fechafin);
 		Map<Integer, Map<Integer, Map<Integer, Integer>>> reportecurier3 = indicadorservice.indicadortabla2cabeceravolumen(fechaini, fechafin); 
 		nuevo.put(1, reportecurier);
@@ -171,10 +265,32 @@ public class ReporteController {
 	public ResponseEntity<?> indicadoreficacia(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
 		Map<Integer, Object> nuevo = new HashMap<>();
-		if(fechaini=="" || fechafin==""){
-			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,2)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
 		Map<Integer, Map<Integer, Float>> reportecurier = indicadoreficaciaservice.indicadorgrafico(fechaini, fechafin);
+		if(reportecurier==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> reportecurier2 = indicadoreficaciaservice.indicadortabla2(fechaini, fechafin); 	
 		Map<Integer, Map<Integer, Map<Integer, Float>>> reportecurier3 = indicadoreficaciaservice.indicadortabla2cabecera(fechaini, fechafin); 
 		nuevo.put(1, reportecurier);
@@ -204,15 +320,36 @@ public class ReporteController {
 	@GetMapping("/cargos/devolucionportipo")
 	public ResponseEntity<?> devolucionPorTipoDevolucion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
-		if(reporteservice.validar(fechaini, fechafin)) {
-			return new ResponseEntity<String>("La fecha inicial no puede ser mayor a la final", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,2)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
 		
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesProveedor = new HashMap<>();
 		Map<Long, Integer> cantidadesPorArea = new HashMap<>();
 		cantidadesProveedor=cargoservice.devolucionPorTipo(fechaini, fechafin);
 		cantidadesPorArea = cargoservice.pendientesCargosPorArea(fechaini, fechafin);
-		
+		if(cantidadesProveedor==null && cantidadesPorArea==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		Map<Integer,Object> graficoControl = new HashMap<>();
 		graficoControl.put(1, cantidadesProveedor);
 		graficoControl.put(2, cantidadesPorArea);
@@ -232,12 +369,37 @@ public class ReporteController {
 	}
 	
 	@GetMapping("/control/{id}/estado")
-	public ResponseEntity<Map<Integer,Object>> controlCargos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
+	public ResponseEntity<?> controlCargos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @PathVariable Long id) throws IOException, JSONException, ParseException, Exception{
 		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> controlCargo = new HashMap<>();
+		if (reporteservice.validardia(fechaini, fechafin,1) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,1)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
+		}
 		Map<Long, Map<Integer, Map<Integer, Integer>>> controlPorArea = new HashMap<>();
 		Map<Integer,Object> graficoControl = new HashMap<>();
 		controlCargo=cargoservice.controlCargos(fechaini, fechafin, id);
 		controlPorArea=cargoservice.controlCargosPorAreas(fechaini, fechafin, id);
+		if(controlCargo==null && controlPorArea==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		graficoControl.put(1, controlCargo);
 		graficoControl.put(2, controlPorArea);
 		return new ResponseEntity<Map<Integer,Object>>(graficoControl, HttpStatus.OK);
@@ -264,14 +426,36 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer, Map<Integer, Map<Integer, Integer>>>>(reportecurier,HttpStatus.OK);
 	}	
 	
-	@GetMapping("/indicadoreficiencia/graficotabla")
+	@GetMapping("/indicadoreficiencia")
 	public ResponseEntity<?> indicadoreficienciagraficotabala(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
-		if(fechaini=="" || fechafin==""){
-			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
+			switch (reporteservice.validardia(fechaini, fechafin,2)) {
+			case 1:
+				rpta = SINFECHA;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 2:
+				rpta = MALFORMATO;
+				status=HttpStatus.BAD_REQUEST;
+				break;
+			case 3:
+				rpta = FINALINICIO;
+				status=HttpStatus.EXPECTATION_FAILED;
+				break;
+			case 4:
+				rpta = RANGOINCORRECTO;
+				status=HttpStatus.FAILED_DEPENDENCY;
+				break;
+			}
+			respuesta.put("mensaje", rpta);
+			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}
 		Map<Integer, Map<Integer, Float>> reportegrafico1 = indicadoreficienciaservice.graficoTablaPorcentaje(fechaini, fechafin);
 		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> reportegrafico2 = indicadoreficienciaservice.proveedorPlazoDentroFuera(fechaini, fechafin);
+		if(reportegrafico1==null && reportegrafico2==null) {
+			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
+		}
 		Map<Integer,Object> graficoIndicador = new HashMap<>();
 		graficoIndicador.put(1, reportegrafico1);
 		graficoIndicador.put(2, reportegrafico2);
