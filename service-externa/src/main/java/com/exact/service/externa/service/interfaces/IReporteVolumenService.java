@@ -15,5 +15,7 @@ public interface IReporteVolumenService {
 	public Map<Integer, Map<Integer, Integer>> volumenbyplazo(String fechaini,String fechainifin) throws IOException, JSONException;
 	
 	
+	public boolean validar(String fechaini,String fechainifin);
+	
 
 }

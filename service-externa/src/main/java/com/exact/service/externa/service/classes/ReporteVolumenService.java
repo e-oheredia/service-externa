@@ -171,4 +171,24 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		
 	}
 
+	@Override
+	public boolean validar(String fechaini, String fechainifin) {
+		Date dateI= null;
+		Date dateF= null;
+		
+		try {
+			dateI = dt.parse(fechaini);
+			dateF = dt.parse(fechainifin); 
+		} catch (Exception e) {
+			return false;
+		}
+		
+		if(dateI.compareTo(dateF)>0){
+			return true;
+		}
+		
+		
+		return false;
+	}
+
 }
