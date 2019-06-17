@@ -171,12 +171,13 @@ public class CargosService implements ICargosService {
 	public Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> controlCargos(String fechaIni, String fechaFin,
 			Long tipoDevolucionId) throws IOException, JSONException, NumberFormatException, ParseException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
 		Date dateI = null;
 		Date dateF = null;
 		try {
-			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin);
+			dateI = dtdia.parse(fechaIni);
+			dateF = dtdia.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}
@@ -256,11 +257,13 @@ public class CargosService implements ICargosService {
 	public Map<Long, Map<Integer, Map<Integer, Integer>>> controlCargosPorAreas(String fechaIni, String fechaFin, Long tipoDevolucionId) throws IOException, JSONException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
+
 		Date dateI = null;
 		Date dateF = null;
 		try {
-			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin);
+			dateI = dtdia.parse(fechaIni);
+			dateF = dtdia.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}

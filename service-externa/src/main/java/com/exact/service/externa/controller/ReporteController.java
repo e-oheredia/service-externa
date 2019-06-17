@@ -397,7 +397,7 @@ public class ReporteController {
 		Map<Integer,Object> graficoControl = new HashMap<>();
 		controlCargo=cargoservice.controlCargos(fechaini, fechafin, id);
 		controlPorArea=cargoservice.controlCargosPorAreas(fechaini, fechafin, id);
-		if(controlCargo==null && controlPorArea==null) {
+		if(controlCargo==null ||  controlPorArea==null) {
 			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
 		}
 		graficoControl.put(1, controlCargo);
