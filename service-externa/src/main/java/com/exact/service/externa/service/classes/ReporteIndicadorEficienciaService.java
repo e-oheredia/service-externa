@@ -48,7 +48,13 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 		} catch (Exception e) {
 			return null;
 		}
+		List<DocumentoReporte> reportes = new ArrayList<>();
 		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas(dateI,dateF);
+		reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+
+		}
 		List<String> listademeses = new ArrayList<>();
 		List<Date> meses = getListaEntreFechas2(dateI,dateF);
 		for(Date mess : meses) {
@@ -119,7 +125,12 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
+		List<DocumentoReporte> reportes = new ArrayList<>();
 		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas(dateI,dateF);
+		reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+		}
 		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> cantidades = new HashMap<>();
 		
 		for(Proveedor proveedor : proveedores ) {

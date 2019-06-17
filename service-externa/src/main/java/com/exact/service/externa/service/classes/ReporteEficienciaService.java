@@ -81,6 +81,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		}
 		Iterable<DocumentoReporte> documentosPlazo = documentoReporteDao.findDocumentosByDentroFueraPlazo(dateI,dateF);
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentosPlazo.spliterator(), false).collect(Collectors.toList());
+		if(documentoslst.size()==0) {
+			return null;
+		}
 		Iterable<Proveedor> proveedores =  proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false).collect(Collectors.toList());
 		for(Proveedor proveedor: proveedoreslst) {

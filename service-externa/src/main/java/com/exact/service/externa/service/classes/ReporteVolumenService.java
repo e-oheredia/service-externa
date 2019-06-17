@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,12 @@ import java.util.stream.StreamSupport;
 
 import javax.persistence.criteria.CriteriaBuilder.In;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IDocumentoReporteDao;
@@ -44,6 +49,15 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	IPlazoDistribucionDao plazodao;
 	
 	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+	SimpleDateFormat dtmes = new SimpleDateFormat("yyyy-MM");
+	
+	private static final String MALFORMATO = "Ingrese Formato correcto";
+	private static final String SINFECHA = "Ingrese las fechas requeridas";
+	private static final String FINALINICIO = "Ingreso de rangos incorrectos";
+	private static final String RANGOINCORRECTO = "Ingrese un máximo de 13 meses";
+	private static final String CORRECTO = "0";
+	private static final Log Logger = LogFactory.getLog(ReporteVolumenService.class);
+
 	
 	@Override
 	public Map<Long,Map<String, Float>> volumenbycurier(String fechaIni,String fechaFin) throws IOException, JSONException {
@@ -58,10 +72,17 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		} catch (Exception e) {
 			return null;
 		}
+		
+
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
+
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		int cantidadtotal = reportes.size();
+		if(cantidadtotal==0) {
+			Logger.info("ENTRO");
+			return null;
+		}
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
@@ -171,4 +192,48 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		
 	}
 
+	@Override
+	public int validardia(String fechaini, String fechainifin,int rango) {
+		
+		if(fechaini=="" || fechainifin==""){
+			return 1;
+		}
+		
+		Date dateI= null;
+		Date dateF= null;
+		
+		if(rango==1) {
+			try {
+				dateI = dt.parse(fechaini);
+				dateF = dt.parse(fechainifin); 
+			} catch (Exception e) {
+				return 2;
+			}
+		}else {
+			try {
+				dateI = dtmes.parse(fechaini);
+				dateF = dtmes.parse(fechainifin); 
+			} catch (Exception e) {
+				return 2;
+			}
+		}
+
+		if(dateI.compareTo(dateF)>0){
+			return 3;
+		}	
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dateI); 
+		calendar.add(Calendar.YEAR, 1);  
+		calendar.getTime();
+		Date iniciomodificado=calendar.getTime();
+		
+		if(iniciomodificado.compareTo(dateF)<0){
+			return 4;
+		}
+			
+		return 0;
+	}
+
+	
 }

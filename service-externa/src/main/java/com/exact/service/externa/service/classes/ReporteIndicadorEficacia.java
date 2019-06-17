@@ -84,27 +84,19 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		}
 		
 		
-		
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
-		
-		
-		
 		List<Date> meses = this.getListaEntreFechas2(dateI,dateF);
-		
-		
-		
-		
-		
-		
-		
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
 
 		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
-		int cantidadtotal = reportes.size();		
+		int cantidadtotal = reportes.size();
+		if(cantidadtotal==0) {
+			return null;
+		}
 	    int i=0;
 		for(String mesaño : listademeses) {
 			int total=0;
@@ -213,6 +205,11 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		
 		
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
+		
+		if(reportes.size()==0) {
+			return null;
+		}
+		
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
@@ -287,7 +284,10 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 
 		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
 		int cantidadtotal = reportes.size();		
-	    int i=0;
+	    if(cantidadtotal==0) {
+	    	return null;
+	    }
+		int i=0;
 	    	    	
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)

@@ -63,6 +63,9 @@ public class ReporteEficaciaService implements IReporteEficaciaService {
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		int cantidadtotal = reportes.size();
+		if(cantidadtotal==0) {
+			return null;
+		}
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());

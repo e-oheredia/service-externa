@@ -80,10 +80,6 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		Logger.info("DIA :"+ Integer.parseInt(dtmeses.format(dateI)));
 		Logger.info("AÑO :"+Integer.parseInt(dtaño.format(dateI)));
 		
-		
-
-		
-		
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
 		List<String> listademeses = new ArrayList<>();
@@ -95,7 +91,10 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		}
 
 		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
-		int cantidadtotal = reportes.size();		
+		int cantidadtotal = reportes.size();
+		if(cantidadtotal==0) {
+			return null;
+		}
 	    int i=0;
 		for(String mesaño : listademeses) {
 			int cantidadsede=0;
@@ -200,6 +199,9 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+		}
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
@@ -267,7 +269,10 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 
 		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
-		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());		
+		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
+		if(reportes.size()==0) {
+			return null;
+		}
 		List<String> listademeses = new ArrayList<>();
 		List<Date> meses = this.getListaEntreFechas2(dateI,dateF);
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
