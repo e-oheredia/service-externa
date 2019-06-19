@@ -1,5 +1,6 @@
 package com.exact.service.externa.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 
@@ -17,5 +19,8 @@ public interface IBuzonPlazoDistribucionDao extends CrudRepository<BuzonPlazoDis
 	public BuzonPlazoDistribucion getPlazoDistribucionIdByBuzonId(Long id);
 	
 	public Iterable<BuzonPlazoDistribucion> findAllByBuzonIdIn(List<Long> buzonIds);
+	
+	@Query("FROM BuzonPlazoDistribucion bp WHERE cast(bp.fechaAsociacion as date) BETWEEN cast(?1 as date) AND cast(?2 as date)")
+	public Iterable<BuzonPlazoDistribucion> listarPorFechasBuzonPlazo(Date fechaIni, Date fechaFin);
 	
 }

@@ -1,6 +1,7 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,6 +34,28 @@ public class BuzonPlazoDistribucion implements Serializable {
 	@Column(name="ruta_autorizacion")
 	private String rutaAutorizacion;
 	
+	@Column(name="fecha_asociacion")
+	private Date fechaAsociacion;
+	
+	@PrePersist
+	public void prePersist() {
+		fechaAsociacion = new Date();
+	}
+	
+	
+	
+	public Date getFechaAsociacion() {
+		return fechaAsociacion;
+	}
+
+
+
+	public void setFechaAsociacion(Date fechaAsociacion) {
+		this.fechaAsociacion = fechaAsociacion;
+	}
+
+
+
 	public String getRutaAutorizacion() {
 		return rutaAutorizacion;
 	}
