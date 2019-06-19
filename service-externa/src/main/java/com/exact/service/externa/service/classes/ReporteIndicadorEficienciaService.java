@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,22 +36,27 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	@Autowired
 	IProveedorDao proveedorDao;
 	
+	private static final Log Logger = LogFactory.getLog(ReporteIndicadorEficienciaService.class);
+
+	
 	@Override
 	public Map<Integer, Map<Integer, Float>> graficoTablaPorcentaje(String fechaIni, String fechaFin)
 			throws IOException, NumberFormatException, ParseException {
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");
+
 		Date dateI= null;
 		Date dateF= null;
 
 		try {
-			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin); 
+			dateI = dtdia.parse(fechaIni);
+			dateF = dtdia.parse(fechaFin); 
 		} catch (Exception e) {
 			return null;
 		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
-		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas(dateI,dateF);
+		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas3(dateI,dateF);
 		reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(reportes.size()==0) {
 			return null;
@@ -110,12 +117,14 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	public Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> proveedorPlazoDentroFuera(String fechaini, String fechafin) throws IOException, NumberFormatException, ParseException {
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");
+
 		Date dateI= null;
 		Date dateF= null;
 
 		try {
-			dateI = dt.parse(fechaini);
-			dateF = dt.parse(fechafin); 
+			dateI = dtdia.parse(fechaini);
+			dateF = dtdia.parse(fechafin); 
 		} catch (Exception e) {
 			return null;
 		}
@@ -126,7 +135,7 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 			listademeses.add(dt.format(mess)); 
 		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
-		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas(dateI,dateF);
+		Iterable<DocumentoReporte> documentos = documentoreporteDao.buscarvolumenporfechas3(dateI,dateF);
 		reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(reportes.size()==0) {
 			return null;
@@ -134,6 +143,7 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 		Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> cantidades = new HashMap<>();
 		
 		for(Proveedor proveedor : proveedores ) {
+
 			Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> plazoCantidad = new HashMap<>();
 			for(PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
 				Map<Integer, Map<Integer, Map<String, Integer>>> mesesIndex = new HashMap<>();
@@ -143,16 +153,16 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 					int cantidadFueraPlazo = 0;
 					Map<String, Integer> cantidadDentroFuera = new HashMap<>();
 					Map<Integer, Map<String, Integer>> cantidadPorMes = new HashMap<>();
-					for(DocumentoReporte documentoreporte : documentos) {
+					for(DocumentoReporte documentoreporte : reportes) {
 						if(proveedor.getId()==documentoreporte.getProveedorId() && plazo.getId()==documentoreporte.getPlazoId()) {
 								if(dt.format(documentoreporte.getFecha()).equals(mesaño)) {
-									if(documentoreporte.getEstadoDocumento()==ENTREGADO) {
+									//if(documentoreporte.getEstadoDocumento() ==ENTREGADO) {
 											if(documentoreporte.getTiempoEntrega()==DENTRO_PLAZO) {
 												cantidadDentroPlazo++;
 											}else {
 												cantidadFueraPlazo++;
 											}
-										}
+										//}
 								}
 						}
 					}
