@@ -62,7 +62,8 @@ public class ReporteController {
 	String rpta = "";
 	Map<String, Object> respuesta = new HashMap<String, Object>();
 
-	
+	private static final Log Logger = LogFactory.getLog(ReporteController.class);
+
 	
 	@GetMapping("/volumen")
 	public ResponseEntity<?> porcentajeporvolumencurier(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
@@ -133,14 +134,17 @@ public class ReporteController {
 		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesPorPlazo = new HashMap<>();
+		Map<Integer, Map<Integer, Map<Integer, Integer>>> cantidadproveedorplazo = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
 		if(cantidades==null) {
 			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
 		}
 		cantidadesPorPlazo=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
+		cantidadproveedorplazo= reporteEficienciaservice.detalleeficienciaporCourier(fechaini, fechafin);
 		Map<Integer,Object> graficoEficiencia = new HashMap<>();
 		graficoEficiencia.put(1, cantidades);
 		graficoEficiencia.put(2, cantidadesPorPlazo);
+		graficoEficiencia.put(3, cantidadproveedorplazo);
 		return new ResponseEntity<Map<Integer,Object>>(graficoEficiencia, HttpStatus.OK);
 		
 	}
@@ -431,6 +435,7 @@ public class ReporteController {
 			throws IOException, JSONException, NumberFormatException, ParseException {
 		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
 			switch (reporteservice.validardia(fechaini, fechafin,2)) {
+			
 			case 1:
 				rpta = SINFECHA;
 				status=HttpStatus.BAD_REQUEST;
@@ -448,6 +453,7 @@ public class ReporteController {
 				status=HttpStatus.FAILED_DEPENDENCY;
 				break;
 			}
+			
 			respuesta.put("mensaje", rpta);
 			return new ResponseEntity<Map<String, Object>>(respuesta, status);
 		}

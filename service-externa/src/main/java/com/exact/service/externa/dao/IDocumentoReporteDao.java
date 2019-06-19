@@ -20,6 +20,11 @@ public interface IDocumentoReporteDao extends CrudRepository<DocumentoReporte, L
 	@Query("FROM DocumentoReporte dr WHERE cast(dr.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date)")
 	public Iterable<DocumentoReporte> buscarvolumenporfechas(Date fechaIni, Date fechaFin);
 	
+	@Query("FROM DocumentoReporte dr WHERE cast(dr.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND (dr.estadoDocumento=4 OR dr.estadoDocumento=5)")
+	public Iterable<DocumentoReporte> buscarvolumenporfechas3(Date fechaIni, Date fechaFin);
+	
+	@Query("FROM DocumentoReporte dr WHERE cast(dr.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND (dr.estadoDocumento=4 OR dr.estadoDocumento=5) ")
+	public Iterable<DocumentoReporte> buscarvolumenporfechas4(Date fechaIni, Date fechaFin);	
 	
 	@Query("FROM DocumentoReporte dr WHERE MONTH(dr.fecha) = ?1 AND YEAR(dr.fecha) = ?2")
 	public Iterable<DocumentoReporte> buscarvolumenporfechas2(int mes, int año);

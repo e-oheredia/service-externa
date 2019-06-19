@@ -41,6 +41,7 @@ public class Documento implements Serializable {
 	
 	@Column(name = "documento_autogenerado")
 	private String documentoAutogenerado;
+	
 	@Column(name = "distrito_id", nullable = false)
 	private Long distritoId;
 	@Column(name = "razon_social_destino")
