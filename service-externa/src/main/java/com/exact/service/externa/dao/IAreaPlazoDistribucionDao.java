@@ -1,5 +1,6 @@
 package com.exact.service.externa.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,4 +18,7 @@ public interface IAreaPlazoDistribucionDao extends CrudRepository<AreaPlazoDistr
 	public AreaPlazoDistribucion getPlazoDistribucionIdByAreaId(Long id);
 	
 	public Iterable<AreaPlazoDistribucion> findAllByAreaIdIn(List<Long> areaIds);
+	
+	@Query("FROM AreaPlazoDistribucion ap WHERE cast(ap.fechaAsociacion as date) BETWEEN cast(?1 as date) AND cast(?2 as date)")
+	public Iterable<AreaPlazoDistribucion> listarPorFechasAreaPlazo(Date fechaIni, Date fechaFin);
 }
