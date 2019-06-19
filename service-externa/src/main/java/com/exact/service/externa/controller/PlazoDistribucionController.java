@@ -1,5 +1,8 @@
 package com.exact.service.externa.controller;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.PlazoDistribucion;
+import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
+import com.exact.service.externa.service.interfaces.IReporteAsignacionPlazoService;
 
 @RestController
 @RequestMapping("/plazosdistribucion")
@@ -20,6 +26,9 @@ public class PlazoDistribucionController {
 	
 	@Autowired
 	IPlazoDistribucionService plazoDistribucionService;
+	
+	@Autowired
+	IReporteAsignacionPlazoService reporteAsignacionPlazoService;
 	
 	@GetMapping("/activos")
 	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazosActivos() {
@@ -49,6 +58,11 @@ public class PlazoDistribucionController {
 	@GetMapping()
 	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() {
 		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarAll(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/reporteplazos")
+	public ResponseEntity<Map<String,Object>> listarAreaBuzonPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, Exception {
+		return new ResponseEntity<Map<String,Object>>(reporteAsignacionPlazoService.listarReportes(fechaini, fechafin), HttpStatus.OK);
 	}
 	
 }
