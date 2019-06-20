@@ -40,6 +40,9 @@ public class ReporteAsignacionPlazoId implements Serializable{
 		this.buzonPlazoDistribucionId = buzonPlazoDistribucionId;
 	}
 	
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 }
