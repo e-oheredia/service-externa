@@ -46,6 +46,8 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 	@Override
 	public Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
 		List<ReporteAsignacionPlazo> reportes = new ArrayList<>();
+		ReporteAsignacionPlazo repor = new ReporteAsignacionPlazo();
+		int id=1;
 	//	Map<String,Object> prueba = new HashMap<>();
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateI= null;
@@ -112,12 +114,15 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 					i++;
 				}
 				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
-				reporte.setAreaPlazoDistribucion(area);
+				reporte.setId(id);
+				reporte.setTipoAsignacion("Área");
+				reporte.setAreaPlazoDistribucion(area.getAreaId());
 				reporte.setFecha(area.getFechaAsociacion());
 				reporte.setAreaBuzon(area.getArea().get("nombre").toString());
 				reporte.setPlazoActual(area.getPlazoDistribucion().getNombre());
 				reporte.setRutaAutorizacion(area.getRutaAutorizacion());
 				reportes.add(reporte);
+				id++;
 			}
 		}
 		
@@ -138,14 +143,22 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 					k++;
 				}
 				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
-				reporte.setBuzonPlazoDistribucion(buzon);
+				reporte.setId(id);
+				reporte.setTipoAsignacion("Buzon");
+				reporte.setBuzonPlazoDistribucion(buzon.getBuzonId());
 				reporte.setFecha(buzon.getFechaAsociacion());
 				reporte.setAreaBuzon(buzon.getBuzon().get("nombre").toString());
 				reporte.setPlazoActual(buzon.getPlazoDistribucion().getNombre());
 				reporte.setRutaAutorizacion(buzon.getRutaAutorizacion());
 				reportes.add(reporte);
+				id++;
 			}
 		}
+		
+//		for(int j=1;j<reportes.size();j++) {
+//			repor.setId(j);
+//			reportes.add
+//		}
 		
 		return reportes;
 	}
