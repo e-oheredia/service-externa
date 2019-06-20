@@ -49,11 +49,11 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 	@Query("DELETE FROM Guia g WHERE g.id = ?1")
 	public void retirarGuia(Long guiaId);
 	
-	@Query("FROM Guia g WHERE g.numeroGuia=?1 AND g.tipoGuia=?2")
+	@Query("FROM Guia g WHERE g.numeroGuia=?1 AND g.tipoGuia.id=?2")
 	public Guia findBynumeroGuia(String numeroGuia, Long tipoGuia);
 	
 	@Query("FROM Guia g WHERE g IN (SELECT sg.guia FROM SeguimientoGuia sg "
-			+ "WHERE cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sg.estadoGuia.id=1) AND g.tipoGuia=?3")
+			+ "WHERE cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sg.estadoGuia.id=1) AND g.tipoGuia.id=?3")
 	public Iterable<Guia> listarGuiasPorFechas(Date fechaIni, Date fechaFin, Long tipoGuia);
 	
 	@Query("FROM Guia g WHERE g IN ( SELECT dg.guia FROM DocumentoGuia dg WHERE dg.documento IN ("
