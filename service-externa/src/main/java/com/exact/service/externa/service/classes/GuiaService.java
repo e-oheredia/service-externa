@@ -579,12 +579,12 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Guia listarPorNumeroGuia(String numeroguia, Long verificador) throws ClientProtocolException, IOException, JSONException, Exception {
+	public Guia listarPorNumeroGuia(String numeroguia, Long verificador, Long tipoGuia) throws ClientProtocolException, IOException, JSONException, Exception {
 		Guia guia = null;
 		if(verificador==GUIA_ACTIVA) {
 			guia = guiaDao.findBynumeroGuiaActiva(numeroguia);
 		}else if(verificador==GUIA_NORMAL) {
-			guia = guiaDao.findBynumeroGuia(numeroguia);
+			guia = guiaDao.findBynumeroGuia(numeroguia,tipoGuia);
 		}
 		if(guia==null) {
 			return null;
@@ -634,7 +634,7 @@ public class GuiaService implements IGuiaService{
 	}
 
 	@Override
-	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin, Long verificador) throws ClientProtocolException, IOException, JSONException, Exception {
+	public Iterable<Guia> listarGuiasPorFechas(String fechaIni, String fechaFin, Long verificador, Long tipoGuia) throws ClientProtocolException, IOException, JSONException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		List<Map<String, Object>> tipodocumento =(List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
@@ -652,7 +652,7 @@ public class GuiaService implements IGuiaService{
 			if(verificador==GUIA_ACTIVA) {
 				guiasBD = guiaDao.listarGuiasActivasPorFechas(dateI, dateF);
 			}else if(verificador==GUIA_NORMAL) {
-				guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF);
+				guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF,tipoGuia);
 			}
 			if(guiasBD==null) {
 				return null;

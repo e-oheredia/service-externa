@@ -61,8 +61,8 @@ public class PlazoDistribucionController {
 	}
 	
 	@GetMapping("/reporteplazos")
-	public ResponseEntity<Map<String,Object>> listarAreaBuzonPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, Exception {
-		return new ResponseEntity<Map<String,Object>>(reporteAsignacionPlazoService.listarReportes(fechaini, fechafin), HttpStatus.OK);
+	public ResponseEntity<Iterable<ReporteAsignacionPlazo>> listarAreaBuzonPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, Exception {
+		return new ResponseEntity<Iterable<ReporteAsignacionPlazo>>(reporteAsignacionPlazoService.listarReportes(fechaini, fechafin), HttpStatus.OK);
 	}
 	
 }
