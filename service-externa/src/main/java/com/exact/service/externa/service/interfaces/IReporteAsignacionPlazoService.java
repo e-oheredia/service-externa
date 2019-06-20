@@ -8,6 +8,6 @@ import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 
 public interface IReporteAsignacionPlazoService {
 
-	Map<String,Object> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception;
+	Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception;
 	
 }

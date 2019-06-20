@@ -44,9 +44,9 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 	
 	
 	@Override
-	public Map<String,Object> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
+	public Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
 		List<ReporteAsignacionPlazo> reportes = new ArrayList<>();
-		Map<String,Object> prueba = new HashMap<>();
+	//	Map<String,Object> prueba = new HashMap<>();
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateI= null;
 		Date dateF= null;
@@ -58,96 +58,96 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 		}
 		Iterable<AreaPlazoDistribucion> areaplazos = areaPlazoDao.listarPorFechasAreaPlazo(dateI, dateF);
 		Iterable<BuzonPlazoDistribucion> buzonplazos = buzonPlazoDao.listarPorFechasBuzonPlazo(dateI, dateF);
-		List<AreaPlazoDistribucion> areaslst = StreamSupport.stream(areaplazos.spliterator(), false).collect(Collectors.toList());
-		List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
-		List<Long> buzonIds = new ArrayList();
-		List<Long> areaIds = new ArrayList();
-		for (int i = 0; i < buzoneslst.size(); i++) {
-			buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
-		}
-		for (int i = 0; i < areaslst.size(); i++) {
-			areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
-		}
-		List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-		List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
-		for(AreaPlazoDistribucion area: areaplazos) {
-			int i =0;
-			while(i<areas.size()) {
-				if(area.getAreaId()==Long.valueOf(areas.get(i).get("id").toString())) {
-					area.setArea(areas.get(i));
-					break;
-				}
-				i++;
-			}
-		}
-		
-		for(BuzonPlazoDistribucion buzon : buzonplazos) {
-			int k =0;
-			while(k<buzonesls.size()) {
-				if(buzon.getBuzonId()==Long.valueOf(buzonesls.get(k).get("id").toString())) {
-					buzon.setBuzon(buzonesls.get(k));
-					break;
-				}
-				k++;
-		}
-	}
-			prueba.put("area", areaplazos);
-			prueba.put("buzon",buzonplazos);
-			
-//		if(areaplazos!=null) {
-//			List<AreaPlazoDistribucion> areaslst = StreamSupport.stream(areaplazos.spliterator(), false)
-//					.collect(Collectors.toList());
-//			List<Long> areaIds = new ArrayList();
-//			for (int i = 0; i < areaslst.size(); i++) {
-//				areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
-//			}
-//			List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
-//			for(AreaPlazoDistribucion area: areaplazos) {
-//				int i =0;
-//				while(i<areas.size()) {
-//					if(area.getAreaId()==Long.valueOf(areas.get(i).get("id").toString())) {
-//						area.setArea(areas.get(i));
-//						break;
-//					}
-//					i++;
+//		List<AreaPlazoDistribucion> areaslst = StreamSupport.stream(areaplazos.spliterator(), false).collect(Collectors.toList());
+//		List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
+//		List<Long> buzonIds = new ArrayList();
+//		List<Long> areaIds = new ArrayList();
+//		for (int i = 0; i < buzoneslst.size(); i++) {
+//			buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
+//		}
+//		for (int i = 0; i < areaslst.size(); i++) {
+//			areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
+//		}
+//		List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+//		List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
+//		for(AreaPlazoDistribucion area: areaplazos) {
+//			int i =0;
+//			while(i<areas.size()) {
+//				if(area.getAreaId()==Long.valueOf(areas.get(i).get("id").toString())) {
+//					area.setArea(areas.get(i));
+//					break;
 //				}
-//				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
-//				reporte.setAreaPlazoDistribucion(area);
-//				reporte.setFecha(area.getFechaAsociacion());
-//				reporte.setAreaBuzon(area.getArea().get("nombre").toString());
-//				reporte.setPlazoActual(area.getPlazoDistribucion().getNombre());
-//				reporte.setRutaAutorizacion(area.getRutaAutorizacion());
-//				reportes.add(reporte);
+//				i++;
 //			}
 //		}
 //		
-//		if(buzonplazos!=null) {
-//			List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
-//			List<Long> buzonIds = new ArrayList();
-//			for (int i = 0; i < buzoneslst.size(); i++) {
-//				buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
-//			}
-//			List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-//			for(BuzonPlazoDistribucion buzon : buzonplazos) {
-//				int k =0;
-//				while(k<buzonesls.size()) {
-//					if(buzon.getBuzonId()==Long.valueOf(buzonesls.get(k).get("id").toString())) {
-//						buzon.setBuzon(buzonesls.get(k));
-//						break;
-//					}
-//					k++;
+//		for(BuzonPlazoDistribucion buzon : buzonplazos) {
+//			int k =0;
+//			while(k<buzonesls.size()) {
+//				if(buzon.getBuzonId()==Long.valueOf(buzonesls.get(k).get("id").toString())) {
+//					buzon.setBuzon(buzonesls.get(k));
+//					break;
 //				}
-//				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
-//				reporte.setBuzonPlazoDistribucion(buzon);
-//				reporte.setFecha(buzon.getFechaAsociacion());
-//				reporte.setAreaBuzon(buzon.getBuzon().get("nombre").toString());
-//				reporte.setPlazoActual(buzon.getPlazoDistribucion().getNombre());
-//				reporte.setRutaAutorizacion(buzon.getRutaAutorizacion());
-//				reportes.add(reporte);
-//			}
+//				k++;
 //		}
+//	}
+//			prueba.put("area", areaplazos);
+//			prueba.put("buzon",buzonplazos);
+			
+		if(areaplazos!=null) {
+			List<AreaPlazoDistribucion> areaslst = StreamSupport.stream(areaplazos.spliterator(), false)
+					.collect(Collectors.toList());
+			List<Long> areaIds = new ArrayList();
+			for (int i = 0; i < areaslst.size(); i++) {
+				areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
+			}
+			List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
+			for(AreaPlazoDistribucion area: areaplazos) {
+				int i =0;
+				while(i<areas.size()) {
+					if(area.getAreaId()==Long.valueOf(areas.get(i).get("id").toString())) {
+						area.setArea(areas.get(i));
+						break;
+					}
+					i++;
+				}
+				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
+				reporte.setAreaPlazoDistribucion(area);
+				reporte.setFecha(area.getFechaAsociacion());
+				reporte.setAreaBuzon(area.getArea().get("nombre").toString());
+				reporte.setPlazoActual(area.getPlazoDistribucion().getNombre());
+				reporte.setRutaAutorizacion(area.getRutaAutorizacion());
+				reportes.add(reporte);
+			}
+		}
 		
-		return prueba;
+		if(buzonplazos!=null) {
+			List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
+			List<Long> buzonIds = new ArrayList();
+			for (int i = 0; i < buzoneslst.size(); i++) {
+				buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
+			}
+			List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+			for(BuzonPlazoDistribucion buzon : buzonplazos) {
+				int k =0;
+				while(k<buzonesls.size()) {
+					if(buzon.getBuzonId()==Long.valueOf(buzonesls.get(k).get("id").toString())) {
+						buzon.setBuzon(buzonesls.get(k));
+						break;
+					}
+					k++;
+				}
+				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
+				reporte.setBuzonPlazoDistribucion(buzon);
+				reporte.setFecha(buzon.getFechaAsociacion());
+				reporte.setAreaBuzon(buzon.getBuzon().get("nombre").toString());
+				reporte.setPlazoActual(buzon.getPlazoDistribucion().getNombre());
+				reporte.setRutaAutorizacion(buzon.getRutaAutorizacion());
+				reportes.add(reporte);
+			}
+		}
+		
+		return reportes;
 	}
 
 	

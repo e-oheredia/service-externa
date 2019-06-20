@@ -1,6 +1,5 @@
 package com.exact.service.externa.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,7 +15,7 @@ import com.exact.service.externa.entity.id.ReporteAsignacionPlazoId;
 
 @Entity
 @Table(name="reporte_asignacion_plazo")
-public class ReporteAsignacionPlazo implements Serializable{
+public class ReporteAsignacionPlazo{
 
 
 	@EmbeddedId
@@ -33,7 +32,7 @@ public class ReporteAsignacionPlazo implements Serializable{
 	private BuzonPlazoDistribucion buzonPlazoDistribucion;
 	
 	@Column(name="tipo_asignacion")
-	private Long tipoAsignacion;
+	private String tipoAsignacion;
 	
 	@Column(name="area_buzon")
 	private String areaBuzon;
@@ -71,11 +70,13 @@ public class ReporteAsignacionPlazo implements Serializable{
 		this.buzonPlazoDistribucion = buzonPlazoDistribucion;
 	}
 
-	public Long getTipoAsignacion() {
+	
+
+	public String getTipoAsignacion() {
 		return tipoAsignacion;
 	}
 
-	public void setTipoAsignacion(Long tipoAsignacion) {
+	public void setTipoAsignacion(String tipoAsignacion) {
 		this.tipoAsignacion = tipoAsignacion;
 	}
 
@@ -114,9 +115,6 @@ public class ReporteAsignacionPlazo implements Serializable{
 	}
 	
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	
 }
