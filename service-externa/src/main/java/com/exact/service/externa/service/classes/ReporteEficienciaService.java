@@ -232,6 +232,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		return hours;
 	}
 
+	
 	@Override
 	public Map<Integer, Map<Integer, Map<Integer, Integer>>> detalleeficienciaporCourier(String fechaIni,
 			String fechaFin) throws IOException, JSONException, ClientProtocolException, java.io.IOException,
@@ -255,11 +256,22 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
-		List<PlazoDistribucion> plazoss= new ArrayList<>();
+		//List<PlazoDistribucion> plazoss= new ArrayList<>();
 		Map<Integer, Map<Integer, Map<Integer, Integer>>> cantidadporproveedorplazos = new HashMap<>();
+		Map<Long, Long> cantidadTiempoEnvio = new HashMap<>();
 
+		
+		for(DocumentoReporte dr : documentoslst) {
+			cantidadTiempoEnvio.put(dr.getId(), calcularHoras(dr));
+		}
+		
+		
+		
+		
+		
 		for (Proveedor proveedor : proveedoreslst) {
 			Map<Integer, Map<Integer, Integer>> cantidadporplazos = new HashMap<>();
+			 List<PlazoDistribucion> plazoss = new ArrayList<PlazoDistribucion>(proveedor.getPlazosDistribucion()); 
 			for (PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
 				int c=0;
 				// for (PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
@@ -270,23 +282,21 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 						int ab=0;
 						int b=0;
 						Date fechaentrega = seguimientodocumento.buscarpordocumento(documentoreporte.getDocumentoId());
-						Logger.info("entreid "+fechaentrega);
-						for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
+						/*for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
 							plazoss.add(plazod);
-						}
+						}*/
 						Collections.sort(plazoss,(x,y)->((Integer)x.getTiempoEnvio()).compareTo((Integer)y.getTiempoEnvio()));						
 						for (PlazoDistribucion plazod : plazoss) {
+							//Modo 1
 							Guia guia = guiaDao.findGuiabydocumentoid(documentoreporte.getDocumentoId());
 							guia.setPlazoDistribucion(plazod);
 							Date fechalimitesub = guiaService.getFechaLimite(guia);
 							if (dt.parse(dt.format(fechalimitesub)).compareTo(dt.parse(dt.format(fechaentrega))) >= 0) {
 								if(b==0) {
 									plazos[(int)(long)plazod.getId()]=plazos[(int)(long)plazod.getId()]+1 ;
-									Logger.info("entreid "+plazod.getId());								
 									ab=1;
 									b=1;
 								}
-
 							}
 							cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
 							c=1;
@@ -297,9 +307,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 						}
 					}
 					cantidadporplazo.put(0,plazos[0]);
-
-				}
-				
+				}				
 				for (PlazoDistribucion plazod : plazoss) {
 				if(c==0) {
 					cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
