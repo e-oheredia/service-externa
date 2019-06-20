@@ -317,11 +317,11 @@ public class GuiaController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("/reporteguias")
-	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia, @RequestParam(name="verificador", required=false) Long verificador ) throws ClientProtocolException, IOException, JSONException, ParseException, Exception 
+	@GetMapping("{id}/reporteguias")
+	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia, @RequestParam(name="verificador", required=false) Long verificador, @PathVariable Long id) throws ClientProtocolException, IOException, JSONException, ParseException, Exception 
 	{
 		if(numeroGuia!=null){
-			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia,verificador);
+			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia,verificador,id);
 			if(guia==null) {
 				return new ResponseEntity<String>("No existe Guia con ese numero", HttpStatus.BAD_REQUEST);
 			}
@@ -340,7 +340,7 @@ public class GuiaController {
 			if(fechaini=="" || fechafin==""){
 				return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 			}
-			Iterable<Guia> guias = guiaService.listarGuiasPorFechas(fechaini, fechafin,verificador);
+			Iterable<Guia> guias = guiaService.listarGuiasPorFechas(fechaini, fechafin,verificador,id);
 			if(guias==null) {
 				return new ResponseEntity<String>("Error en Listar Guías", HttpStatus.BAD_REQUEST);
 			}
