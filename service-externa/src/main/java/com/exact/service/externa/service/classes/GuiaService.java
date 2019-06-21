@@ -582,7 +582,7 @@ public class GuiaService implements IGuiaService{
 	public Guia listarPorNumeroGuia(String numeroguia, Long verificador, Long tipoGuia) throws ClientProtocolException, IOException, JSONException, Exception {
 		Guia guia = null;
 		if(verificador==GUIA_ACTIVA) {
-			guia = guiaDao.findBynumeroGuiaActiva(numeroguia);
+			guia = guiaDao.findBynumeroGuiaActiva(numeroguia,tipoGuia);
 		}else if(verificador==GUIA_NORMAL) {
 			guia = guiaDao.findBynumeroGuia(numeroguia,tipoGuia);
 		}
@@ -650,7 +650,7 @@ public class GuiaService implements IGuiaService{
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
 			Iterable<Guia> guiasBD = null;
 			if(verificador==GUIA_ACTIVA) {
-				guiasBD = guiaDao.listarGuiasActivasPorFechas(dateI, dateF);
+				guiasBD = guiaDao.listarGuiasActivasPorFechas(dateI, dateF,tipoGuia);
 			}else if(verificador==GUIA_NORMAL) {
 				guiasBD = guiaDao.listarGuiasPorFechas(dateI, dateF,tipoGuia);
 			}

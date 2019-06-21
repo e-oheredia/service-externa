@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 	@Override
 	public BuzonPlazoDistribucion actualizar(BuzonPlazoDistribucion buzonPlazoDistribucion, MultipartFile file) throws IOException  {
 		if (buzonPlazoDistribucionDao.existsById(buzonPlazoDistribucion.getBuzonId())) {
-			String ruta ="asignaciones";
+			String ruta ="autorizaciones";
 			if(file!=null) {
 				String rutaAutorizacion = buzonPlazoDistribucion.getBuzonId().toString() + "."
 						+ FilenameUtils.getExtension(file.getOriginalFilename());
@@ -49,6 +50,7 @@ public class BuzonPlazoDistribucionService implements IBuzonPlazoDistribucionSer
 				if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 					return null;
 				}
+				buzonPlazoDistribucion.setFechaAsociacion(new Date());
 				return buzonPlazoDistribucionDao.save(buzonPlazoDistribucion);
 			}
 			return null;
