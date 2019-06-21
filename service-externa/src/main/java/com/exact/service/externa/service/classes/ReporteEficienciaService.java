@@ -261,9 +261,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		Map<Long, Long> cantidadTiempoEnvio = new HashMap<>();
 
 		
-		for(DocumentoReporte dr : documentoslst) {
+		/*for(DocumentoReporte dr : documentoslst) {
 			cantidadTiempoEnvio.put(dr.getId(), calcularHoras(dr));
-		}
+		}**/
 		
 		
 		
