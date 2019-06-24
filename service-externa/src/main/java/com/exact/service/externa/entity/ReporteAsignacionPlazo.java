@@ -10,9 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.exact.service.externa.entity.id.ReporteAsignacionPlazoId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="reporte_asignacion_plazo")
@@ -44,7 +46,9 @@ public class ReporteAsignacionPlazo{
 	@Column(name="plazo_actual")
 	private String plazoActual;
 	
-	@Column(name="fecha")
+	@Column(nullable = false)
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
 	private Date fecha;
 	
 	@Column(name="ruta_autorizacion")
@@ -57,7 +61,10 @@ public class ReporteAsignacionPlazo{
 //	public void setId(ReporteAsignacionPlazoId id) {
 //		this.id = id;
 //	}
-	
+	@PrePersist
+	public void prePersist() {
+		fecha = new Date();
+	}
 
 	public Long getAreaPlazoDistribucion() {
 		return areaPlazoDistribucion;

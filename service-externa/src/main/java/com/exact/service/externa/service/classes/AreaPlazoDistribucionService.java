@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
@@ -39,7 +40,7 @@ public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionServi
 	@Override
 	public AreaPlazoDistribucion actualizar(AreaPlazoDistribucion areaPlazoDistribucion, MultipartFile file) throws IOException {
 		if (areaPlazoDistribucionDao.existsById(areaPlazoDistribucion.getAreaId())) {
-			String ruta = "asignaciones";
+			String ruta = "autorizaciones";
 			if(file!=null) {
 				String rutaAutorizacion = areaPlazoDistribucion.getAreaId().toString() + "."
 						+ FilenameUtils.getExtension(file.getOriginalFilename());
@@ -49,6 +50,7 @@ public class AreaPlazoDistribucionService implements IAreaPlazoDistribucionServi
 				if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 					return null;
 				}
+				areaPlazoDistribucion.setFechaAsociacion(new Date());
 				return areaPlazoDistribucionDao.save(areaPlazoDistribucion);
 			}
 			return null;

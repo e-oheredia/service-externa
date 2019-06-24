@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 	@Autowired
 	IAreaEdao areaEdao;
 	
+	@Value("${storage.autorizaciones}")
+	String storageAutorizaciones;
 	
 	@Override
 	public Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
@@ -115,12 +118,12 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 				}
 				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
 				reporte.setId(id);
-				reporte.setTipoAsignacion("Área");
+				reporte.setTipoAsignacion("ÁREA");
 				reporte.setAreaPlazoDistribucion(area.getAreaId());
 				reporte.setFecha(area.getFechaAsociacion());
 				reporte.setAreaBuzon(area.getArea().get("nombre").toString());
 				reporte.setPlazoActual(area.getPlazoDistribucion().getNombre());
-				reporte.setRutaAutorizacion(area.getRutaAutorizacion());
+				reporte.setRutaAutorizacion(this.storageAutorizaciones + area.getRutaAutorizacion());
 				reportes.add(reporte);
 				id++;
 			}
@@ -144,21 +147,18 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 				}
 				ReporteAsignacionPlazo reporte = new ReporteAsignacionPlazo();
 				reporte.setId(id);
-				reporte.setTipoAsignacion("Buzon");
+				reporte.setTipoAsignacion("BUZÓN");
 				reporte.setBuzonPlazoDistribucion(buzon.getBuzonId());
 				reporte.setFecha(buzon.getFechaAsociacion());
 				reporte.setAreaBuzon(buzon.getBuzon().get("nombre").toString());
 				reporte.setPlazoActual(buzon.getPlazoDistribucion().getNombre());
-				reporte.setRutaAutorizacion(buzon.getRutaAutorizacion());
+				reporte.setRutaAutorizacion(this.storageAutorizaciones + buzon.getRutaAutorizacion());
 				reportes.add(reporte);
 				id++;
 			}
 		}
 		
-//		for(int j=1;j<reportes.size();j++) {
-//			repor.setId(j);
-//			reportes.add
-//		}
+
 		
 		return reportes;
 	}

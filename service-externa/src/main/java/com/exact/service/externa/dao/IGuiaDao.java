@@ -74,12 +74,12 @@ public interface IGuiaDao extends CrudRepository<Guia,Long>{
 	public Iterable<Guia> listarGuiasCompletadas();	
 
 	@Query("FROM Guia g WHERE g.numeroGuia=?1 AND g IN (SELECT sg.guia FROM SeguimientoGuia sg WHERE sg.id = ("
-			+ "SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = g.id) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3))")
-	public Guia findBynumeroGuiaActiva(String numeroGuia);
+			+ "SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id = g.id) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3)) AND g.tipoGuia.id=?2")
+	public Guia findBynumeroGuiaActiva(String numeroGuia, Long tipoGuia);
 	
 	@Query("FROM Guia g WHERE g IN (SELECT sg.guia FROM SeguimientoGuia sg "
-			+ "WHERE sg.id = (SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id=g.id) AND (cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date)) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3))")
-	public Iterable<Guia> listarGuiasActivasPorFechas(Date fechaIni, Date fechaFin);
+			+ "WHERE sg.id = (SELECT MAX (sg2.id) FROM SeguimientoGuia sg2 WHERE sg2.guia.id=g.id) AND (cast(sg.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date)) AND (sg.estadoGuia.id=2 OR sg.estadoGuia.id=3)) AND g.tipoGuia.id=?3")
+	public Iterable<Guia> listarGuiasActivasPorFechas(Date fechaIni, Date fechaFin, Long tipoGuia);
 	
 	@Query("FROM Guia g WHERE g IN ( SELECT dg.guia FROM DocumentoGuia dg WHERE dg.documento IN ("
 			+ "SELECT do FROM Documento do WHERE do.id=?1))")
