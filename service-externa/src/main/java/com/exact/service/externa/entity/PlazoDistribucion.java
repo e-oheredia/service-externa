@@ -1,8 +1,11 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="plazo_distribucion")
@@ -31,9 +36,41 @@ public class PlazoDistribucion implements Serializable{
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
+	
+	@Transient
+	private Set<Map<String, Object>> ambitos;
+//		
+//	@OneToMany(cascade = CascadeType.ALL, mappedBy = "plazoDistribucion")
+//	private Set<AmbitoPlazoDistribucion> ambitosPlazoDistribucion;
+	
+	
+//	public Set<Map<String, Object>> getAmbitos() {
+//		return ambitos;
+//	}
+//	public void setAmbitos(Set<Map<String, Object>> ambitos) {
+//		this.ambitos = ambitos;
+//		this.ambitosPlazoDistribucion = new HashSet<AmbitoPlazoDistribucion>();
+//		this.ambitos.forEach(ambito -> {
+//			AmbitoPlazoDistribucion ambitoPlazo = new AmbitoPlazoDistribucion();
+//			ambitoPlazo.setAmbito(Long.valueOf(ambito.get("id").toString()));
+//			this.ambitosPlazoDistribucion.add(ambitoPlazo);
+//		});
+//		
+//		
+//	}
+
+	
+	
 	@Column(name="activo", nullable=false)
 	private boolean activo;
 	
+
+	public Set<Map<String, Object>> getAmbitos() {
+		return ambitos;
+	}
+	public void setAmbitos(Set<Map<String, Object>> ambitos) {
+		this.ambitos = ambitos;
+	}
 	public boolean isActivo() {
 		return activo;
 	}
