@@ -20,7 +20,16 @@ public interface IAmbitoPlazoDistribucionDao extends CrudRepository<AmbitoPlazoD
 	@Query("SELECT ap FROM AmbitoPlazoDistribucion ap WHERE ap.plazoDistribucion.id=?1")
 	public Iterable<AmbitoPlazoDistribucion> listarAmbitosIds(Long plazoId);
 	
+
 	@Query("SELECT ap.plazoDistribucion FROM AmbitoPlazoDistribucion ap WHERE ap.id.ambitoId=?1")
 	public Iterable<PlazoDistribucion> listarPlazosByAmbitoId(Long ambitoId);
+
+	//ambitoplazos.getId().getAmbitoId()
+	//@Query("SELECT ap FROM AmbitoPlazoDistribucion ap WHERE ap.ambitoId=?1 ")
+	//public Iterable<AmbitoPlazoDistribucion> listarplazosIds(Long ambitoId);
+	
+	//@Query(value=" Select * From ambito_proveedor As ap where ap.ambito_id=?1")	
+	//public Iterable<AmbitoPlazoDistribucion> listarplazosIds(Long ambitoId);
+
 	
 }
