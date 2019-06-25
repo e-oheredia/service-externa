@@ -1,6 +1,7 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.entity.AmbitoPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
@@ -35,28 +37,29 @@ public class PlazoDistribucionController {
 		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarPlazosActivos(), HttpStatus.OK);
 	}
 	
-	@PostMapping
+	@PostMapping()
 	public ResponseEntity<PlazoDistribucion> guardar(@RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setActivo(true);
 		try {
 			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
-		plazoDist.setId(id);
-		try {
-			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
-		}
-	}
+//	@PutMapping("/{id}/ambito/{ambitoId}/region/{regionId}")
+//	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist, @PathVariable Long ambitoId, @PathVariable Long regionId) {
+//		plazoDist.setId(id);
+//		try {
+//			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist, ambitoId, regionId), HttpStatus.OK);
+//		} catch (Exception e) {
+//			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 	
 	@GetMapping()
-	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() {
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() throws Exception {
 		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarAll(), HttpStatus.OK);
 	}
 	
