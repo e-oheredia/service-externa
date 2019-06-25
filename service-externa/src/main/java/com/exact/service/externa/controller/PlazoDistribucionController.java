@@ -59,7 +59,7 @@ public class PlazoDistribucionController {
 //	}
 	
 	@GetMapping()
-	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() {
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() throws Exception {
 		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarAll(), HttpStatus.OK);
 	}
 	

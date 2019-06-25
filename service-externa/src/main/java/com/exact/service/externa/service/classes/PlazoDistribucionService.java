@@ -1,8 +1,10 @@
 package com.exact.service.externa.service.classes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IAmbitoPlazoDistribucionDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.entity.AmbitoPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.id.AmbitoPlazoDistribucionId;
@@ -24,6 +27,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	
 	@Autowired
 	IAmbitoPlazoDistribucionDao ambitoPlazoDao;
+	
+	@Autowired
+	IRegionEdao ambitodiasdao;
 	
 	@Override
 	public Iterable<PlazoDistribucion> listarPlazosActivos() {
@@ -61,8 +67,29 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	}
 
 	@Override
-	public Iterable<PlazoDistribucion> listarAll() {
-		return plazoDistribucionDao.findAll();
+	public Iterable<PlazoDistribucion> listarAll() throws Exception {
+		
+		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
+		Iterable<PlazoDistribucion> plazos =  plazoDistribucionDao.findAll();
+		List<PlazoDistribucion> plazoslst = StreamSupport.stream(plazos.spliterator(), false).collect(Collectors.toList());
+		for(PlazoDistribucion plazito : plazoslst) {
+			Iterable<AmbitoPlazoDistribucion> ambitosId= ambitoPlazoDao.listarAmbitosIds(plazito.getId());
+			Set<Map<String,Object>> ambitplazos = new HashSet<>();
+			List<Long> ambitoPlazos = new ArrayList<>();
+			for(AmbitoPlazoDistribucion ambitoplazos : ambitosId) {
+				ambitoPlazos.add(ambitoplazos.getId().getAmbitoId());
+			}
+			for(Long ambitoId : ambitoPlazos) {
+				for(Map<String,Object> ambito: ambitos) {
+					if(ambitoId==Long.valueOf(ambito.get("id").toString())) {
+						ambitplazos.add(ambito);
+					}
+				}
+			}
+			plazito.setAmbitos(ambitplazos);
+		}
+		
+		return plazoslst;
 	}
 
 	@Override
