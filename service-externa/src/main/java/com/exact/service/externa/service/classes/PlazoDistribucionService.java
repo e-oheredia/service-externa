@@ -93,15 +93,26 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	}
 
 	@Override
-	public PlazoDistribucion modificar(PlazoDistribucion plazodistribucion, Long ambitoId) {
+	public PlazoDistribucion modificar(PlazoDistribucion plazodistribucion) {
 		if(plazodistribucion.getNombre()==null) {
 			return null;
 		}
-		AmbitoPlazoDistribucion ambitoplazo = ambitoPlazoDao.findAmbitoPlazo(plazodistribucion.getId());
+		PlazoDistribucion plazoactualizado = plazoDistribucionDao.save(plazodistribucion);
+		ambitoPlazoDao.deleteById(plazodistribucion.getId());
+		List<AmbitoPlazoDistribucion> ambitosplazos = new ArrayList<>();
+		for(Map<String,Object> ambito : plazoactualizado.getAmbitos()) {
+			AmbitoPlazoDistribucion ambitoplazito = new AmbitoPlazoDistribucion();
+			AmbitoPlazoDistribucionId ambitoPlazoDistribucionId = new AmbitoPlazoDistribucionId();
+			ambitoPlazoDistribucionId.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+			ambitoPlazoDistribucionId.setPlazoDistribucionID(plazoactualizado.getId());
+			ambitoplazito.setId(ambitoPlazoDistribucionId);
+			ambitoplazito.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+			ambitoplazito.setPlazoDistribucion(plazoactualizado);
+			ambitosplazos.add(ambitoplazito);
+		}
+		ambitoPlazoDao.saveAll(ambitosplazos);
 		
-		ambitoplazo.setPlazoDistribucion(plazodistribucion);
-		ambitoPlazoDao.save(ambitoplazo);
-		return plazoDistribucionDao.save(plazodistribucion);
+		return plazoactualizado;
 	}
 
 }

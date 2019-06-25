@@ -48,15 +48,15 @@ public class PlazoDistribucionController {
 		}
 	}
 	
-//	@PutMapping("/{id}/ambito/{ambitoId}/region/{regionId}")
-//	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist, @PathVariable Long ambitoId, @PathVariable Long regionId) {
-//		plazoDist.setId(id);
-//		try {
-//			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist, ambitoId, regionId), HttpStatus.OK);
-//		} catch (Exception e) {
-//			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
-//		}
-//	}
+	@PutMapping("/{id}")
+	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
+		plazoDist.setId(id);
+		try {
+			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 	@GetMapping()
 	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazos() throws Exception {
