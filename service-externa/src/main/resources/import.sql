@@ -582,14 +582,6 @@ INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (8,  N'6.pdf', 6, GETDATE())
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (9,  N'6.pdf', 4, GETDATE())
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (10,  N'6.pdf', 4, GETDATE())
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 1)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 2)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 3)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 4)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 1)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 2)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 3)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 4)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (1, 1, NULL, 96)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (2, 1, NULL, 72)
 INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (3, 1, NULL, 48)
@@ -655,3 +647,21 @@ INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_
 INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [sede_id], [tiempo_entrega]) VALUES (53, 1, 14, 1, 3, CAST(N'2019-06-14T09:08:26.0140000' AS DateTime2), 1, 2, 6, 1)
 INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [sede_id], [tiempo_entrega]) VALUES (54, 1, 15, 1, 3, CAST(N'2019-06-14T09:08:26.0140000' AS DateTime2), 1, 2, 6, 1)
 SET IDENTITY_INSERT [dbo].[documento_reporte] OFF
+
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 1)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 2)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 3)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (2, 4)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (2, 5)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (5, 6)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (5, 7)
+
+
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 2)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (5, 1)
+
+
+
+
