@@ -2,6 +2,7 @@ package com.exact.service.externa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -35,6 +37,11 @@ public class Proveedor implements Serializable{
 	@JoinTable(name="proveedor_plazo_distribucion", joinColumns = { @JoinColumn(name = "proveedor_id") },
     inverseJoinColumns = { @JoinColumn(name = "plazo_distribucion_id") })
 	private Set<PlazoDistribucion> plazosDistribucion;
+	
+	
+	@Transient
+	private Set<Map<String, Object>> ambitos;
+	
 	
 	@Column(name="activo", nullable=false)
 	private boolean activo;
@@ -78,6 +85,20 @@ public class Proveedor implements Serializable{
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+
+	
+	
+
+
+	public Set<Map<String, Object>> getAmbitos() {
+		return ambitos;
+	}
+
+	public void setAmbitos(Set<Map<String, Object>> ambitos) {
+		this.ambitos = ambitos;
+	}
+
+
 
 
 
