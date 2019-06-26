@@ -137,6 +137,8 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
+		
+		
 		for (Proveedor proveedor : proveedoreslst) {
 			Map<Long, Map<String, Integer>> cantidadPlazo = new HashMap<>();
 			for (PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
