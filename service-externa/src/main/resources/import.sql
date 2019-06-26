@@ -660,7 +660,6 @@ INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) 
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 2)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
-INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (5, 1)
 
 
 

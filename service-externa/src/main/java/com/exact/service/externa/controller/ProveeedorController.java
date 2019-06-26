@@ -62,8 +62,9 @@ public class ProveeedorController {
 	public ResponseEntity<Proveedor> modificar(@PathVariable Long id, @RequestBody Proveedor proveedor) {
 		proveedor.setId(id);
 		try {
-			return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
+			return new ResponseEntity<Proveedor>(proveedorService.modificar(proveedor), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
 		}
 	}

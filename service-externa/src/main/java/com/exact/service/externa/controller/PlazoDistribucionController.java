@@ -52,8 +52,9 @@ public class PlazoDistribucionController {
 	public ResponseEntity<PlazoDistribucion> modificar(@PathVariable Long id, @RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setId(id);
 		try {
-			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.modificar(plazoDist), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
 		}
 	}
