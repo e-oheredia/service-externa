@@ -13,6 +13,7 @@ public interface IAmbitoProveedorDao extends CrudRepository<AmbitoProveedor,Long
 	@Query("SELECT ap FROM AmbitoProveedor ap WHERE ap.proveedores.id=?1")
 	public Iterable<AmbitoProveedor> listarAmbitosIds(Long proveedorId);
 	
+	
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM AmbitoProveedor ap WHERE ap.proveedores.id=?1")
