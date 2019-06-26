@@ -48,7 +48,7 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
 		if(plazodistribucion.getNombre()==null) {
 			return null;
-		}
+		} 
 		
 		PlazoDistribucion plazito = plazoDistribucionDao.save(plazodistribucion);
 		List<AmbitoPlazoDistribucion> ambitosplazos = new ArrayList<>();
@@ -88,7 +88,6 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			}
 			plazito.setAmbitos(ambitplazos);
 		}
-		
 		return plazoslst;
 	}
 
@@ -98,8 +97,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			return null;
 		}
 		PlazoDistribucion plazoactualizado = plazoDistribucionDao.save(plazodistribucion);
-		ambitoPlazoDao.deleteById(plazodistribucion.getId());
+		ambitoPlazoDao.eliminarbyproveedorid(plazodistribucion.getId());
 		List<AmbitoPlazoDistribucion> ambitosplazos = new ArrayList<>();
+		plazoactualizado.setAmbitos(plazodistribucion.getAmbitos());
 		for(Map<String,Object> ambito : plazoactualizado.getAmbitos()) {
 			AmbitoPlazoDistribucion ambitoplazito = new AmbitoPlazoDistribucion();
 			AmbitoPlazoDistribucionId ambitoPlazoDistribucionId = new AmbitoPlazoDistribucionId();
