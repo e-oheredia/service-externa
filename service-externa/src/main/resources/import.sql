@@ -660,7 +660,15 @@ INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) 
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 2)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
-INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (5, 1)
+
+INSERT [dbo].[ambito_distrito] ([distrito_id],[ambito_id]) VALUES (1299, 1)
+INSERT [dbo].[ambito_distrito] ([distrito_id],[ambito_id]) VALUES (1302, 1)
+INSERT [dbo].[ambito_distrito] ([distrito_id],[ambito_id]) VALUES (1284, 1)
+INSERT [dbo].[ambito_distrito] ([distrito_id],[ambito_id]) VALUES (1276, 1)
+INSERT [dbo].[ambito_distrito] ([distrito_id],[ambito_id]) VALUES (1291, 1)
+
+
+
 
 
 
