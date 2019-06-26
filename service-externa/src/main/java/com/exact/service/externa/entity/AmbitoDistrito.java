@@ -1,6 +1,6 @@
 package com.exact.service.externa.entity;
 
-import java.beans.Transient;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -20,10 +21,10 @@ public class AmbitoDistrito implements Serializable{
 	@Column(name="ambito_id")
 	private Long ambitoId;
 	
-	@javax.persistence.Transient
+	@Transient
 	private Map<String,Object> ambito;
 	
-	@javax.persistence.Transient
+	@Transient
 	private Map<String,Object> distrito;
 	
 	

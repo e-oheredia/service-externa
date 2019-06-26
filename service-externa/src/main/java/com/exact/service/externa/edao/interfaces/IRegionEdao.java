@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -45,5 +46,7 @@ public interface IRegionEdao {
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	
 	
 	public Map<String, Object> listarFechaLimite (Long ambitoId, String fecha, double dia )  throws IOException, JSONException, URISyntaxException;	
+	
+	public Iterable<Map<String,Object>> listarAmbitosByIds(List<Long> ids) throws java.io.IOException, JSONException;
 	
 }
