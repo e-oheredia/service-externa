@@ -115,6 +115,33 @@ public class ProveedorService implements IProveedorService{
 		if(proveedor.getNombre()==null) {
 			return null;
 		}
+		Iterable<AmbitoPlazoDistribucion> ambitosplazos2 = ambitoPlazoDao.findAll();
+		Iterable<PlazoDistribucion> varios = plazodao.findAll();
+		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
+		
+		List<Long> idsambitos = new ArrayList<>();
+		List<Long> plazos = new ArrayList<>(); 
+		for(Map<String,Object> ambito : proveedor.getAmbitos()) {
+			idsambitos.add(Long.valueOf(ambito.get("id").toString()));
+		}
+		
+		for(AmbitoPlazoDistribucion ambitoproveedor : ambitosplazos2) {
+			for(Long ids : idsambitos) {
+				if(ids== ambitoproveedor.getId().getAmbitoId()) {
+					plazos.add(ambitoproveedor.getPlazoDistribucion().getId());
+				}
+			}
+		}
+		
+		for(PlazoDistribucion plazosss : varios ) {
+			for(Long idsplazos : plazos  ) {
+				if(idsplazos == plazosss.getId()) {
+					variosplazos.add(plazosss);
+				}
+			}
+		}
+		proveedor.setPlazosDistribucion(variosplazos);
+		
 		Proveedor provee = proveedorDao.save(proveedor);
 		List<AmbitoProveedor> ambitosplazos = new ArrayList<>();
 		for(Map<String,Object> ambito : provee.getAmbitos()) {
