@@ -5,7 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -203,7 +205,14 @@ public class RegionEdao implements IRegionEdao {
 		return CommonUtils.jsonToMap(responseJson);
 	}
 	
-	
+	@Override
+	public Iterable<Map<String, Object>> listarAmbitosByIds(List<Long> ids) throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(regionesPath + path2 + "?ids=" + String.join(",", ids.stream().map(id -> id.toString()).collect(Collectors.toList())));
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
 	
 	
 	
