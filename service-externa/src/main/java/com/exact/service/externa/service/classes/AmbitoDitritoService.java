@@ -64,6 +64,24 @@ public class AmbitoDitritoService implements IAmbitoDistritoService{
 		return ambitoDistritos;
 		
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Iterable<AmbitoDistrito> validarActualizarAmbitoDistrito(List<Map<String,Object>> distritos) throws ClientProtocolException, IOException, JSONException {
+		Iterable<AmbitoDistrito> ambitoDistritoBD = ambitoDistritoDao.findAll();
+		for(AmbitoDistrito ambitodistrito : ambitoDistritoBD) {
+			int i=0;
+			while(i<distritos.size()) {
+				Long distritoId = Long.valueOf(distritos.get(i).get("id").toString());
+				if(ambitodistrito.getDistritoId()==distritoId) {
+					Map<String,Object> ambito = (Map<String, Object>) distritos.get(i).get("ambito");
+					ambitodistrito.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+				}
+			}
+		}	
+		
+		return ambitoDistritoBD;
+	}
 	
 
 }
