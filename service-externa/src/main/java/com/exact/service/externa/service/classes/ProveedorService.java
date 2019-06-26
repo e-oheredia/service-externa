@@ -115,7 +115,6 @@ public class ProveedorService implements IProveedorService{
 		if(proveedor.getNombre()==null) {
 			return null;
 		}
-		
 		Proveedor provee = proveedorDao.save(proveedor);
 		List<AmbitoProveedor> ambitosplazos = new ArrayList<>();
 		for(Map<String,Object> ambito : provee.getAmbitos()) {
@@ -134,10 +133,26 @@ public class ProveedorService implements IProveedorService{
 
 	@Override
 	public Proveedor modificar(Proveedor proveedor) {
-		if(proveedorDao.existsById(proveedor.getId())) {
-			return guardar(proveedor);
-		}else
+		if(proveedor.getNombre()==null) {
 			return null;
+		}
+		Proveedor provee = proveedorDao.save(proveedor);
+		provee.setAmbitos(proveedor.getAmbitos());
+		ambitoproveedorDao.eliminarbyproveedorid(proveedor.getId());
+		List<AmbitoProveedor> ambitosplazos = new ArrayList<>();
+		for(Map<String,Object> ambito : provee.getAmbitos()) {
+			AmbitoProveedor ambitoprovee = new AmbitoProveedor();
+			AmbitoProveedorId ambitoProveedorId = new AmbitoProveedorId();
+			ambitoProveedorId.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+			ambitoProveedorId.setProveedorId(provee.getId());
+			ambitoprovee.setId(ambitoProveedorId);
+			ambitoprovee.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+			ambitoprovee.setProveedores(provee);
+			ambitosplazos.add(ambitoprovee);
+		}
+		
+		ambitoproveedorDao.saveAll(ambitosplazos);
+		return provee;		
 	}
 
 	@Override
