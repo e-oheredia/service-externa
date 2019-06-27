@@ -38,10 +38,8 @@ public class Proveedor implements Serializable{
     inverseJoinColumns = { @JoinColumn(name = "plazo_distribucion_id") })
 	private Set<PlazoDistribucion> plazosDistribucion;
 	
-	
 	@Transient
 	private Set<Map<String, Object>> ambitos;
-	
 	
 	@Column(name="activo", nullable=false)
 	private boolean activo;
@@ -62,33 +60,21 @@ public class Proveedor implements Serializable{
 		this.plazosDistribucion = plazosDistribucion;
 	}
 
-
-
 	public Long getId() {
 		return id;
 	}
-
-
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
-
 	public String getNombre() {
 		return nombre;
 	}
 
-
-
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
-	
-	
-
 
 	public Set<Map<String, Object>> getAmbitos() {
 		return ambitos;
@@ -97,8 +83,6 @@ public class Proveedor implements Serializable{
 	public void setAmbitos(Set<Map<String, Object>> ambitos) {
 		this.ambitos = ambitos;
 	}
-
-
 
 
 
