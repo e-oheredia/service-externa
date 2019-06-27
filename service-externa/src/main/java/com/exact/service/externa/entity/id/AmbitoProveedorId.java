@@ -9,9 +9,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class AmbitoProveedorId implements Serializable{
 	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name="ambito_id")
@@ -19,12 +17,6 @@ public class AmbitoProveedorId implements Serializable{
 	
 	@Column(name="proveedor_id")
 	private Long proveedorId;
-
-	
-	
-	public AmbitoProveedorId() {
-		super();
-	}
 
 	public AmbitoProveedorId(Long ambitoId, Long proveedorId) {
 		super();
@@ -38,6 +30,10 @@ public class AmbitoProveedorId implements Serializable{
 
 	public void setAmbitoId(Long ambitoId) {
 		this.ambitoId = ambitoId;
+	}
+
+	public AmbitoProveedorId() {
+		super();
 	}
 
 	public Long getProveedorId() {
