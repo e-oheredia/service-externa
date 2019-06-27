@@ -17,7 +17,7 @@ import com.exact.service.externa.entity.AmbitoDistrito;
 import com.exact.service.externa.service.interfaces.IAmbitoDistritoService;
  
 @Service
-public class AmbitoDitritoService implements IAmbitoDistritoService{
+public class AmbitoDistritoService implements IAmbitoDistritoService{
 
 	@Autowired
 	IAmbitoDistritoDao ambitoDistritoDao;
