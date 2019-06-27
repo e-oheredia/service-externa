@@ -46,11 +46,15 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 
 	@Override
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
+		
 		if(plazodistribucion.getNombre()==null) {
 			return null;
-		} 
+		}
 		
 		PlazoDistribucion plazito = plazoDistribucionDao.save(plazodistribucion);
+		return plazito;
+		
+		/*
 		List<AmbitoPlazoDistribucion> ambitosplazos = new ArrayList<>();
 		for(Map<String,Object> ambito : plazito.getAmbitos()) {
 			AmbitoPlazoDistribucion ambitoplazito = new AmbitoPlazoDistribucion();
@@ -63,31 +67,43 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			ambitosplazos.add(ambitoplazito);
 		}
 		ambitoPlazoDao.saveAll(ambitosplazos);
-		return plazito;		
+		return plazito;
+		*/		
 	}
 
 	@Override
 	public Iterable<PlazoDistribucion> listarAll() throws Exception {
 		
-		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
+		//Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
 		Iterable<PlazoDistribucion> plazos =  plazoDistribucionDao.findAll();
 		List<PlazoDistribucion> plazoslst = StreamSupport.stream(plazos.spliterator(), false).collect(Collectors.toList());
+		Iterable<Map<String,Object>> regiones = ambitodiasdao.listarAmbitos();
+		//List<Map<String,Object>> regioneslistt = StreamSupport.stream(regiones.spliterator(), false).collect(Collectors.toList());
 		for(PlazoDistribucion plazito : plazoslst) {
-			Iterable<AmbitoPlazoDistribucion> ambitosId= ambitoPlazoDao.listarAmbitosIds(plazito.getId());
-			Set<Map<String,Object>> ambitplazos = new HashSet<>();
-			List<Long> ambitoPlazos = new ArrayList<>();
-			for(AmbitoPlazoDistribucion ambitoplazos : ambitosId) {
-				ambitoPlazos.add(ambitoplazos.getId().getAmbitoId());
-			}
-			for(Long ambitoId : ambitoPlazos) {
-				for(Map<String,Object> ambito: ambitos) {
-					if(ambitoId==Long.valueOf(ambito.get("id").toString())) {
-						ambitplazos.add(ambito);
-					}
+			for(Map<String,Object> region : regiones) {
+				if(plazito.getRegionId()==Long.valueOf(region.get("id").toString())) {
+					plazito.setRegion(region);
 				}
 			}
-			plazito.setAmbitos(ambitplazos);
+
 		}
+		
+		/*
+		Iterable<AmbitoPlazoDistribucion> ambitosId= ambitoPlazoDao.listarAmbitosIds(plazito.getId());
+		Set<Map<String,Object>> ambitplazos = new HashSet<>();
+		List<Long> ambitoPlazos = new ArrayList<>();
+		for(AmbitoPlazoDistribucion ambitoplazos : ambitosId) {
+			ambitoPlazos.add(ambitoplazos.getId().getAmbitoId());
+		}
+		for(Long ambitoId : ambitoPlazos) {
+			for(Map<String,Object> ambito: ambitos) {
+				if(ambitoId==Long.valueOf(ambito.get("id").toString())) {
+					ambitplazos.add(ambito);
+				}
+			}
+		}
+		plazito.setAmbitos(ambitplazos);
+		*/
 		return plazoslst;
 	}
 
@@ -97,6 +113,8 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			return null;
 		}
 		PlazoDistribucion plazoactualizado = plazoDistribucionDao.save(plazodistribucion);
+		
+		/*
 		ambitoPlazoDao.eliminarbyproveedorid(plazodistribucion.getId());
 		List<AmbitoPlazoDistribucion> ambitosplazos = new ArrayList<>();
 		plazoactualizado.setAmbitos(plazodistribucion.getAmbitos());
@@ -111,7 +129,7 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			ambitosplazos.add(ambitoplazito);
 		}
 		ambitoPlazoDao.saveAll(ambitosplazos);
-		
+		*/
 		return plazoactualizado;
 	}
 

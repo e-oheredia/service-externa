@@ -36,10 +36,36 @@ public class PlazoDistribucion implements Serializable{
 	@JoinColumn(name="tipo_plazo_distribucion_id")
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
+
+	@Column(name="region_id")
+	private Long regionId;
 	
 	@Transient
-	private Set<Map<String, Object>> ambitos;
-//		
+	private Map<String, Object> region;
+	
+	public Long getRegionId() {
+		return regionId;
+	}
+	
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
+	}
+	
+	
+	public Map<String, Object> getRegion() {
+		return region;
+	}
+	
+	
+	public void setRegion(Map<String, Object> region) {
+		this.regionId=Long.valueOf(region.get("id").toString());
+		this.region = region;
+	}
+	
+
+//	@Transient
+//	private Set<Map<String, Object>> ambitos;
+	
 //	@OneToMany(cascade = CascadeType.ALL, mappedBy = "plazoDistribucion")
 //	private Set<AmbitoPlazoDistribucion> ambitosPlazoDistribucion;
 	
@@ -59,18 +85,21 @@ public class PlazoDistribucion implements Serializable{
 //		
 //	}
 
-	
-	
+
+
 	@Column(name="activo", nullable=false)
 	private boolean activo;
 	
 
+	/*
 	public Set<Map<String, Object>> getAmbitos() {
 		return ambitos;
 	}
 	public void setAmbitos(Set<Map<String, Object>> ambitos) {
 		this.ambitos = ambitos;
 	}
+	*/
+	
 	public boolean isActivo() {
 		return activo;
 	}
@@ -101,8 +130,7 @@ public class PlazoDistribucion implements Serializable{
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	/**
-	 * 
-	 */
+
+	
 	private static final long serialVersionUID = 1L;
 }
