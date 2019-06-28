@@ -1,6 +1,7 @@
 package com.exact.service.externa.service.interfaces;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -17,6 +18,6 @@ public interface IProveedorService {
 	Proveedor guardar(Proveedor proveedor);
 	Proveedor modificar(Proveedor proveedor);
 	Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException;
-
+	List<Proveedor> buscarProveedorByPlazoId(Long plazoId);
 	
 }

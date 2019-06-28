@@ -10,4 +10,5 @@ public interface IPlazoDistribucionService {
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion);
 	public Iterable<PlazoDistribucion> listarAll() throws Exception;
 	public PlazoDistribucion modificar(PlazoDistribucion plazodistribucion);
+	public Iterable<PlazoDistribucion> listarPlazosByRegionId(Long regionId);
 }

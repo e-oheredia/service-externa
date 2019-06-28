@@ -19,6 +19,10 @@ public interface IPlazoDistribucionDao extends CrudRepository<PlazoDistribucion,
 	@Query(value=" Select * From plazo_distribucion As p where p.plazo_distribucion_id	in (select pd.plazo_distribucion_id From proveedor_plazo_distribucion as pd where pd.proveedor_id=?1) and p.activo=1 ", nativeQuery=true)	
 	Iterable<PlazoDistribucion> listarplazosactivos(Long proveedorId);
 	
+
+	@Query("FROM PlazoDistribucion P WHERE P.regionId = ?1")
+	Iterable<PlazoDistribucion> findPlazosByRegionId(Long regionId);
+
 	@Query("SELECT P FROM PlazoDistribucion P WHERE P.regionId = ?1")
 	Iterable<PlazoDistribucion> plazosByRegion(Long Region);
 	
@@ -27,6 +31,7 @@ public interface IPlazoDistribucionDao extends CrudRepository<PlazoDistribucion,
 	@Query(value="DELETE FROM proveedor_plazo_distribucion WHERE proveedor_plazo_distribucion.proveedor_id=?1", nativeQuery=true)
 	void eliminarbyproveedorid(Long proveedorId);	
 	
+
 	
 	@Query("SELECT P FROM PlazoDistribucion P WHERE P.nombre = ?1")
 	PlazoDistribucion buscarpornombre(String nombre);
