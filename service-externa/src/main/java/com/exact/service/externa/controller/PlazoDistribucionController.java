@@ -41,7 +41,11 @@ public class PlazoDistribucionController {
 	public ResponseEntity<PlazoDistribucion> guardar(@RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setActivo(true);
 		try {
-			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+			PlazoDistribucion pd =plazoDistribucionService.guardar(plazoDist);
+			if(pd==null) {
+				return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+			}
+			return new ResponseEntity<PlazoDistribucion>(pd, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);

@@ -112,20 +112,39 @@ public class ProveedorService implements IProveedorService{
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Proveedor guardar(Proveedor proveedor) {
+		
 		if(proveedor.getNombre()==null) {
 			return null;
 		}
-		Iterable<AmbitoPlazoDistribucion> ambitosplazos2 = ambitoPlazoDao.findAll();
-		Iterable<PlazoDistribucion> varios = plazodao.findAll();
-		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
 		
-		List<Long> idsambitos = new ArrayList<>();
-		List<Long> plazos = new ArrayList<>(); 
+		List<Long> idsregion = new ArrayList<>();
+
+		
+		for(Map<String,Object> ambito : proveedor.getAmbitos()) {	
+			Map<String,Object> region = (Map<String, Object>) ambito.get("region");
+			idsregion.add(Long.valueOf(region.get("id").toString()));
+		}
+		
+		idsregion = idsregion.stream().distinct().collect(Collectors.toList());
+		
+		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
+
+				
+		for(Long id : idsregion) {
+			    for(PlazoDistribucion pd : plazodao.plazosByRegion(id)) {
+			    	variosplazos.add(pd);
+			    }
+		}
+		//Iterable<AmbitoPlazoDistribucion> ambitosplazos2 = ambitoPlazoDao.findAll();
+		//Iterable<PlazoDistribucion> varios = plazodao.findAll();
+		//List<Long> idsambitos = new ArrayList<>();
+		//List<Long> plazos = new ArrayList<>();
+		/*
 		for(Map<String,Object> ambito : proveedor.getAmbitos()) {
 			idsambitos.add(Long.valueOf(ambito.get("id").toString()));
 		}
-		
 		for(AmbitoPlazoDistribucion ambitoproveedor : ambitosplazos2) {
 			for(Long ids : idsambitos) {
 				if(ids== ambitoproveedor.getId().getAmbitoId()) {
@@ -133,7 +152,6 @@ public class ProveedorService implements IProveedorService{
 				}
 			}
 		}
-		
 		for(PlazoDistribucion plazosss : varios ) {
 			for(Long idsplazos : plazos  ) {
 				if(idsplazos == plazosss.getId()) {
@@ -141,8 +159,8 @@ public class ProveedorService implements IProveedorService{
 				}
 			}
 		}
+		*/
 		proveedor.setPlazosDistribucion(variosplazos);
-		
 		Proveedor provee = proveedorDao.save(proveedor);
 		List<AmbitoProveedor> ambitosplazos = new ArrayList<>();
 		for(Map<String,Object> ambito : provee.getAmbitos()) {
@@ -160,10 +178,34 @@ public class ProveedorService implements IProveedorService{
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Proveedor modificar(Proveedor proveedor) {
+		
 		if(proveedor.getNombre()==null) {
 			return null;
 		}
+		plazodao.eliminarbyproveedorid(proveedor.getId());
+		
+		List<Long> idsregion = new ArrayList<>();
+		for(Map<String,Object> ambito : proveedor.getAmbitos()) {	
+			Map<String,Object> region = (Map<String, Object>) ambito.get("region");
+			idsregion.add(Long.valueOf(region.get("id").toString()));
+		}
+		
+		idsregion = idsregion.stream().distinct().collect(Collectors.toList());
+		
+		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
+		
+		for(Long id : idsregion) {
+				Iterable<PlazoDistribucion> pds =  plazodao.plazosByRegion(id);
+				if(pds==null) {
+					return null;
+				}
+			    for(PlazoDistribucion pd : plazodao.plazosByRegion(id)) {
+			    	variosplazos.add(pd);
+			    }
+		}
+		proveedor.setPlazosDistribucion(variosplazos);
 		Proveedor provee = proveedorDao.save(proveedor);
 		provee.setAmbitos(proveedor.getAmbitos());
 		ambitoproveedorDao.eliminarbyproveedorid(proveedor.getId());
