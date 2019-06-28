@@ -10,6 +10,8 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IAmbitoPlazoDistribucionDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
@@ -48,6 +50,11 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
 		
 		if(plazodistribucion.getNombre()==null) {
+			return null;
+		}
+		
+		PlazoDistribucion plaz =plazoDistribucionDao.buscarpornombre(plazodistribucion.getNombre());
+		if(plaz!=null) {
 			return null;
 		}
 		
