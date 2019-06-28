@@ -69,4 +69,9 @@ public class PlazoDistribucionController {
 		return new ResponseEntity<Iterable<ReporteAsignacionPlazo>>(reporteAsignacionPlazoService.listarReportes(fechaini, fechafin), HttpStatus.OK);
 	}
 	
+	@GetMapping("{id}/plazoregion")
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarAreaBuzonPlazos(@PathVariable Long id) throws IOException, Exception {
+		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarPlazosByRegionId(id), HttpStatus.OK);
+	}
+	
 }

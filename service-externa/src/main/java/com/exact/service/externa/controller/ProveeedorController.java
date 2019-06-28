@@ -74,4 +74,9 @@ public class ProveeedorController {
 		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.listarProveedores(),HttpStatus.OK);
 	}
 	
+	@GetMapping("{id}/proveedorplazo")
+	public ResponseEntity<Iterable<Proveedor>> listarProveedorByPlazo(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException {
+		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.buscarProveedorByPlazoId(id),HttpStatus.OK);
+	}
+	
 }

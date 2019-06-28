@@ -3,6 +3,7 @@
 
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -188,6 +189,26 @@ public class ProveedorService implements IProveedorService{
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedoresBD.spliterator(), false).collect(Collectors.toList());
 		proveedoreslst.removeIf(proveedor -> !proveedor.isActivo());
 		return proveedoreslst;
+	}
+
+	@Override
+	public List<Proveedor> buscarProveedorByPlazoId(Long plazoId) {
+		List<BigInteger> proveedores = proveedorDao.finproveedorByPlazo(plazoId);
+		Iterable<Proveedor> proveedoreslst = proveedorDao.findAll();
+		List<Proveedor> proveedorEncontrados = new ArrayList<>();
+		for(Proveedor proveedor : proveedoreslst) {
+			int i=0;
+			while(i<proveedores.size()) {
+				Long proveedorId = Long.valueOf(proveedores.get(i).toString());
+				if(proveedor.getId().longValue()==proveedorId) {
+					proveedorEncontrados.add(proveedor);
+					break;
+				}
+				i++;
+			}
+		}
+		
+		return proveedorEncontrados;
 	}
 
 

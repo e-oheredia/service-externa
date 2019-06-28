@@ -133,4 +133,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		return plazoactualizado;
 	}
 
+	@Override
+	public Iterable<PlazoDistribucion> listarPlazosByRegionId(Long regionId) {
+		return plazoDistribucionDao.findPlazosByRegionId(regionId);
+	}
+
 }
