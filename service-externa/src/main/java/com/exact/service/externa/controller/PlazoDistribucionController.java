@@ -41,7 +41,11 @@ public class PlazoDistribucionController {
 	public ResponseEntity<PlazoDistribucion> guardar(@RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setActivo(true);
 		try {
-			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.guardar(plazoDist), HttpStatus.OK);
+			PlazoDistribucion pd =plazoDistribucionService.guardar(plazoDist);
+			if(pd==null) {
+				return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
+			}
+			return new ResponseEntity<PlazoDistribucion>(pd, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
@@ -67,6 +71,11 @@ public class PlazoDistribucionController {
 	@GetMapping("/reporteplazos")
 	public ResponseEntity<Iterable<ReporteAsignacionPlazo>> listarAreaBuzonPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, Exception {
 		return new ResponseEntity<Iterable<ReporteAsignacionPlazo>>(reporteAsignacionPlazoService.listarReportes(fechaini, fechafin), HttpStatus.OK);
+	}
+	
+	@GetMapping("{id}/plazoregion")
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarAreaBuzonPlazos(@PathVariable Long id) throws IOException, Exception {
+		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarPlazosByRegionId(id), HttpStatus.OK);
 	}
 	
 }

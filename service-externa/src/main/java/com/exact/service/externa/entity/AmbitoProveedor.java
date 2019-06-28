@@ -18,8 +18,6 @@ import com.exact.service.externa.entity.id.AmbitoProveedorId;
 @Table(name="ambito_proveedor")
 public class AmbitoProveedor implements Serializable{
 	
-
-
 	@EmbeddedId
 	private AmbitoProveedorId id;
 	
@@ -31,45 +29,30 @@ public class AmbitoProveedor implements Serializable{
 	@MapsId("proveedorId")
 	private Proveedor proveedores;
 	
-
 	public AmbitoProveedorId getId() {
 		return id;
 	}
-
-
-
+	
 	public void setId(AmbitoProveedorId id) {
 		this.id = id;
 	}
-
-
 
 	public Long getAmbitoId() {
 		return ambitoId;
 	}
 
-
-
 	public void setAmbitoId(Long ambitoId) {
 		this.ambitoId = ambitoId;
 	}
-
-
 
 	public Proveedor getProveedores() {
 		return proveedores;
 	}
 
-
-
 	public void setProveedores(Proveedor proveedores) {
 		this.proveedores = proveedores;
 	}
 
-
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 }
