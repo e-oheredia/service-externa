@@ -59,5 +59,16 @@ public class DistritoEdao implements IDistritoEdao {
 		JSONArray responseJson = new JSONArray(response);		
 		return CommonUtils.jsonArrayToMap(responseJson);
 	}
+	
+	@Override
+	public Iterable<Map<String, Object>> listarDistritoIdsByUbigeos(List<String> ids)
+			throws ClientProtocolException, IOException, JSONException {
+		HttpGet httpGet = new HttpGet(lugaresPath + path + "?ubigeos=" + String.join(",", ids.stream().map(id -> id.toString())
+				.collect(Collectors.toList())));
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
 
 }

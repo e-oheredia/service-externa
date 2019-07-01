@@ -2,8 +2,11 @@ package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -67,21 +70,37 @@ public class AmbitoDistritoService implements IAmbitoDistritoService{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Iterable<AmbitoDistrito> validarActualizarAmbitoDistrito(List<Map<String,Object>> distritos) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<AmbitoDistrito> validarActualizarAmbitoDistrito(List<Map<String,Object>> distritosExcel) throws ClientProtocolException, IOException, JSONException {
 		Iterable<AmbitoDistrito> ambitoDistritoBD = ambitoDistritoDao.findAll();
-		for(AmbitoDistrito ambitodistrito : ambitoDistritoBD) {
-			int i=0;
-			while(i<distritos.size()) {
-				Long distritoId = Long.valueOf(distritos.get(i).get("id").toString());
-				if(ambitodistrito.getDistritoId()==distritoId) {
-					Map<String,Object> ambito = (Map<String, Object>) distritos.get(i).get("ambito");
-					ambitodistrito.setAmbitoId(Long.valueOf(ambito.get("id").toString()));
+		List<AmbitoDistrito> ambitoDistritoBDlst = StreamSupport.stream(ambitoDistritoBD.spliterator(), false).collect(Collectors.toList());
+		List<String> ubigeoslst = new ArrayList<>();
+		int m=0;
+		while(m<distritosExcel.size()) {
+			ubigeoslst.add(distritosExcel.get(m).get("ubigeo").toString());
+			m++;
+		}
+		List<Map<String,Object>> distritosBD =  (List<Map<String, Object>>) distritoEdao.listarDistritoIdsByUbigeos(ubigeoslst);
+		for(Map<String, Object> distritoExcel :distritosExcel) {
+			String ubigeoExcel= distritoExcel.get("ubigeo").toString();
+			for(Map<String,Object> distritoBD : distritosBD) {
+				String ubigeoBD = distritoBD.get("ubigeo").toString();	
+					if(ubigeoExcel.equals(ubigeoBD)) {
+						Long distritoId = Long.valueOf(distritoBD.get("id").toString());
+						for(AmbitoDistrito ambitodistrito: ambitoDistritoBDlst) {
+							if(distritoId==ambitodistrito.getDistritoId().longValue()) {
+								Map<String,Object> ambitoExcel = (Map<String, Object>) distritoExcel.get("ambito");
+								Long ambitoExcelId = Long.valueOf(ambitoExcel.get("id").toString());
+								if(ambitodistrito.getAmbitoId()!=ambitoExcelId) {
+									ambitodistrito.setAmbitoId(ambitoExcelId);
+									break;
+								}
+							}
+						}
+					}
 				}
-			}
-		}	
-		
+		}
+		ambitoDistritoDao.saveAll(ambitoDistritoBDlst);
 		return ambitoDistritoBD;
 	}
 	
-
 }

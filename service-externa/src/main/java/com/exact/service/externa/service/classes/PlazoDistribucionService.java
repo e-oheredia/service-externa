@@ -85,11 +85,18 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		Iterable<PlazoDistribucion> plazos =  plazoDistribucionDao.findAll();
 		List<PlazoDistribucion> plazoslst = StreamSupport.stream(plazos.spliterator(), false).collect(Collectors.toList());
 		Iterable<Map<String,Object>> regiones = ambitodiasdao.listarAmbitos();
+		
 		//List<Map<String,Object>> regioneslistt = StreamSupport.stream(regiones.spliterator(), false).collect(Collectors.toList());
 		for(PlazoDistribucion plazito : plazoslst) {
 			for(Map<String,Object> region : regiones) {
+				Iterable<Map<String,Object>> ambitos =ambitodiasdao.listarAmbitosByRegion(Long.valueOf(region.get("id").toString()));
+				Set<Map<String,Object>> ambitoslst = new HashSet<>();
+				for(Map<String,Object> ambitoEncontrado:ambitos ) {
+					ambitoslst.add(ambitoEncontrado);
+				}
 				if(plazito.getRegionId()==Long.valueOf(region.get("id").toString())) {
 					plazito.setRegion(region);
+					plazito.setAmbitos(ambitoslst);
 				}
 			}
 
