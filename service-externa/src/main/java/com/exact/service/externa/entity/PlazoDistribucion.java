@@ -43,6 +43,18 @@ public class PlazoDistribucion implements Serializable{
 	@Transient
 	private Map<String, Object> region;
 	
+	@Transient
+	private Set<Map<String, Object>> ambitos;
+	
+	
+	public Set<Map<String, Object>> getAmbitos() {
+		return ambitos;
+	}
+
+	public void setAmbitos(Set<Map<String, Object>> ambitos) {
+		this.ambitos = ambitos;
+	}
+
 	public Long getRegionId() {
 		return regionId;
 	}
