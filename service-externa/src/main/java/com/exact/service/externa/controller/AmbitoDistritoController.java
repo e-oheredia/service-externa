@@ -1,6 +1,7 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,15 @@ public class AmbitoDistritoController {
 		return new ResponseEntity<Iterable<AmbitoDistrito>>(ambitoDistritoService.listarAmbitoDistritos(), HttpStatus.OK);
 	}
 	@PutMapping()
-	public ResponseEntity<Iterable<AmbitoDistrito>> subirUbigeos(@RequestBody List<Map<String, Object>> distritos)throws IOException, JSONException {
-		return new ResponseEntity<Iterable<AmbitoDistrito>>(ambitoDistritoService.validarActualizarAmbitoDistrito(distritos), HttpStatus.OK);
+	public ResponseEntity<Map<String, Object>> subirUbigeos(@RequestBody List<Map<String, Object>> distritos)throws IOException, JSONException {
+		
+		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Iterable<AmbitoDistrito> ambitosactualizados = ambitoDistritoService.validarActualizarAmbitoDistrito(distritos);
+		if(ambitosactualizados==null) {
+			respuesta.put("mensaje", "No se actualizaron los ubigeos");
+		}
+			respuesta.put("mensaje", "Se actualizaron los ubigeos");
+		return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.OK);
 	}
 	
 	
