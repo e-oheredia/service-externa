@@ -1,6 +1,12 @@
 package com.exact.service.externa.entity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,20 +19,42 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import com.exact.service.externa.utils.Encryption;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 
 @Entity
 @Table(name = "seguimiento_autorizado")
 public class SeguimientoAutorizado implements Serializable{
 
+	@Value("${key.string}")
+	@Transient
+	String keystring;
+	
+	@Transient
+	String key;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "seguimiento_autorizado_id")
 	private Long id;
 	
+	public SeguimientoAutorizado() throws IOException {
+		File archivo = new File (keystring);
+		FileReader fr = new FileReader (archivo);
+		BufferedReader br = new BufferedReader(fr);
+		key = br.readLine();	
+	}
+
+
 	@Column(name="fecha")
 	@JsonFormat
     (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
@@ -35,9 +63,24 @@ public class SeguimientoAutorizado implements Serializable{
 	@Column(nullable = false, name = "usuario_id")
 	private Long usuarioId;
 	
-	@Column(nullable = true, name = "nombre_usuario")
+	@Transient
 	private String nombreUsuario;
 	
+	@Column(nullable = true, name = "nombre_usuario")	
+	private String nombreUsuarioencryptado;
+
+	
+	public String getNombreUsuarioencryptado() {
+		return nombreUsuarioencryptado;
+	}
+
+	public void setNombreUsuarioencryptado(String nombreUsuarioencryptado) throws UnsupportedEncodingException {
+		byte[] keybytes = key.getBytes("UTF-8");
+		this.nombreUsuarioencryptado = nombreUsuarioencryptado;
+		this.nombreUsuario=Encryption.decrypt(nombreUsuarioencryptado, keybytes);
+	}
+
+
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="envio_id")
 	@JsonIgnore
@@ -80,8 +123,10 @@ public class SeguimientoAutorizado implements Serializable{
 		return nombreUsuario;
 	}
 
-	public void setNombreUsuario(String nombreUsuario) {
+	public void setNombreUsuario(String nombreUsuario) throws UnsupportedEncodingException {
 		this.nombreUsuario = nombreUsuario;
+		byte[] keybytes = key.getBytes("UTF-8");
+		this.nombreUsuarioencryptado =Encryption.encrypt(nombreUsuario, keybytes);
 	}
 
 	public EstadoAutorizado getEstadoAutorizado() {
@@ -99,11 +144,8 @@ public class SeguimientoAutorizado implements Serializable{
 	public void setEnvio(Envio envio) {
 		this.envio = envio;
 	}
-	
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 }
