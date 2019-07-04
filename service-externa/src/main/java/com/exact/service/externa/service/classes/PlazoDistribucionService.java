@@ -161,7 +161,8 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 
 	@Override
 	public Iterable<PlazoDistribucion> listarPlazosByDistritoId(Long distritoId) throws IOException, JSONException {
-		Map<String,Object> region = ambitodiasdao.listarRegionByDistrito(distritoId);
+		AmbitoDistrito ambitodistrito = ambitodistritoDao.findById(distritoId).orElse(null);
+		Map<String,Object> region = ambitodiasdao.listarRegionByDistrito(ambitodistrito.getAmbitoId());
 		return plazoDistribucionDao.findPlazosByRegionId(Long.valueOf(region.get("id").toString()));
 	}
 
