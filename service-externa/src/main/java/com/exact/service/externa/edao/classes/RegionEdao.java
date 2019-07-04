@@ -233,6 +233,15 @@ public class RegionEdao implements IRegionEdao {
 		return response;
 	}
 	
+	@Override
+	public Map<String,Object> listarRegionByDistrito(Long id) throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(regionesPath + path + "/ambito" + "/" + id);
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONObject responseJson = new JSONObject(response);		 	
+		return CommonUtils.jsonToMap(responseJson);
+	}
+	
 	
 	
 }

@@ -52,4 +52,6 @@ public interface IRegionEdao {
 	public Iterable<Map<String,Object>> listarAmbitosByRegion(Long id) throws java.io.IOException, JSONException;
 	
 	public String listarAmbitosByNombre(List<String> nombres) throws java.io.IOException, JSONException;
+	
+	public Map<String,Object> listarRegionByDistrito(Long id) throws java.io.IOException, JSONException;
 }
