@@ -1,5 +1,6 @@
 package com.exact.service.externa.service.classes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,14 +9,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exact.service.externa.dao.IAmbitoDistritoDao;
 import com.exact.service.externa.dao.IAmbitoPlazoDistribucionDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IRegionEdao;
+import com.exact.service.externa.entity.AmbitoDistrito;
 import com.exact.service.externa.entity.AmbitoPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.id.AmbitoPlazoDistribucionId;
@@ -32,6 +36,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	
 	@Autowired
 	IRegionEdao ambitodiasdao;
+	
+	@Autowired
+	IAmbitoDistritoDao ambitodistritoDao;
 	
 	@Override
 	public Iterable<PlazoDistribucion> listarPlazosActivos() {
@@ -150,6 +157,12 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	@Override
 	public Iterable<PlazoDistribucion> listarPlazosByRegionId(Long regionId) {
 		return plazoDistribucionDao.findPlazosByRegionId(regionId);
+	}
+
+	@Override
+	public Iterable<PlazoDistribucion> listarPlazosByDistritoId(Long distritoId) throws IOException, JSONException {
+		Map<String,Object> region = ambitodiasdao.listarRegionByDistrito(distritoId);
+		return plazoDistribucionDao.findPlazosByRegionId(Long.valueOf(region.get("id").toString()));
 	}
 
 }
