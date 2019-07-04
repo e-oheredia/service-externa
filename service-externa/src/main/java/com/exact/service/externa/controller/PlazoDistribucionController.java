@@ -79,7 +79,7 @@ public class PlazoDistribucionController {
 	}
 	
 	@GetMapping("{id}/distrito")
-	public ResponseEntity<Iterable<PlazoDistribucion>> listarRegionPorDistrito(@PathVariable Long id) throws IOException, Exception {
+	public ResponseEntity<Iterable<PlazoDistribucion>> listarPlazosPorDistrito(@PathVariable Long id) throws IOException, Exception {
 		return new ResponseEntity<Iterable<PlazoDistribucion>>(plazoDistribucionService.listarPlazosByDistritoId(id), HttpStatus.OK);
 	}
 	
