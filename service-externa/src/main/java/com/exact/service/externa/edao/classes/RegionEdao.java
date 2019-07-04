@@ -192,11 +192,13 @@ public class RegionEdao implements IRegionEdao {
 	}
 	
 	@Override
-	public Map<String, Object> listarFechaLimite(Long id, String fecha, double hora) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
+	public Map<String, Object> listarFechaLimite(Long id, String fecha, double hora, int tipo) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
 		String horas = String.valueOf(hora);
+		String tipoplazo = Integer.toString(tipo);
 		URI uri = new URIBuilder(regionesPath + path +"/"+ id +"/fechalimite") 
 			    .addParameter("fecha", fecha) 
 			    .addParameter("hora", horas)
+			    .addParameter("tipo", tipoplazo)
 			    .build();
 		HttpGet httpGet = new HttpGet(uri);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
@@ -214,7 +216,22 @@ public class RegionEdao implements IRegionEdao {
 		return CommonUtils.jsonArrayToMap(responseJson);
 	}
 	
+	@Override
+	public Iterable<Map<String, Object>> listarAmbitosByRegion(Long id) throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(regionesPath + path2 + "/" + id + "/region" );
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		JSONArray responseJson = new JSONArray(response);		
+		return CommonUtils.jsonArrayToMap(responseJson);
+	}
 	
+	@Override
+	public String listarAmbitosByNombre(List<String> nombres) throws java.io.IOException, JSONException {
+		HttpGet httpGet = new HttpGet(regionesPath + path2 + "?nombres=" + String.join(",", nombres.stream().map(id -> id.toString()).collect(Collectors.toList())));
+		CloseableHttpResponse httpResponse = requester.request(httpGet);
+		String response = EntityUtils.toString(httpResponse.getEntity());
+		return response;
+	}
 	
 	
 	

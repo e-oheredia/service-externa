@@ -45,8 +45,11 @@ public interface IRegionEdao {
 	
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	
 	
-	public Map<String, Object> listarFechaLimite (Long ambitoId, String fecha, double dia )  throws IOException, JSONException, URISyntaxException;	
+	public Map<String, Object> listarFechaLimite (Long ambitoId, String fecha, double dia ,int tipo )  throws IOException, JSONException, URISyntaxException;	
 	
 	public Iterable<Map<String,Object>> listarAmbitosByIds(List<Long> ids) throws java.io.IOException, JSONException;
 	
+	public Iterable<Map<String,Object>> listarAmbitosByRegion(Long id) throws java.io.IOException, JSONException;
+	
+	public String listarAmbitosByNombre(List<String> nombres) throws java.io.IOException, JSONException;
 }

@@ -37,12 +37,24 @@ public class PlazoDistribucion implements Serializable{
 	private TipoPlazoDistribucion tipoPlazoDistribucion;
 	
 
-	@Column(name="region_id")
+	@Column(name="region_id", nullable = true)
 	private Long regionId;
 	
 	@Transient
 	private Map<String, Object> region;
 	
+	@Transient
+	private Set<Map<String, Object>> ambitos;
+	
+	
+	public Set<Map<String, Object>> getAmbitos() {
+		return ambitos;
+	}
+
+	public void setAmbitos(Set<Map<String, Object>> ambitos) {
+		this.ambitos = ambitos;
+	}
+
 	public Long getRegionId() {
 		return regionId;
 	}
@@ -58,8 +70,10 @@ public class PlazoDistribucion implements Serializable{
 	
 	
 	public void setRegion(Map<String, Object> region) {
-		this.regionId=Long.valueOf(region.get("id").toString());
-		this.region = region;
+		if(region !=null) {
+			this.regionId=Long.valueOf(region.get("id").toString());
+			this.region = region;
+		}
 	}
 	
 
