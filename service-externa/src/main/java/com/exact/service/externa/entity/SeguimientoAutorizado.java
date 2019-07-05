@@ -34,24 +34,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "seguimiento_autorizado")
 public class SeguimientoAutorizado implements Serializable{
 
-	@Value("${key.string}")
-	@Transient
-	String keystring;
-	
-	@Transient
-	String key;
-	
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "seguimiento_autorizado_id")
 	private Long id;
 	
-	public SeguimientoAutorizado() throws IOException {
-		File archivo = new File (keystring);
-		FileReader fr = new FileReader (archivo);
-		BufferedReader br = new BufferedReader(fr);
-		key = br.readLine();	
+	public SeguimientoAutorizado() {
 	}
 
 
@@ -75,9 +63,9 @@ public class SeguimientoAutorizado implements Serializable{
 	}
 
 	public void setNombreUsuarioencryptado(String nombreUsuarioencryptado) throws UnsupportedEncodingException {
-		byte[] keybytes = key.getBytes("UTF-8");
+		//byte[] keybytes = key.getBytes("UTF-8");
 		this.nombreUsuarioencryptado = nombreUsuarioencryptado;
-		this.nombreUsuario=Encryption.decrypt(nombreUsuarioencryptado, keybytes);
+		//this.nombreUsuario=Encryption.decrypt(nombreUsuarioencryptado, keybytes);
 	}
 
 
@@ -125,8 +113,8 @@ public class SeguimientoAutorizado implements Serializable{
 
 	public void setNombreUsuario(String nombreUsuario) throws UnsupportedEncodingException {
 		this.nombreUsuario = nombreUsuario;
-		byte[] keybytes = key.getBytes("UTF-8");
-		this.nombreUsuarioencryptado =Encryption.encrypt(nombreUsuario, keybytes);
+		//byte[] keybytes = key.getBytes("UTF-8");
+		//this.nombreUsuarioencryptado =Encryption.encrypt(nombreUsuario, keybytes);
 	}
 
 	public EstadoAutorizado getEstadoAutorizado() {

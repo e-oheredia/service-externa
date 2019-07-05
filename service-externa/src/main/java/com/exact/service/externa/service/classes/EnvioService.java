@@ -18,6 +18,7 @@ import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESP
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +75,7 @@ import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoEnvio;
 import com.exact.service.externa.service.interfaces.IEnvioService;
+import com.exact.service.externa.utils.Encryption;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 
@@ -130,6 +132,10 @@ public class EnvioService implements IEnvioService {
 	@Autowired
 	IInconsistenciaDao inconsistenciaDao;
 
+	@Autowired
+	Encryption encryption;
+	
+	
 	@Override
 	@Transactional
 	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file, String header) throws IOException, ParseException, MessagingException, JSONException {
@@ -151,11 +157,9 @@ public class EnvioService implements IEnvioService {
 
 		Long envioIdAnterior = envioDao.getMaxId();
 		Long nuevoEnvioId = envioIdAnterior == null ? 1L : envioIdAnterior + 1L;
-		
 		TipoEnvio tipoEnvio = new TipoEnvio();
 		tipoEnvio.setId(ENVIO_REGULAR);
 		envio.setTipoEnvio(tipoEnvio);
-		
 		if(envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId()==EXPRESS && file==null) {
 			correos = gestionUsuarioEdao.obtenerCorreoUTD(header);
 			Documento documentoCreado = envio.getDocumentos().iterator().next();
@@ -193,6 +197,7 @@ public class EnvioService implements IEnvioService {
 				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
 				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
+			encryptarseguimiento(seguimientoAutorizado);
 			seguimientoAutorizado.setEnvio(envio);
 			lstseguimientoAutorizado.add(seguimientoAutorizado);
 			Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
@@ -222,6 +227,11 @@ public class EnvioService implements IEnvioService {
 					.listarByIds(tipoDocumentoIds);
 			for (Envio envio : enviosNoAutorizadosActivos) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
+				
+				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+					descryptarseguimiento(sg);
+				}
+				
 				int i = 0;
 				while (i < buzones.size()) {
 					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
@@ -269,7 +279,9 @@ public class EnvioService implements IEnvioService {
 			List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 			for (Envio envio : enviosCreadosList) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
-
+				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+					descryptarseguimiento(sg);
+				}
 				for (Documento documento : envio.getDocumentos()) {
 					int h = 0;
 					while (h < distritos.size()) {
@@ -395,6 +407,10 @@ public class EnvioService implements IEnvioService {
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		for(Envio envio: lstenvioAutorizaciones) {
+			for( SeguimientoAutorizado sa : envio.getSeguimientosAutorizado()) {
+				descryptarseguimiento(sa);
+				String nu = sa.getNombreUsuario();
+			}
 			envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 			int i = 0;
 			while (i < buzones.size()) {
@@ -437,7 +453,10 @@ public class EnvioService implements IEnvioService {
 				break;
 			}
 		}
-		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
+		
+	
+		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header); 	//============================================================
+		
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
@@ -445,6 +464,7 @@ public class EnvioService implements IEnvioService {
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
 		seguimientoAutorizado.setUsuarioId(idUsuario);
 		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
+		encryptarseguimiento(seguimientoAutorizado);
 		seguimientoAutorizado.setEnvio(envioBD);
 		lstseguimientoAutorizado.add(seguimientoAutorizado);
 		Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
@@ -481,7 +501,13 @@ public class EnvioService implements IEnvioService {
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 
 		for(Envio envio : enviosInconsistenciaslst) {
+			
 			int i = 0;
+			
+			for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+			descryptarseguimiento(sg);
+			}
+			
 			while (i < buzones.size()) {
 				if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
 					envio.setBuzon(buzones.get(i));
@@ -493,5 +519,14 @@ public class EnvioService implements IEnvioService {
 		
 		return enviosInconsistenciaslst;
 	}
+	
+	
+	public void descryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException, IOException {
+		seguimiento.setNombreUsuario(encryption.decrypt( seguimiento.getNombreUsuarioencryptado()));
+	}
+	
+	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException {
+		seguimiento.setNombreUsuarioencryptado(seguimiento.getNombreUsuario());
+	}	
 
 }
