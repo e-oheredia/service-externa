@@ -22,6 +22,7 @@ import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
+import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorEficienciaService;
 
 import static com.exact.service.externa.enumerator.EstadoTiempoEntregaEnum.DENTRO_PLAZO;
@@ -35,6 +36,9 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	
 	@Autowired
 	IProveedorDao proveedorDao;
+	
+	@Autowired
+	IPlazoDistribucionService plazoservice;
 	
 	private static final Log Logger = LogFactory.getLog(ReporteIndicadorEficienciaService.class);
 
@@ -145,7 +149,7 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 		for(Proveedor proveedor : proveedores ) {
 
 			Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> plazoCantidad = new HashMap<>();
-			for(PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
+			for(PlazoDistribucion plazo : plazoservice.listarPlazosByProveedor(proveedor) ) {
 				Map<Integer, Map<Integer, Map<String, Integer>>> mesesIndex = new HashMap<>();
 				int i=0;
 				for(String mesaño : listademeses) {

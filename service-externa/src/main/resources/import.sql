@@ -8,14 +8,14 @@ INSERT [dbo].[tipo_plazo_distribucion] ([tipo_plazo_distribucion_id], [nombre]) 
 SET IDENTITY_INSERT [dbo].[tipo_plazo_distribucion] OFF
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] ON 
 
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (1, 1, N'ESTÁNDAR LIMA', 96, 1,1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (2, 1, N'72 HORAS', 72, 2,2)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (3, 1, N'48 HORAS', 48, 2,2)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (4, 1, N'24 HORAS', 24, 2,1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (5, 1, N'4 HORAS', 4, 2,1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (6, 1, N'2 HORAS', 2, 3,1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (7, 1, N'DIRECTORIO', 2, 3,1)
-INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id],[region_id]) VALUES (8, 1, N'ESTÁNDAR PROVINCIA', 120, 1,2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (1, 1, N'ESTÁNDAR LIMA', 96, 1)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (2, 1, N'72 HORAS', 72, 2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (3, 1, N'48 HORAS', 48, 2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (4, 1, N'24 HORAS', 24, 2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (5, 1, N'4 HORAS', 4, 2)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (6, 1, N'2 HORAS', 2, 3)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (7, 1, N'DIRECTORIO', 2, 3)
+INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (8, 1, N'ESTÁNDAR PROVINCIA', 120, 1)
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] OFF
 SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
 
@@ -583,14 +583,14 @@ INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (8,  N'6.pdf', 6, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (9,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
 INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (10,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (1, 1, NULL, 96)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (2, 1, NULL, 72)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (3, 1, NULL, 48)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (4, 1, NULL, 24)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (5, 1, NULL, 4)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (6, 1, NULL, 2)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (7, 1, NULL, 2)
-INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (1, 1, NULL, 96)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (2, 1, NULL, 72)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (3, 1, NULL, 48)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (4, 1, NULL, 24)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (5, 1, NULL, 4)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (6, 1, NULL, 2)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (7, 1, NULL, 2)
+--INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
 SET IDENTITY_INSERT [dbo].[documento_reporte] ON 
 
 INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [sede_id], [tiempo_entrega]) VALUES (1, 1, 3, 1, 3, CAST(N'2019-06-14T09:04:18.1970000' AS DateTime2), 1, 1, 5, 1)
@@ -665,13 +665,34 @@ INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
 
 
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 1)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 2)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 3)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 4)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 1)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 2)
-INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 3)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 2)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 1)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 3)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 5)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 6)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 7)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 8)
+
+
+
+
+
+
+
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 1)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 3)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 4)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
+
+
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 1)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 2)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 3)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 4)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 1)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 2)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 3)
 --INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 4)
 
 
@@ -2560,8 +2581,5 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1864, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1865, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1866, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1867, 4)
-
-
-
 
 
