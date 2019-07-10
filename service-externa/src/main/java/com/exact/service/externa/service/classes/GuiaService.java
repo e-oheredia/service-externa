@@ -75,6 +75,7 @@ import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
@@ -1048,7 +1049,8 @@ public class GuiaService implements IGuiaService{
 	public Date getFechaLimite(Guia guia) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		Date fechaLimite = null;
 		double horas = 0.0;
-		RegionPlazoDistribucion regionplazo = subambitoplazodao.getPlazoDistribucionBySubambitoId(guia.getRegionId(), guia.getPlazoDistribucion().getId());
+		//RegionPlazoDistribucion regionplazo = subambitoplazodao.getPlazoDistribucionBySubambitoId(guia.getRegionId(), guia.getPlazoDistribucion().getId());
+		PlazoDistribucion pd = guia.getPlazoDistribucion();
 		SeguimientoGuia sg = guia.getSeguimientoGuiaByEstadoId(GUIA_ENVIADO);
 		Long tipoPlazo = guia.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
 		if(sg==null) {
@@ -1058,9 +1060,9 @@ public class GuiaService implements IGuiaService{
 		
 		envio.setTime(sg.getFecha());
 		if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
-			horas = (Math.ceil(regionplazo.getTiempoEnvio()/24.0))*24;
+			horas = (Math.ceil(pd.getTiempoEnvio()/24.0))*24;
 		}else if(tipoPlazo==EXPRESS) {
-			horas = (double) regionplazo.getTiempoEnvio();
+			horas = (double) pd.getTiempoEnvio();
 		}
 		Date utilDate = envio.getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

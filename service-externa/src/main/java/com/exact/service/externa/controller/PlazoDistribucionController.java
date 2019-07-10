@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.exact.service.externa.entity.AmbitoPlazoDistribucion;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
@@ -41,7 +40,7 @@ public class PlazoDistribucionController {
 	public ResponseEntity<PlazoDistribucion> guardar(@RequestBody PlazoDistribucion plazoDist) {
 		plazoDist.setActivo(true);
 		try {
-			PlazoDistribucion pd =plazoDistribucionService.guardar(plazoDist);
+			PlazoDistribucion pd = plazoDistribucionService.guardar(plazoDist);
 			if(pd==null) {
 				return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
 			}

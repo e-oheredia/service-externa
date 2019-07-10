@@ -23,41 +23,40 @@ public class RegionPlazoDistribucion implements Serializable {
 
 	@EmbeddedId
 	private RegionPlazoDistribucionId id;
-	
 
-	@MapsId("regionId")
-	@JoinColumn(name="region_id")
-	private Long region;
+	@Transient
+	private Long regionId;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@MapsId("plazoDistribucionId")
 	@JoinColumn(name="plazo_distribucion_id")
+	@MapsId("plazoDistribucionId")
 	private PlazoDistribucion plazoDistribucion;
-	
-	@Column(name="tiempo_envio")
-	private int tiempoEnvio;
 
-	
 	public RegionPlazoDistribucionId getId() {
 		return id;
 	}
-
-
 
 	public void setId(RegionPlazoDistribucionId id) {
 		this.id = id;
 	}
 
 
-	public Long getRegion() {
-		return region;
+
+
+
+	public Long getRegionId() {
+		return regionId;
 	}
 
 
 
-	public void setRegion(Long region) {
-		this.region = region;
+
+
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
+
+
 
 
 
@@ -67,21 +66,13 @@ public class RegionPlazoDistribucion implements Serializable {
 
 
 
+
+
 	public void setPlazoDistribucion(PlazoDistribucion plazoDistribucion) {
 		this.plazoDistribucion = plazoDistribucion;
 	}
 
 
-
-	public int getTiempoEnvio() {
-		return tiempoEnvio;
-	}
-
-
-
-	public void setTiempoEnvio(int tiempoEnvio) {
-		this.tiempoEnvio = tiempoEnvio;
-	}
 
 
 

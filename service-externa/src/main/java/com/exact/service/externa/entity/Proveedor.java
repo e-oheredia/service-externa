@@ -33,11 +33,6 @@ public class Proveedor implements Serializable{
 	@Column(name="nombre",nullable=false, unique=true)
 	private String nombre;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(name="proveedor_plazo_distribucion", joinColumns = { @JoinColumn(name = "proveedor_id") },
-    inverseJoinColumns = { @JoinColumn(name = "plazo_distribucion_id") })
-	private Set<PlazoDistribucion> plazosDistribucion;
-	
 	@Transient
 	private Set<Map<String, Object>> ambitos;
 	
@@ -52,13 +47,6 @@ public class Proveedor implements Serializable{
 		this.activo = activo;
 	}
 
-	public Set<PlazoDistribucion> getPlazosDistribucion() {
-		return plazosDistribucion;
-	}
-
-	public void setPlazosDistribucion(Set<PlazoDistribucion> plazosDistribucion) {
-		this.plazosDistribucion = plazosDistribucion;
-	}
 
 	public Long getId() {
 		return id;

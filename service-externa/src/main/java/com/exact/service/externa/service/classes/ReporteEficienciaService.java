@@ -39,6 +39,7 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
 
 import io.jsonwebtoken.io.IOException;
@@ -73,6 +74,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 
 	@Autowired
 	ISeguimientoDocumentoDao seguimientodocumento;
+	
+	@Autowired
+	IPlazoDistribucionService plazoservice;
 
 	private static final Log Logger = LogFactory.getLog(ReporteEficienciaService.class);
 
@@ -119,6 +123,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Map<Long, Map<Long, Map<String, Integer>>> eficienciaPorPlazoPorCourier(String fechaIni, String fechaFin)
 			throws IOException, JSONException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -137,11 +142,10 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
-		
-		
 		for (Proveedor proveedor : proveedoreslst) {
+			Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByProveedor(proveedor);
 			Map<Long, Map<String, Integer>> cantidadPlazo = new HashMap<>();
-			for (PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
+			for (PlazoDistribucion plazo :plazos) {
 				Map<String, Integer> cantidadDentroFuera = new HashMap<>();
 				int cantidaddentroplazo = 0;
 				int cantidadfueraplazo = 0;
@@ -189,8 +193,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 				.collect(Collectors.toList());
 		Proveedor proveedor = proveedorDao.findById(proveedorId).orElse(null);
 		Map<Long, Map<String, Integer>> cantidadDetalle = new HashMap<>();
-
-		for (PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
+		Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByProveedor(proveedor);
+		
+		for (PlazoDistribucion plazo : plazos  ) {
 			Map<Integer, Integer> cantidadTiempoEnvio = new HashMap<>();
 			Map<Long, Map<Integer, Integer>> cantidadPlazo = new HashMap<>();
 			int cantidadPlazos = 0;
@@ -273,8 +278,12 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		
 		for (Proveedor proveedor : proveedoreslst) {
 			Map<Integer, Map<Integer, Integer>> cantidadporplazos = new HashMap<>();
-			 List<PlazoDistribucion> plazoss = new ArrayList<PlazoDistribucion>(proveedor.getPlazosDistribucion()); 
-			for (PlazoDistribucion plazo : proveedor.getPlazosDistribucion()) {
+			 
+			List<PlazoDistribucion> plazoss = new ArrayList<PlazoDistribucion>();
+			for(PlazoDistribucion pd : plazoservice.listarPlazosByProveedor(proveedor)  ) {
+				plazoss.add(pd);
+			}
+			for (PlazoDistribucion plazo : plazoservice.listarPlazosByProveedor(proveedor)) {
 				int c=0;
 				// for (PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
 				Map<Integer, Integer> cantidadporplazo = new HashMap<>();	
