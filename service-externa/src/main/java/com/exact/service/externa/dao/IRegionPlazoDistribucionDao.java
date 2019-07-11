@@ -26,5 +26,9 @@ public interface IRegionPlazoDistribucionDao extends CrudRepository<RegionPlazoD
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM RegionPlazoDistribucion ap WHERE ap.plazoDistribucion.id=?1")
-	void eliminarbyplazoid(Long plazoId);	
+	void eliminarbyplazoid(Long plazoId);
+	
+	@Query(value="SELECT * FROM region_plazo_distribucion WHERE plazo_distribucion_id=?1", nativeQuery=true)
+	public RegionPlazoDistribucion getRegionByPlazoID(Long plazoId);
+	
 }

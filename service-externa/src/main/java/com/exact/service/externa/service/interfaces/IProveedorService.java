@@ -18,6 +18,6 @@ public interface IProveedorService {
 	Proveedor guardar(Proveedor proveedor);
 	Proveedor modificar(Proveedor proveedor);
 	Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException;
-	List<Proveedor> buscarProveedorByPlazoId(Long plazoId);
+	List<Proveedor> buscarProveedorByPlazoId(Long plazoId)throws IOException, JSONException;
 	
 }

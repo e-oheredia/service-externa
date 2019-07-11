@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import com.exact.service.externa.dao.IAmbitoProveedorDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.dao.IProveedorDao;
+import com.exact.service.externa.dao.IRegionPlazoDistribucionDao;
 import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.entity.AmbitoProveedor;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
+import com.exact.service.externa.entity.RegionPlazoDistribucion;
 import com.exact.service.externa.entity.id.AmbitoProveedorId;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
@@ -44,6 +46,12 @@ public class ProveedorService implements IProveedorService{
 	
 	@Autowired
 	IPlazoDistribucionDao plazodao;
+	
+	@Autowired
+	IRegionPlazoDistribucionDao regionplazoDao;
+	
+	@Autowired
+	IRegionEdao regionEdao;
 	
 	@Override
 	public Iterable<Proveedor> listarProveedores() throws ClientProtocolException, IOException, JSONException {
@@ -202,23 +210,37 @@ public class ProveedorService implements IProveedorService{
 	
 	//IMPACTO
 	@Override
-	public List<Proveedor> buscarProveedorByPlazoId(Long plazoId) {
-		List<BigInteger> proveedores = proveedorDao.finproveedorByPlazo(plazoId);
-		Iterable<Proveedor> proveedoreslst = proveedorDao.findAll();
-		List<Proveedor> proveedorEncontrados = new ArrayList<>();
-		for(Proveedor proveedor : proveedoreslst) {
-			int i=0;
-			while(i<proveedores.size()) {
-				Long proveedorId = Long.valueOf(proveedores.get(i).toString());
-				if(proveedor.getId().longValue()==proveedorId) {
-					proveedorEncontrados.add(proveedor);
-					break;
-				}
-				i++;
-			}
-		}
+	public List<Proveedor> buscarProveedorByPlazoId(Long plazoId) throws IOException, JSONException {
 		
-		return proveedorEncontrados;
+		RegionPlazoDistribucion regionplazo = regionplazoDao.getRegionByPlazoID(plazoId);
+		Iterable<Map<String,Object>> ambitos = regionEdao.listarAmbitosByRegion(regionplazo.getId().getRegionId());
+		List<Long> ambitosIds = new ArrayList<>();
+		for(Map<String,Object> ambito : ambitos) {
+			ambitosIds.add(Long.valueOf(ambito.get("id").toString()));
+		}
+		Iterable<AmbitoProveedor> ambitoProveedor = ambitoproveedorDao.findProveedorByAmbitoId(ambitosIds.get(0));
+		List<Proveedor> proveedorEncontrado = new ArrayList<>();
+		for(AmbitoProveedor ambitoproveedor :ambitoProveedor) {
+			proveedorEncontrado.add(ambitoproveedor.getProveedores());
+		}
+ 		
+		
+//		List<BigInteger> proveedores = proveedorDao.finproveedorByPlazo(plazoId);
+//		Iterable<Proveedor> proveedoreslst = proveedorDao.findAll();
+//		List<Proveedor> proveedorEncontrados = new ArrayList<>();
+//		for(Proveedor proveedor : proveedoreslst) {
+//			int i=0;
+//			while(i<proveedores.size()) {
+//				Long proveedorId = Long.valueOf(proveedores.get(i).toString());
+//				if(proveedor.getId().longValue()==proveedorId) {
+//					proveedorEncontrados.add(proveedor);
+//					break;
+//				}
+//				i++;
+//			}
+//		}
+		
+		return proveedorEncontrado;
 	}
 
 
