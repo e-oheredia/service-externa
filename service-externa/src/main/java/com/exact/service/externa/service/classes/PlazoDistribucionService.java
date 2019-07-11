@@ -296,10 +296,10 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			return null;
 		}
 		
-		PlazoDistribucion plaz =plazoDistribucionDao.buscarpornombre(plazodistribucion.getNombre());
-		if(plaz!=null) {
+		/*PlazoDistribucion plaz =plazoDistribucionDao.buscarpornombre(plazodistribucion.getNombre());
+		if(plaz==null) {
 			return null;
-		}
+		}*/
 
 		
 		PlazoDistribucion plazito = plazoDistribucionDao.save(plazodistribucion);
