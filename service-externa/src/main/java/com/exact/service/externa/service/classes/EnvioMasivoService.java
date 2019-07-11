@@ -107,7 +107,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	IInconsistenciaDao inconsistenciaEdao;
 
 	@Override
-	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file,String matricula ,String header)
+	public EnvioMasivo registrarEnvioMasivo(EnvioMasivo envioMasivo, Long idUsuario, MultipartFile file,String matricula ,String header, String perfil)
 			throws IOException, ParseException, MessagingException, JSONException {
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();	
@@ -134,11 +134,10 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		String masivoAutogeneradoNuevo = autogeneradoUtils.generateMasivoAutogenerado(masivoAutogeneradoAnterior);
 		envioMasivo.setMasivoAutogenerado(masivoAutogeneradoNuevo);
 		
-		String perfilUsuario = gestionUsuarioEdao.findPerfil(idUsuario, header);
 		TipoEnvio tipoEnvio = new TipoEnvio();
-		if(perfilUsuario.equals("USUARIO_REGULAR")) {
+		if(perfil.equals("USUARIO_REGULAR")) {
 			tipoEnvio.setId(ENVIO_REGULAR);
-		}else if(perfilUsuario.equals("USUARIO_BLOQUE")) {
+		}else if(perfil.equals("USUARIO_BLOQUE")) {
 			tipoEnvio.setId(ENVIO_BLOQUE);
 			envioMasivo.setSede(sede);
 		}

@@ -52,7 +52,7 @@ public class EnvioMasivoController {
 		ObjectMapper mapper = new ObjectMapper();
 		String header = req.getHeader("Authorization");
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
-		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file,datosUsuario.get("matricula").toString() ,header);
+		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file,datosUsuario.get("matricula").toString() ,header,datosUsuario.get("perfil").toString());
 		if(envioMasivoRegistrado==null) {
 			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
 		}
@@ -92,7 +92,7 @@ public class EnvioMasivoController {
 		ObjectMapper mapper = new ObjectMapper();
 		EnvioMasivo envioBloque = mapper.readValue(envioJsonString, EnvioMasivo.class);		
 		String header = req.getHeader("Authorization");
-		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, datosUsuario.get("matricula").toString(),header);
+		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, datosUsuario.get("matricula").toString(),header,datosUsuario.get("perfil").toString());
 		if(envioBloqueNuevo==null) {
 			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
 		}
