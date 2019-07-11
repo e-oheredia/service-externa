@@ -510,11 +510,14 @@ INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (3, N
 SET IDENTITY_INSERT [dbo].[estado_autorizado] OFF
 SET IDENTITY_INSERT [dbo].[seguimiento_autorizado] ON 
 
-INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (1, CAST(N'2019-06-14T08:56:14.4580000' AS DateTime2), NULL, 7, 7, 1)
-INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (2, CAST(N'2019-06-14T08:56:40.6130000' AS DateTime2), NULL, 7, 8, 1)
-INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (3, CAST(N'2019-06-14T08:56:55.4280000' AS DateTime2), N'ERNST ROJAS', 9, 7, 2)
-INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (4, CAST(N'2019-06-14T08:56:57.1350000' AS DateTime2), N'ERNST ROJAS', 9, 8, 2)
+INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (1, CAST(N'2019-06-14T08:56:14.4580000' AS DateTime2), N'', 7, 7, 1)
+INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (2, CAST(N'2019-06-14T08:56:40.6130000' AS DateTime2), N'', 7, 8, 1)
+INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (3, CAST(N'2019-06-14T08:56:55.4280000' AS DateTime2), N'+PvQaYUWRSdI6ECijqvvjQ==', 9, 7, 2)
+INSERT [dbo].[seguimiento_autorizado] ([seguimiento_autorizado_id], [fecha], [nombre_usuario], [usuario_id], [envio_id], [estado_autorizado_id]) VALUES (4, CAST(N'2019-06-14T08:56:57.1350000' AS DateTime2), N'+PvQaYUWRSdI6ECijqvvjQ==', 9, 8, 2)
 SET IDENTITY_INSERT [dbo].[seguimiento_autorizado] OFF
+
+
+
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2, 1)
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3, 2)
 INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (4, 1)
