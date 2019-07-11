@@ -18,16 +18,13 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.exact.service.externa.dao.IAmbitoPlazoDistribucionDao;
 import com.exact.service.externa.dao.IAmbitoProveedorDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.edao.interfaces.IRegionEdao;
-import com.exact.service.externa.entity.AmbitoPlazoDistribucion;
 import com.exact.service.externa.entity.AmbitoProveedor;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
-import com.exact.service.externa.entity.id.AmbitoPlazoDistribucionId;
 import com.exact.service.externa.entity.id.AmbitoProveedorId;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
@@ -41,8 +38,6 @@ public class ProveedorService implements IProveedorService{
 	@Autowired
 	IAmbitoProveedorDao ambitoproveedorDao;
 	
-	@Autowired
-	IAmbitoPlazoDistribucionDao ambitoPlazoDao;
 	
 	@Autowired
 	IRegionEdao ambitodiasdao;
@@ -56,55 +51,26 @@ public class ProveedorService implements IProveedorService{
 		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
 		Iterable<Proveedor> proveedoresCreados = proveedorDao.findAll();
 		List<Proveedor> proveedoresCreadosList = StreamSupport.stream(proveedoresCreados.spliterator(), false).collect(Collectors.toList());
-		Iterable<PlazoDistribucion> plazos = plazodao.findAll();
-		Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
-
+		//Iterable<PlazoDistribucion> plazos = plazodao.findAll();
+		//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
+		
 		for(Proveedor provee : proveedoresCreadosList) {
 			Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(provee.getId());
 			Set<Map<String,Object>> ambitprovee = new HashSet<>();
 			List<Long> ambitoProveedor = new ArrayList<>();
-			List<Long> ambitoPlazos = new ArrayList<>();
+			//List<Long> ambitoPlazos = new ArrayList<>();
 			
 			for(AmbitoProveedor ambitoprovee : ambitosId) {
 				ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
 			}
-			
-			for(Long ambitoss : ambitoProveedor) {
-					for(AmbitoPlazoDistribucion ambitoplazo : ambitosplazo) {
-					if(ambitoplazo.getId().getAmbitoId()==ambitoss) {
-						ambitoPlazos.add(ambitoplazo.getPlazoDistribucion().getId());
-						}
-					}
 
-				}	
-			
 			for(Long ambitoId : ambitoProveedor) {
 				for(Map<String,Object> ambito: ambitos) {
 					if(ambitoId==Long.valueOf(ambito.get("id").toString())) {
-						ambitprovee.add(ambito);
-						Set<PlazoDistribucion> plazosdistri = new HashSet<>();
-						//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.listarplazosIds(Long.valueOf(ambito.get("id").toString()));
-							/*
-							for(AmbitoPlazoDistribucion ambitoplazos : ambitosplazo) {
-								if(ambitoplazos.getPlazoDistribucion().getId()==Long.valueOf(ambito.get("id").toString())) {
-									ambitoPlazos.add(ambitoplazos.getPlazoDistribucion().getId());
-								}
-							}*/
-							for(Long plazosid : ambitoPlazos) {
-								for(PlazoDistribucion plazo: plazos) {
-									if(plazosid==plazo.getId() ) {
-										plazosdistri.add(plazo);
-									}
-								}
-							}
-							
-							provee.setPlazosDistribucion(plazosdistri);
-						
-						
-						
-					}
-				}
+						ambitprovee.add(ambito);}}
+				
 			}
+			
 			provee.setAmbitos(ambitprovee) ;
 		}
 		
@@ -129,14 +95,14 @@ public class ProveedorService implements IProveedorService{
 		
 		idsregion = idsregion.stream().distinct().collect(Collectors.toList());
 		
-		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
+		//Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
 
-				
+		/*		
 		for(Long id : idsregion) {
 			    for(PlazoDistribucion pd : plazodao.plazosByRegion(id)) {
 			    	variosplazos.add(pd);
 			    }
-		}
+		}*/
 		//Iterable<AmbitoPlazoDistribucion> ambitosplazos2 = ambitoPlazoDao.findAll();
 		//Iterable<PlazoDistribucion> varios = plazodao.findAll();
 		//List<Long> idsambitos = new ArrayList<>();
@@ -160,7 +126,7 @@ public class ProveedorService implements IProveedorService{
 			}
 		}
 		*/
-		proveedor.setPlazosDistribucion(variosplazos);
+		//proveedor.setPlazosDistribucion(variosplazos);
 		Proveedor provee = proveedorDao.save(proveedor);
 		List<AmbitoProveedor> ambitosplazos = new ArrayList<>();
 		for(Map<String,Object> ambito : provee.getAmbitos()) {
@@ -184,7 +150,7 @@ public class ProveedorService implements IProveedorService{
 		if(proveedor.getNombre()==null) {
 			return null;
 		}
-		plazodao.eliminarbyproveedorid(proveedor.getId());
+		//plazodao.eliminarbyproveedorid(proveedor.getId());
 		
 		List<Long> idsregion = new ArrayList<>();
 		for(Map<String,Object> ambito : proveedor.getAmbitos()) {	
@@ -194,8 +160,8 @@ public class ProveedorService implements IProveedorService{
 		
 		idsregion = idsregion.stream().distinct().collect(Collectors.toList());
 		
-		Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
-		
+		//Set<PlazoDistribucion> variosplazos = new HashSet<PlazoDistribucion>();
+		/*
 		for(Long id : idsregion) {
 				Iterable<PlazoDistribucion> pds =  plazodao.plazosByRegion(id);
 				if(pds==null) {
@@ -204,8 +170,8 @@ public class ProveedorService implements IProveedorService{
 			    for(PlazoDistribucion pd : plazodao.plazosByRegion(id)) {
 			    	variosplazos.add(pd);
 			    }
-		}
-		proveedor.setPlazosDistribucion(variosplazos);
+		}*/
+		//proveedor.setPlazosDistribucion(variosplazos);
 		Proveedor provee = proveedorDao.save(proveedor);
 		provee.setAmbitos(proveedor.getAmbitos());
 		ambitoproveedorDao.eliminarbyproveedorid(proveedor.getId());
@@ -232,7 +198,9 @@ public class ProveedorService implements IProveedorService{
 		proveedoreslst.removeIf(proveedor -> !proveedor.isActivo());
 		return proveedoreslst;
 	}
-
+	
+	
+	//IMPACTO
 	@Override
 	public List<Proveedor> buscarProveedorByPlazoId(Long plazoId) {
 		List<BigInteger> proveedores = proveedorDao.finproveedorByPlazo(plazoId);
@@ -252,7 +220,6 @@ public class ProveedorService implements IProveedorService{
 		
 		return proveedorEncontrados;
 	}
-
 
 
 }

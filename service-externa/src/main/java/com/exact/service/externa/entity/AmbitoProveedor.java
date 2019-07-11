@@ -10,8 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.exact.service.externa.entity.id.AmbitoPlazoDistribucionId;
 import com.exact.service.externa.entity.id.AmbitoProveedorId;
 
 @Entity
