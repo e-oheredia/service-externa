@@ -9,6 +9,7 @@ import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REG
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,10 +51,14 @@ import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoEnvio;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
+import com.exact.service.externa.utils.Encryption;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 @Service
 public class EnvioMasivoService implements IEnvioMasivoService {
+	
+	@Autowired
+	Encryption encryption;
 	
 	@Autowired
 	IDocumentoDao documentoDao;
@@ -166,6 +171,7 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
 			seguimientoAutorizado.setEnvio(envioMasivo);
+			encryptarseguimiento(seguimientoAutorizado);
 			lstseguimientoAutorizado.add(seguimientoAutorizado);
 			Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
 			envioMasivo.setSeguimientosAutorizado(sa);
@@ -183,6 +189,8 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		
 		return envioMasivoCreado;
 	}
+	
+	
 	@Override	
 	public Iterable<EnvioMasivo> listarEnviosMasivosCreados(String matricula) throws ClientProtocolException, IOException, JSONException {
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
@@ -202,7 +210,12 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId).collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-			for (Envio envio: enviosCreadosList) {				
+			for (Envio envio: enviosCreadosList) {
+				
+				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+					descryptarseguimiento(sg);
+				}
+				
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());				
 				for (Documento documento : envio.getDocumentos()) {
 					int h = 0;
@@ -235,5 +248,14 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		}			
 		return enviosCreadosList;		
 	}
-
+	
+	
+	public void descryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException, IOException {
+		seguimiento.setNombreUsuario(encryption.decrypt( seguimiento.getNombreUsuarioencryptado()));
+	}
+	
+	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws IOException {
+		seguimiento.setNombreUsuarioencryptado( encryption.encrypt(seguimiento.getNombreUsuario()));
+	}	
+	
 }

@@ -29,6 +29,7 @@ import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
+import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 import com.exact.service.externa.service.interfaces.ISedeService;
 
@@ -47,6 +48,10 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	
 	@Autowired
 	IPlazoDistribucionDao plazodao;
+	
+	
+	@Autowired
+	IPlazoDistribucionService plazoservice;
 	
 	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat dtmes = new SimpleDateFormat("yyyy-MM");
@@ -172,7 +177,15 @@ public class ReporteVolumenService implements IReporteVolumenService {
 				.collect(Collectors.toList());
 		
 		for (Proveedor pro : proveedores) {
-			Iterable<PlazoDistribucion> pd =plazodao.listarplazosactivos(pro.getId());
+			
+			//////////////
+			
+			//Iterable<PlazoDistribucion> pd =plazodao.listarplazosactivos(pro.getId());
+			Iterable<PlazoDistribucion> pd = plazoservice.listarPlazosByProveedor(pro);
+			//////////////
+			
+			
+			
 			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 			
 			for (PlazoDistribucion entidad : pd) {

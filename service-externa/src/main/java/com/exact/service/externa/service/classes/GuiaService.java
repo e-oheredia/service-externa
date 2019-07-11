@@ -1070,7 +1070,7 @@ public class GuiaService implements IGuiaService{
 
 		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),format.format(utilDate).toString(),horas, (int)(long)tipoPlazo);
 		try {
-			fechaLimite = format2.parse(fecha.get("fechaLimite").toString());
+			fechaLimite = format.parse(fecha.get("fechaLimite").toString());
 		} catch (Exception e) {
 			return null;
 		}
