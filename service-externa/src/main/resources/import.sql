@@ -668,13 +668,13 @@ INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
 INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
 
 
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 1)
 INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 2)
-INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 1)
-INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 3)
-INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
 INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 5)
-INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 6)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 6)
 INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 7)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 3)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
 INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 8)
 
 

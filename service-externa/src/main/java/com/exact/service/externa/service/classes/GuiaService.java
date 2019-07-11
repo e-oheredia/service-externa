@@ -738,6 +738,8 @@ public class GuiaService implements IGuiaService{
 		Proveedor proveedor = new Proveedor();
 		TipoGuia tipoGuia = new TipoGuia();
 		tipoGuia.setId(GUIA_BLOQUE);
+		RegionPlazoDistribucion regionplazo = subambitoplazodao.getRegionByPlazoID(envioMasivo.getPlazoDistribucion().getId());
+		guia.setRegionId(regionplazo.getId().getRegionId());
 		proveedor.setId(proveedorId);
 		guia.setSede(sede);
 		guia.setPlazoDistribucion(envioMasivo.getPlazoDistribucion());
@@ -772,7 +774,6 @@ public class GuiaService implements IGuiaService{
 		List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<>();
 		SeguimientoGuia seguimientoGuia = new SeguimientoGuia();		
 		EstadoGuia estadoGuia = new EstadoGuia();		
-		
 		estadoGuia.setId(GUIA_CREADO);
 		seguimientoGuia.setGuia(guia);
 		seguimientoGuia.setEstadoGuia(estadoGuia);		
@@ -780,7 +781,8 @@ public class GuiaService implements IGuiaService{
 		seguimientoGuiaList.add(seguimientoGuia);
 		Set<SeguimientoGuia> sg = new HashSet<>(seguimientoGuiaList);
 		guia.setSeguimientosGuia(sg);
-		guia.setRegionId(LIMA);
+		
+		
 		guiaDao.save(guia);
 		
 		return guia;

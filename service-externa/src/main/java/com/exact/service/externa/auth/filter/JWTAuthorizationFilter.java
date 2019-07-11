@@ -77,9 +77,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		UsernamePasswordAuthenticationToken authentication = null;
 		Long idUsuario = Long.valueOf(claims.get("idUsuario").toString());
 		String matricula = (String) claims.get("matricula");
+		String perfil = claims.get("perfil").toString();
 		Map<String, Object> datosUsuario = new HashMap<String, Object>();
 		datosUsuario.put("idUsuario", idUsuario);
-		datosUsuario.put("matricula", matricula);		
+		datosUsuario.put("matricula", matricula);
+		datosUsuario.put("perfil", perfil);
 		Object permisos = claims.get("permisos");
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		
