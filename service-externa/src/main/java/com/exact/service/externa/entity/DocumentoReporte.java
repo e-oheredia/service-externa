@@ -47,6 +47,9 @@ public class DocumentoReporte implements Serializable{
 	@Column(name="area_id")
 	private Long area;
 	
+	@Column(name="region_id")
+	private Long regionId;
+	
 	@Column(nullable = false)
 	@JsonFormat
     (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
@@ -189,6 +192,20 @@ public class DocumentoReporte implements Serializable{
 
 	public void setEstadoCargo(Long estadoCargo) {
 		this.estadoCargo = estadoCargo;
+	}
+
+
+
+
+	public Long getRegionId() {
+		return regionId;
+	}
+
+
+
+
+	public void setRegionId(Long regionId) {
+		this.regionId = regionId;
 	}
 
 

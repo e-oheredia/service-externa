@@ -72,6 +72,7 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 			documentoReporte.setEstadoCargo(NO_GENERADO);
 			documentoReporte.setSedeId(guia.getSedeId());
 			documentoReporte.setArea(Long.valueOf(area.get("id").toString()));
+			documentoReporte.setRegionId(guia.getRegionId());
 			documentoreporteDao.save(documentoReporte);
 		}
 	}

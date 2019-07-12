@@ -845,7 +845,7 @@ public class GuiaService implements IGuiaService{
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		
 		for(Guia guia : guiasBloque) {
-			
+				Date fechaLimite= null;
 				int entregados =0;
 				int rezagados =0;
 				int nodistri =0;
@@ -896,6 +896,11 @@ public class GuiaService implements IGuiaService{
 				guia.setCantidadNoDistribuibles(nodistri);
 				guia.setCantidadRezagados(rezagados);
 				guia.setCantidadDocumentos(cont);
+				
+				if(guia.getUltimoSeguimientoGuia().getId()>=GUIA_ENVIADO) {
+					fechaLimite=getFechaLimite(guia);
+					guia.setFechaLimite(fechaLimite);
+				}
 		}
 		return guiasBloqueBD;
 	}
