@@ -84,7 +84,7 @@ public class EnvioController {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
-		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()),header);
+		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get("idUsuario").toString()),header,datosUsuario.get("usuario").toString());
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
 		filter.put("documentosFilter", "envio");

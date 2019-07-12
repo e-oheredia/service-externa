@@ -325,20 +325,22 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException {
+	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header,String nombreUsuario) throws ParseException, IOException, JSONException {
 
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
 		}
-		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
+		//String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(APROBADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
 		seguimientoAutorizado.setUsuarioId(idUsuario);
+		//ACA VA EL METODO DE ENCRYPTAR NOMBREUSUARIO
 		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
+		encryptarseguimiento(seguimientoAutorizado);
 		envio.getDocumentos().stream().forEach(documento -> {
 			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
 					documento.getUltimoSeguimientoDocumento().getEstadoDocumento(), observacionAutorizacion);
@@ -409,7 +411,6 @@ public class EnvioService implements IEnvioService {
 		for(Envio envio: lstenvioAutorizaciones) {
 			for( SeguimientoAutorizado sa : envio.getSeguimientosAutorizado()) {
 				descryptarseguimiento(sa);
-				String nu = sa.getNombreUsuario();
 			}
 			envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 			int i = 0;
@@ -525,8 +526,8 @@ public class EnvioService implements IEnvioService {
 		seguimiento.setNombreUsuario(encryption.decrypt( seguimiento.getNombreUsuarioencryptado()));
 	}
 	
-	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException {
-		seguimiento.setNombreUsuarioencryptado(seguimiento.getNombreUsuario());
+	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws IOException {
+		seguimiento.setNombreUsuarioencryptado(encryption.encrypt(seguimiento.getNombreUsuario()));
 	}	
 
 }
