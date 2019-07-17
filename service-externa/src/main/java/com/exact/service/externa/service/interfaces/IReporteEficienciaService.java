@@ -13,10 +13,10 @@ public interface IReporteEficienciaService {
 
 	Map<Long, Map<String, Integer>> eficienciaPorCourier(String fechaIni,String fechaFin) throws IOException, JSONException;
 	
-	Map<Long, Map<Long, Map<String, Integer>>> eficienciaPorPlazoPorCourier(String fechaIni,String fechaFin) throws IOException, JSONException;
+	Map<Long, Object> eficienciaPorPlazoPorCourier(String fechaIni,String fechaFin) throws IOException, JSONException, java.io.IOException;
 	
 	Map<Long, Map<String, Integer>> detalleEficienciaPorCourier(String fechaIni,String fechaFin,Long proveedorId) throws IOException, JSONException, ClientProtocolException, java.io.IOException, URISyntaxException, ParseException ;
 	
-	Map<Integer, Map<Integer, Map<Integer, Integer>>> detalleeficienciaporCourier(String fechaIni,String fechaFin) throws IOException, JSONException, ClientProtocolException, java.io.IOException, URISyntaxException, ParseException;
+	Map<Integer, Object> detalleeficienciaporCourier(String fechaIni,String fechaFin) throws IOException, JSONException, ClientProtocolException, java.io.IOException, URISyntaxException, ParseException;
 
 }

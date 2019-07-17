@@ -39,7 +39,10 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IGuiaService;
+import com.exact.service.externa.service.interfaces.IPeriodoService;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
+import com.exact.service.externa.service.interfaces.IProveedorService;
+import com.exact.service.externa.service.interfaces.IRegionService;
 import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
 
 import io.jsonwebtoken.io.IOException;
@@ -77,6 +80,12 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 	
 	@Autowired
 	IPlazoDistribucionService plazoservice;
+	
+	@Autowired
+	IRegionService regionservice;
+	
+	@Autowired
+	IProveedorService proveedorservice;
 
 	private static final Log Logger = LogFactory.getLog(ReporteEficienciaService.class);
 
@@ -124,8 +133,8 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<Long, Map<Long, Map<String, Integer>>> eficienciaPorPlazoPorCourier(String fechaIni, String fechaFin)
-			throws IOException, JSONException {
+	public Map<Long, Object> eficienciaPorPlazoPorCourier(String fechaIni, String fechaFin)
+			throws IOException, JSONException, java.io.IOException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateI = null;
 		Date dateF = null;
@@ -135,17 +144,56 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		} catch (Exception e) {
 			return null;
 		}
-		Map<Long, Map<Long, Map<String, Integer>>> proveedorcantidad = new HashMap<>();
+		Map<Long,Object> proveedorcantidad = new HashMap<>();
 		Iterable<DocumentoReporte> documentosPlazo = documentoReporteDao.findDocumentosByDentroFueraPlazo(dateI, dateF);
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentosPlazo.spliterator(), false)
 				.collect(Collectors.toList());
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
+		
+		
+		
+		
+		
 		for (Proveedor proveedor : proveedoreslst) {
-			Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByProveedor(proveedor);
-			Map<Long, Map<String, Integer>> cantidadPlazo = new HashMap<>();
-			for (PlazoDistribucion plazo :plazos) {
+			Iterable<Map<String, Object>> regiones = regionservice.RegionesbyProveedor(proveedor.getId());
+			
+			//Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByProveedor(proveedor);
+			Map<Long, Object> cantidadregion = new HashMap<>();
+			
+			for(Map<String, Object> region : regiones) {
+				Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+				Iterable<PlazoDistribucion> pds = plazoservice.listarPlazosByRegionId( Long.valueOf(region.get("id").toString())  );
+				Map<Long, Map<String, Integer>> cantidadPlazo = new HashMap<>();
+				for (PlazoDistribucion plazo : pds) {
+					
+					Map<String, Integer> cantidadDentroFuera = new HashMap<>();
+					int cantidaddentroplazo = 0;
+					int cantidadfueraplazo = 0;
+					for (DocumentoReporte documentoreporte : documentoslst) {
+						if (proveedor.getId() == documentoreporte.getProveedorId()) {
+							if (plazo.getId() == documentoreporte.getPlazoId() && proveedor.getId()==documentoreporte.getProveedorId() && documentoreporte.getRegionId() == Long.valueOf(region.get("id").toString())  ) {
+								if (documentoreporte.getTiempoEntrega() == DENTRO_PLAZO) {
+									cantidaddentroplazo++;
+
+								} else {
+									cantidadfueraplazo++;
+								}
+							}
+						}
+					}
+					cantidadDentroFuera.put("dentroplazo", cantidaddentroplazo);
+					cantidadDentroFuera.put("fueraplazo", cantidadfueraplazo);
+					cantidadPlazo.put(plazo.getId(), cantidadDentroFuera);
+					
+				}
+				cantidadregion.put(Long.valueOf(region.get("id").toString()), cantidadPlazo);
+			}
+			
+			proveedorcantidad.put(proveedor.getId(), cantidadregion);
+
+			/*for (PlazoDistribucion plazo :plazos) {
 				Map<String, Integer> cantidadDentroFuera = new HashMap<>();
 				int cantidaddentroplazo = 0;
 				int cantidadfueraplazo = 0;
@@ -165,8 +213,10 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 				cantidadDentroFuera.put("fueraplazo", cantidadfueraplazo);
 				cantidadPlazo.put(plazo.getId(), cantidadDentroFuera);
 			}
-			proveedorcantidad.put(proveedor.getId(), cantidadPlazo);
+			proveedorcantidad.put(proveedor.getId(), cantidadPlazo);*/
 		}
+		
+		
 
 		return proveedorcantidad;
 
@@ -241,7 +291,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 
 	
 	@Override
-	public Map<Integer, Map<Integer, Map<Integer, Integer>>> detalleeficienciaporCourier(String fechaIni,
+	public Map<Integer, Object> detalleeficienciaporCourier(String fechaIni,
 			String fechaFin) throws IOException, JSONException, ClientProtocolException, java.io.IOException,
 			URISyntaxException, ParseException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -264,7 +314,7 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
 		//List<PlazoDistribucion> plazoss= new ArrayList<>();
-		Map<Integer, Map<Integer, Map<Integer, Integer>>> cantidadporproveedorplazos = new HashMap<>();
+		Map<Integer, Object   > cantidadporproveedorplazos = new HashMap<>();
 		Map<Long, Long> cantidadTiempoEnvio = new HashMap<>();
 
 		
@@ -272,84 +322,95 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 			cantidadTiempoEnvio.put(dr.getId(), calcularHoras(dr));
 		}**/
 		
-		
-		
-		
-		
 		for (Proveedor proveedor : proveedoreslst) {
-			Map<Integer, Map<Integer, Integer>> cantidadporplazos = new HashMap<>();
-			 
-			List<PlazoDistribucion> plazoss = new ArrayList<PlazoDistribucion>();
-			for(PlazoDistribucion pd : plazoservice.listarPlazosByProveedor(proveedor)  ) {
-				plazoss.add(pd);
-			}
-			for (PlazoDistribucion plazo : plazoservice.listarPlazosByProveedor(proveedor)) {
-				int c=0;
-				// for (PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
-				Map<Integer, Integer> cantidadporplazo = new HashMap<>();	
-				int[ ] plazos = new int[10000];
-				for (DocumentoReporte documentoreporte : documentoslst) {
-					if (documentoreporte.getPlazoId() == plazo.getId() && documentoreporte.getProveedorId()==proveedor.getId()) {
-						int ab=0;
-						int b=0;
-						Date fechaentrega = seguimientodocumento.buscarpordocumento(documentoreporte.getDocumentoId());
-						/*for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
-							plazoss.add(plazod);
-						}*/
-						Collections.sort(plazoss,(x,y)->((Integer)x.getTiempoEnvio()).compareTo((Integer)y.getTiempoEnvio()));						
-						for (PlazoDistribucion plazod : plazoss) {
-							//Modo 1
+			
+			Iterable<Long> idsregiones = proveedorservice.regionesbyproveedor(proveedor);
+			Map<String , Object> cantidadporregion = new HashMap<>();
+			for( Long regionid : idsregiones ) {
+				
+				List<PlazoDistribucion> plazoss = new ArrayList<PlazoDistribucion>();
+
+				for(PlazoDistribucion pd : plazoservice.listarPlazosByRegionId(regionid) ) {
+					plazoss.add(pd);
+				}
+				Map<Integer, Map<Integer, Integer>> cantidadporplazos = new HashMap<>();
+				Collections.sort(plazoss,(x,y)->((Integer)x.getTiempoEnvio()).compareTo((Integer)y.getTiempoEnvio()));						
+
+				for (PlazoDistribucion plazo : plazoss ) { 
+					int c=0;
+					// for (PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
+					Map<Integer, Integer> cantidadporplazo = new HashMap<>();	
+					int[ ] plazos = new int[10000];
+					for (DocumentoReporte documentoreporte : documentoslst) {
+						if (documentoreporte.getPlazoId() == plazo.getId() && documentoreporte.getProveedorId()==proveedor.getId() && documentoreporte.getRegionId()==regionid ) {
+							int ab=0;
+							int b=0;
+							Date fechaentrega = seguimientodocumento.buscarpordocumento(documentoreporte.getDocumentoId());
+							/*for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
+								plazoss.add(plazod);
+							}*/
+							//Collections.sort(plazoss,(x,y)->((Integer)x.getTiempoEnvio()).compareTo((Integer)y.getTiempoEnvio()));						
+							for (PlazoDistribucion plazod : plazoss) {
+								//Modo 1
+								Guia guia = guiaDao.findGuiabydocumentoid(documentoreporte.getDocumentoId());
+								guia.setPlazoDistribucion(plazod);
+								Date fechalimitesub = guiaService.getFechaLimite(guia);
+								if (dt.parse(dt.format(fechalimitesub)).compareTo(dt.parse(dt.format(fechaentrega))) >= 0) {
+									if(b==0) {
+										plazos[(int)(long)plazod.getId()]=plazos[(int)(long)plazod.getId()]+1 ;
+										ab=1;
+										b=1;
+									}
+								}
+								cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
+								c=1;
+							}
+							
+							if(ab==0) {
+								plazos[0]++;
+							}
+						}
+						cantidadporplazo.put(0,plazos[0]);
+					}				
+					
+					for (PlazoDistribucion plazod : plazoss) {
+					if(c==0) {
+						cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
+					}
+					
+					}
+					
+					
+					/*
+					for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
+						
+						for (DocumentoReporte documentoreporte : documentoslst) {
+							
 							Guia guia = guiaDao.findGuiabydocumentoid(documentoreporte.getDocumentoId());
 							guia.setPlazoDistribucion(plazod);
 							Date fechalimitesub = guiaService.getFechaLimite(guia);
-							if (dt.parse(dt.format(fechalimitesub)).compareTo(dt.parse(dt.format(fechaentrega))) >= 0) {
-								if(b==0) {
-									plazos[(int)(long)plazod.getId()]=plazos[(int)(long)plazod.getId()]+1 ;
-									ab=1;
-									b=1;
-								}
+							Date fechaentrega = seguimientodocumento.buscarpordocumento(documentoreporte.getDocumentoId());
+
+							if (fechalimitesub.compareTo(fechaentrega) >= 0) {
+								cantidaddedocumentos++;
 							}
-							cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
-							c=1;
+							cantidadporplazo.put((int) (long) plazod.getId(), cantidaddedocumentos);
+							
+							
 						}
-						
-						if(ab==0) {
-							plazos[0]++;
-						}
-					}
-					cantidadporplazo.put(0,plazos[0]);
-				}				
-				for (PlazoDistribucion plazod : plazoss) {
-				if(c==0) {
-					cantidadporplazo.put((int)(long)plazod.getId(), plazos[(int)(long)plazod.getId()]);
-				}
-				
-				}
-
-				
-				/*
-				for(PlazoDistribucion plazod : proveedor.getPlazosDistribucion()) {
+					}*/	
+					cantidadporplazos.put((int) (long) plazo.getId(), cantidadporplazo);
 					
-					for (DocumentoReporte documentoreporte : documentoslst) {
-						
-						Guia guia = guiaDao.findGuiabydocumentoid(documentoreporte.getDocumentoId());
-						guia.setPlazoDistribucion(plazod);
-						Date fechalimitesub = guiaService.getFechaLimite(guia);
-						Date fechaentrega = seguimientodocumento.buscarpordocumento(documentoreporte.getDocumentoId());
 
-						if (fechalimitesub.compareTo(fechaentrega) >= 0) {
-							cantidaddedocumentos++;
-						}
-						cantidadporplazo.put((int) (long) plazod.getId(), cantidaddedocumentos);
-						
-						
-					}
-				}*/	
-				cantidadporplazos.put((int) (long) plazo.getId(), cantidadporplazo);
-
-				// }
+					// }
+				}
+				
+				cantidadporregion.put(Long.toString(regionid), cantidadporplazos);
+				
 			}
-			cantidadporproveedorplazos.put((int) (long) proveedor.getId(), cantidadporplazos);
+
+			
+			cantidadporproveedorplazos.put((int) (long) proveedor.getId(), cantidadporregion);
 		}
 
 		return cantidadporproveedorplazos;

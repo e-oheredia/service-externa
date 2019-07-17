@@ -28,6 +28,7 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.RegionPlazoDistribucion;
 import com.exact.service.externa.entity.id.AmbitoProveedorId;
+import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 
 @Service
@@ -52,6 +53,9 @@ public class ProveedorService implements IProveedorService{
 	
 	@Autowired
 	IRegionEdao regionEdao;
+	
+	@Autowired
+	IPlazoDistribucionService plazoservice;
 	
 	@Override
 	public Iterable<Proveedor> listarProveedores() throws ClientProtocolException, IOException, JSONException {
@@ -200,11 +204,75 @@ public class ProveedorService implements IProveedorService{
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Iterable<Proveedor> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException {
+		
 		Iterable<Proveedor> proveedoresBD = proveedorDao.findAll();
+		List<Long> idregiones = new ArrayList<>();
+		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedoresBD.spliterator(), false).collect(Collectors.toList());
 		proveedoreslst.removeIf(proveedor -> !proveedor.isActivo());
+		for(Proveedor provee : proveedoreslst) {
+			Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(provee.getId());
+			Set<Map<String,Object>> ambitprovee = new HashSet<>();
+			List<Long> ambitoProveedor = new ArrayList<>();
+			//List<Long> ambitoPlazos = new ArrayList<>();
+			for(AmbitoProveedor ambitoprovee : ambitosId) {
+				ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
+			}
+			for(Long ambitoId : ambitoProveedor) {
+				for(Map<String,Object> ambito: ambitos) {
+					if(ambitoId==Long.valueOf(ambito.get("id").toString())) {
+						Map<String,Object> region = (Map<String, Object>) ambito.get("region");
+						idregiones.add(Long.valueOf(region.get("id").toString()) ); 
+						Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByRegionId(Long.valueOf(region.get("id").toString()))  ;
+						region.put("plazosDistribucion", plazos);
+						ambito.put("region", region);
+						ambitprovee.add(ambito);
+					}
+				}
+			}
+			provee.setAmbitos(ambitprovee) ;
+		}
+
 		return proveedoreslst;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Iterable<Long> regionesbyproveedor(Proveedor proveedor) throws IOException, JSONException{
+		List<Long> idsregion = new ArrayList<>();
+		Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(proveedor.getId());
+		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
+		Set<Map<String,Object>> ambitprovee = new HashSet<>();
+		List<Long> ambitoProveedor = new ArrayList<>();
+		List<Long> regionesid = new ArrayList<>();
+		//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
+		List<Map<String,Object>> listaambitos = new ArrayList<>();
+		List<PlazoDistribucion> listaplazos = new ArrayList<>();
+		for(AmbitoProveedor ambitoprovee : ambitosId) {
+			ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
+		}
+		
+		
+		for(Long ambitoss : ambitoProveedor) {
+				for(Map<String,Object> ambito : ambitos) {
+					if(Long.valueOf(  ambito.get("id").toString()     )==ambitoss) {
+						listaambitos.add(ambito);
+					}
+					
+				}
+
+		}
+		
+		for(Map<String,Object> ambito : listaambitos) {
+			Map<String,Object> region = (Map<String, Object>) ambito.get("region");
+			idsregion.add(Long.valueOf(region.get("id").toString()));			
+		}
+		
+		idsregion = idsregion.stream().distinct().collect(Collectors.toList());
+		
+		return idsregion;
 	}
 	
 	

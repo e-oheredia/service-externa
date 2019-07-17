@@ -17,5 +17,5 @@ public interface IPlazoDistribucionService {
 	public PlazoDistribucion modificar(PlazoDistribucion plazodistribucion);
 	public Iterable<PlazoDistribucion> listarPlazosByRegionId(Long regionId);
 	public Iterable<PlazoDistribucion> listarPlazosByDistritoId(Long distritoId)throws IOException, JSONException;
-	public Iterable<PlazoDistribucion> listarPlazosByProveedor(Proveedor proveedor);
+	public Iterable<PlazoDistribucion> listarPlazosByProveedor(Proveedor proveedor) throws IOException, JSONException;
 }
