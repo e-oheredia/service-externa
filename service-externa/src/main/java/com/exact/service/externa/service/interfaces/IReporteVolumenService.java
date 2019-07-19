@@ -12,7 +12,7 @@ public interface IReporteVolumenService {
 	
 	public Map<Integer, Map<String, Float>> volumenbyutd(String fechaini,String fechainifin) throws IOException, JSONException;
 	
-	public Map<Integer, Map<Integer, Integer>> volumenbyplazo(String fechaini,String fechainifin) throws IOException, JSONException;
+	public Map<Integer, Object> volumenbyplazo(String fechaini,String fechainifin) throws IOException, JSONException;
 	
 	
 	public int validardia(String fechaini,String fechainifin, int rango);

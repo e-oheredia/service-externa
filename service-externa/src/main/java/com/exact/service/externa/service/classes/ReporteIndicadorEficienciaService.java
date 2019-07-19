@@ -14,6 +14,7 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -118,7 +119,7 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	}
 
 	@Override
-	public Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> proveedorPlazoDentroFuera(String fechaini, String fechafin) throws IOException, NumberFormatException, ParseException {
+	public Map<Long, Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>>> proveedorPlazoDentroFuera(String fechaini, String fechafin) throws IOException, NumberFormatException, ParseException, JSONException {
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
 		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");

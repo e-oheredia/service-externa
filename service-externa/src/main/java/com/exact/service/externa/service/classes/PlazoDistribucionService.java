@@ -65,6 +65,7 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Iterable<PlazoDistribucion> listarByProveedorId(Long proveedorId) throws IOException, JSONException {
 		//return plazoDistribucionDao.findByProveedorId(proveedorId);
 		List<Long> idsregion = new ArrayList<>();
@@ -108,6 +109,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		
 		return listaplazos;
 	}
+	
+	
+
 
 	@Override
 	public PlazoDistribucion guardar(PlazoDistribucion plazodistribucion) {
@@ -377,7 +381,7 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Iterable<PlazoDistribucion> listarPlazosByProveedor(Proveedor proveedor) {
+	public Iterable<PlazoDistribucion> listarPlazosByProveedor(Proveedor proveedor) throws IOException, JSONException {
 		List<Long> idsregion = new ArrayList<>();
 		List<PlazoDistribucion> plazos = new ArrayList<>();
 		//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
@@ -388,14 +392,13 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		for(AmbitoProveedor ambitoprovee : ambitosId) {
 			ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
 		}
-		/*for(Long ambitoss : ambitoProveedor) {
-				for(AmbitoPlazoDistribucion ambitoplazo : ambitosplazo) {
-				if(ambitoplazo.getId().getAmbitoId()==ambitoss) {
-					ambitoPlazos.add(ambitoplazo.getPlazoDistribucion().getId());
-					}
-				}
 
-			}*/
+		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarAmbitosByIds(ambitoProveedor);
+		
+		for(Map<String,Object> ambito : ambitos) {
+		ambitprovee.add(ambito);
+		}	
+		
 		proveedor.setAmbitos(ambitprovee); 
 		for(Map<String,Object> ambito : proveedor.getAmbitos()) {	
 			Map<String,Object> region = (Map<String, Object>) ambito.get("region");

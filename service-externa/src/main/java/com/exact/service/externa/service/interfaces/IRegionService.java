@@ -28,4 +28,6 @@ public interface IRegionService {
 	
 	public Map<String, Object> modificarRegion(Long id, String ambito) throws IOException, JSONException;
 	
+	public Iterable<Map<String, Object>> RegionesbyProveedor(Long id) throws IOException, JSONException;
+	
 }
