@@ -200,6 +200,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
+		List<Long> distritosIdslst = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
@@ -208,8 +209,8 @@ public class DocumentoService implements IDocumentoService {
 			buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
-		
-		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		distritosIdslst=distritosIds.stream().distinct().collect(Collectors.toList());
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritosIdslst);
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();

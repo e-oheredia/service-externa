@@ -1,6 +1,7 @@
 package com.exact.service.externa.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -42,6 +43,8 @@ public interface IDocumentoReporteDao extends CrudRepository<DocumentoReporte, L
 
 	@Query("SELECT dr FROM DocumentoReporte dr WHERE cast(dr.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND dr.estadoDocumento=?3  ")
 	public Iterable<DocumentoReporte> findDocumentosByEstadoDevolucionDenuncia(Date fechaIni, Date fechaFin, Long estadoId);
+
+	public Iterable<DocumentoReporte> findAllByIdIn(List<Long> documentoId);
 
 	
 }
