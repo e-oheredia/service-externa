@@ -195,16 +195,16 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
 		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
-		
+		List<Long> distritoIds = new ArrayList<Long>();
+		List<Long> distritoIdslst = new ArrayList<Long>();
 		if (!enviosCreadosList.isEmpty()) {
-			List<Long> distritoIds = new ArrayList<Long>();
 			enviosCreadosList.stream().forEach(envioCreado -> {
 				envioCreado.getDocumentos().stream().forEach(documento -> {
 					distritoIds.add(documento.getDistritoId());
 				});
 			});
-
-			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
+			distritoIdslst = distritoIds.stream().distinct().collect(Collectors.toList());
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIdslst);
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId).collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
@@ -216,16 +216,16 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				}
 				
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());				
-				for (Documento documento : envio.getDocumentos()) {
-					int h = 0;
-					while (h < distritos.size()) {
-						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
-							documento.setDistrito(distritos.get(h));
-							break;
-						}
-						h++;
-					}
-				}
+//				for (Documento documento : envio.getDocumentos()) {
+//					int h = 0;
+//					while (h < distritos.size()) {
+//						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
+//							documento.setDistrito(distritos.get(h));
+//							break;
+//						}
+//						h++;
+//					}
+//				}
 				int i = 0; 
 				while(i < buzones.size()) {
 					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
