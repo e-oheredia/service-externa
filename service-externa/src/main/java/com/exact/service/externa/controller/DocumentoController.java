@@ -525,19 +525,4 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-	@GetMapping("{id}/envio")
-	public ResponseEntity<?> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
-		@SuppressWarnings("unchecked")
-		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorEnvioId(id, datosUsuario.get("matricula").toString());
-		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
-		filter.put("envioFilter", "documentos");
-		filter.put("documentoFilter", "documentosGuia");
-		filter.put("guiaFilter", "documentosGuia");
-		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		String dtoMapAsString = cu.filterListaObjetoJson(documentosBD,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-	}
-	
 }
