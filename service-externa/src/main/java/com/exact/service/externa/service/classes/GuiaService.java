@@ -416,7 +416,12 @@ public class GuiaService implements IGuiaService{
 			int validados=0;
 			
 			List<DocumentoGuia> documentoGuiaList = StreamSupport.stream(guia.getDocumentosGuia().spliterator(), false).collect(Collectors.toList());	
-			
+//			List<Long> documentosIds = new ArrayList<>();
+//			for(DocumentoGuia documentoGuia : documentoGuiaList) {
+//				documentosIds.add(documentoGuia.getDocumento().getId());
+//			}
+//			Iterable<Long> estadoDocumentosIds = estadodocumentodao.findEstadoDocumentoIds(documentosIds);
+			// validar metodo dao de estado documento
 			for(DocumentoGuia documentoGuia : documentoGuiaList) {
 				Documento documento = documentoGuia.getDocumento();
 				EstadoDocumento estadodocumento = estadodocumentodao.buscarpordocumento(documento.getId());
@@ -828,9 +833,9 @@ public class GuiaService implements IGuiaService{
 			dg.getDocumento().setSeguimientosDocumento(sd);
 		}
 		
-		Guia guiacreada = guiaDao.save(guiaBloque);
-		documentoreporteservice.insertarDocumentosReporte(guiacreada);
-		return guiacreada;
+		//Guia guiacreada = guiaDao.save(guiaBloque);
+		//documentoreporteservice.insertarDocumentosReporte(guiacreada);
+		return guiaDao.save(guiaBloque);
 		
 	}
 
@@ -942,35 +947,35 @@ public class GuiaService implements IGuiaService{
 		return guiasBloque;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public Iterable<Documento> listarDocumentosPorGuiaId(Long id) throws ClientProtocolException, IOException, JSONException, Exception {
 	Iterable<Documento> documentosBD = guiaDao.listarDocumentosByGuiaId(id);
-	List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+	//List<Documento> documentoslst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 	
-	if(documentoslst.isEmpty()) {
+	if(documentosBD==null) {
 		return null;
 	}
 	
-	List<Long> tipoDocumentoIds = new ArrayList();
-	List<Long> productoIds = new ArrayList();
-	List<Long> distritosIds = new ArrayList();
+//	List<Long> tipoDocumentoIds = new ArrayList();
+//	List<Long> productoIds = new ArrayList();
+//	List<Long> distritosIds = new ArrayList();
 	
-	for (Documento documento : documentoslst) {
-		distritosIds.add(documento.getDistritoId());
-		productoIds.add(documento.getEnvio().getProductoId());
-		tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
-	}
-	
+//	for (Documento documento : documentoslst) {
+////		distritosIds.add(documento.getDistritoId());
+////		productoIds.add(documento.getEnvio().getProductoId());
+////		tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
+//	}
 	List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 	List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-	List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+	List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 	
-	for (Documento documento : documentoslst) {
+	for (Documento documento : documentosBD) {
 		
 		int i = 0; 
 		while(i < distritos.size()) {
-			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-			if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+			//Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+			if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
 				documento.setDistrito(distritos.get(i));
 				break;
 			}
@@ -996,7 +1001,7 @@ public class GuiaService implements IGuiaService{
 		}
 	}
 			
-	return documentoslst;
+	return documentosBD;
 	
 	}
 

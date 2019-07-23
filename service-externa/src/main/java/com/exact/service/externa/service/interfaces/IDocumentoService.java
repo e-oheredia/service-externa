@@ -40,4 +40,5 @@ public interface IDocumentoService {
 	Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento listarDocumentoaRecepcionar(Long documentoId, String matricula) throws ClientProtocolException, IOException, JSONException;
 	Documento recepcionDocumento(Long documentoId, Long idUsuario, List<TipoDevolucion> tiposDevolucion) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Documento> listarDocumentosPorEnvioId(Long envioId, String matricula) throws ClientProtocolException, IOException, JSONException;
 }

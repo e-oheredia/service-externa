@@ -13,6 +13,7 @@ import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCION
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
+import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -152,12 +153,12 @@ public class DocumentoService implements IDocumentoService {
 
 				
 		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
-		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
+//		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
 		
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
-		for (Documento documento : documentosCustodiadosList) {
+		for (Documento documento : documentosCustodiados) {
 			buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
@@ -166,7 +167,7 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 		
-		for (Documento documento : documentosCustodiadosList) {
+		for (Documento documento : documentosCustodiados) {
 			
 			int i = 0; 
 			while(i < buzones.size()) {
@@ -186,7 +187,7 @@ public class DocumentoService implements IDocumentoService {
 			}
 		
 		}
-		return documentosCustodiadosList;
+		return documentosCustodiados;
 	}
 
 	
@@ -423,8 +424,11 @@ public class DocumentoService implements IDocumentoService {
 			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
 		}
 		
-		documentoDao.saveAll(documentosBDList);		
-		documentoReporteservice.actualizarDocumentosPorResultado(documentosBDList, guiaids);
+		documentoDao.saveAll(documentosBDList);
+		if(guia.getTipoGuia().getId()==GUIA_REGULAR) {
+			documentoReporteservice.actualizarDocumentosPorResultado(documentosBDList, guiaids);
+		}
+		
 		boolean rpta = guiadao.existeDocumentosPendientes(guia.getId());
 		if(!rpta) {
 			List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
@@ -563,49 +567,52 @@ public class DocumentoService implements IDocumentoService {
 
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin)
 			throws IOException, Exception {
 		
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
-		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		List<Long> distritosIds = new ArrayList();
+//		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		//List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
-		for (Documento documento : documentosUTD) {
-			distritosIds.add(documento.getDistritoId());
+		for (Documento documento : documentos) {
+			//distritosIds.add(documento.getDistritoId());
 			buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
-		
+		//distritosIds=distritosIds.stream().distinct().collect(Collectors.toList());
+		buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
+		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tipoDocumentos = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 		
-		for (Documento documento : documentosUTD) {
+		for (Documento documento : documentos) {
+			
+			documento.getEnvio().setBuzon(buzones.get(0));
 			
 			int i = 0; 
 			while(i < distritos.size()) {
-				
-				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-				
-				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+				//Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
 				i++;
 			}
 			
-			int j = 0; 
-			while(j < buzones.size()) {
-				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
-					documento.getEnvio().setBuzon(buzones.get(j));
-					break;
-				}
-				j++;
-			}
+//			int j = 0; 
+//			while(j < buzones.size()) {
+//				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+//					documento.getEnvio().setBuzon(buzones.get(j));
+//					break;
+//				}
+//				j++;
+//			}
 			
 			int k = 0; 
 			while(k < sedes.size()) {
@@ -634,7 +641,7 @@ public class DocumentoService implements IDocumentoService {
 				n++;
 			}
 		}
-		return documentosUTD;
+		return documentos;
 	}
 
 	@Override
@@ -902,6 +909,13 @@ public class DocumentoService implements IDocumentoService {
 		Documento documentoguardado = documentoDao.save(documento);
 		documentoReporteservice.actualizarDocumentosRecepcionados(documentoguardado.getId());
 		return documentoguardado;
+	}
+
+	@Override
+	public Iterable<Documento> listarDocumentosPorEnvioId(Long envioId, String matricula)
+			throws ClientProtocolException, IOException, JSONException {
+		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		return documentoDao.findDocumentosByEnvioId(envioId, Long.valueOf(sede.get("id").toString()));
 	}
 
 
