@@ -80,6 +80,7 @@ public class EnvioMasivoController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
+		filter.put("EnvioFilter", "documentos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);

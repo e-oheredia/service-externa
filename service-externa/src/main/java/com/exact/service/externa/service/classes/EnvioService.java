@@ -261,18 +261,20 @@ public class EnvioService implements IEnvioService {
 		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false)
 				.collect(Collectors.toList());
 
-		if (enviosCreadosList.size() != 0) {
+		if (!enviosCreadosList.isEmpty()) {
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
-			List<Long> distritoIds = new ArrayList<Long>();
-			enviosCreadosList.stream().forEach(envioCreado -> {
-				envioCreado.getDocumentos().stream().forEach(documento -> {
-					distritoIds.add(documento.getDistritoId());
-				});
-			});
-
-			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
+//			List<Long> distritoIds = new ArrayList<Long>();
+//			enviosCreadosList.stream().forEach(envioCreado -> {
+//				envioCreado.getDocumentos().stream().forEach(documento -> {
+//					distritoIds.add(documento.getDistritoId());
+//				});
+//			});
+			
+			//distritoIds=distritoIds.stream().distinct().collect(Collectors.toList());
+			buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
@@ -282,25 +284,27 @@ public class EnvioService implements IEnvioService {
 				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
 					descryptarseguimiento(sg);
 				}
-				for (Documento documento : envio.getDocumentos()) {
-					int h = 0;
-					while (h < distritos.size()) {
-						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
-							documento.setDistrito(distritos.get(h));
-							break;
-						}
-						h++;
-					}
-				}
+//				for (Documento documento : envio.getDocumentos()) {
+//					int h = 0;
+//					while (h < distritos.size()) {
+//						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
+//							documento.setDistrito(distritos.get(h));
+//							break;
+//						}
+//						h++;
+//					}
+//				}
 
-				int i = 0;
-				while (i < buzones.size()) {
-					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
-						envio.setBuzon(buzones.get(i));
-						break;
-					}
-					i++;
-				}
+				envio.setBuzon(buzones.get(0));
+				
+//				int i = 0;
+//				while (i < buzones.size()) {
+//					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
+//						envio.setBuzon(buzones.get(i));
+//						break;
+//					}
+//					i++;
+//				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
 					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
