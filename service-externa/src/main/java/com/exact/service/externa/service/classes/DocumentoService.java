@@ -201,43 +201,87 @@ public class DocumentoService implements IDocumentoService {
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> distritosIdslst = new ArrayList();
-		List<Long> buzonIds = new ArrayList();
+		//List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
 			distritosIds.add(documento.getDistritoId());
-			buzonIds.add(documento.getEnvio().getBuzonId());
+			//buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
 		distritosIdslst=distritosIds.stream().distinct().collect(Collectors.toList());
+		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritosIdslst);
-		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		Map<String, Object> buzon = buzonEdao.listarById(idbuzon);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-		
+		List<Integer> tamanoslist = new ArrayList<>();
+		tamanoslist.add(distritos.size());
+		tamanoslist.add(sedes.size());
+		tamanoslist.add(productos.size());
+		tamanoslist.add(tiposDocumento.size());
+		int mayor = tamanoslist.stream().mapToInt(i -> i).max().getAsInt();
+
+
 		for (Documento documento : documentosUbcp) {
-			
+			documento.getEnvio().setBuzon(buzon);
+			int i = 0;
+			boolean distritoboolean = false;
+			boolean sedeboolean = false;
+			boolean productoboolean = false;
+			boolean clasificacionboolean = false;
+			while(i< mayor) {
+				
+				if(!distritoboolean) {
+					if (documento.getDistritoId().longValue() ==  Long.valueOf(distritos.get(i).get("id").toString())) {
+						documento.setDistrito(distritos.get(i));
+						distritoboolean=true;
+					}
+				}
+
+				
+				if(!sedeboolean) {
+					if (documento.getEnvio().getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+						documento.getEnvio().setSede(sedes.get(i));
+						sedeboolean=true;
+
+					}
+				}
+
+				if(!productoboolean) {
+					if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(i).get("id").toString())) {
+						documento.getEnvio().setProducto(productos.get(i));
+						productoboolean=true;
+
+					}
+					
+				}
+				
+				if(!clasificacionboolean) {
+					if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(i).get("id").toString())) {
+						documento.getEnvio().setClasificacion(tiposDocumento.get(i));
+						clasificacionboolean=true;
+
+					}
+				}
+				
+				if(distritoboolean && sedeboolean && productoboolean && clasificacionboolean) {
+					break;
+				}
+				i++;
+			}
+			/*
 			int i = 0; 
 			while(i < distritos.size()) {
-				
-				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-				
-				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+				//Long distritoId=
+				if (documento.getDistritoId().longValue() ==  Long.valueOf(distritos.get(i).get("id").toString())) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
 				i++;
 			}
 			
-			int j = 0; 
-			while(j < buzones.size()) {
-				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
-					documento.getEnvio().setBuzon(buzones.get(j));
-					break;
-				}
-				j++;
-			}
 			
 			int k = 0; 
 			while(k < sedes.size()) {
@@ -265,7 +309,11 @@ public class DocumentoService implements IDocumentoService {
 				}
 				n++;
 			}
+			*/
 		}
+		
+
+		
 		return documentosUbcp;
 	}
 
@@ -784,27 +832,32 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	public Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException {
+		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		
 		Iterable<Documento> documentosBD = documentoDao.listarDocumentosParaRecepcionar(Long.valueOf(sede.get("id").toString()));
-		List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+		
+		//List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		List<Long> buzonIds = new ArrayList();
 		
-		for (Documento documento : documentolst) {
+		for (Documento documento : documentosBD) {
 			buzonIds.add(documento.getEnvio().getBuzonId());
 		}
+		
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-		for (Documento documento : documentolst) {
+		
+		for (Documento documento : documentosBD) {
 			int i = 0; 
 			while(i < buzones.size()) {
 				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
 					documento.getEnvio().setBuzon(buzones.get(i));
 					break;
-				}
+				}	
 				i++;
 			}
+			
 		}
-		
-		return documentolst;
+		return documentosBD;
 	}
 
 	@Override
@@ -826,7 +879,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
 		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
-		
+		//SeguimientoDocumento sdMax = seguimientoDocumentodao.segmax(documentoId);
 		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO && sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=NO_DISTRIBUIBLE) {
 			return null;
 		}
@@ -840,17 +893,15 @@ public class DocumentoService implements IDocumentoService {
 		seguimientoDocumento.setLinkImagen(sdMax.getLinkImagen());
 		seguimientoDocumento.setDocumento(documento);
 		seguimientoDocumento.setFecha(new Date());
-		seguimientosDocumentolst.add(seguimientoDocumento);
-		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
-		
-		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		seguimientoDocumento.setMotivoEstado(sdMax.getMotivoEstado());
+		//seguimientosDocumentolst.add(seguimientoDocumento);
+		//seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>();
+		sd.add(seguimientoDocumento);
 		documento.setSeguimientosDocumento(sd);
 		Documento documentoguardado = documentoDao.save(documento);
-		
 		documentoReporteservice.actualizarDocumentosRecepcionados(documentoguardado.getId());
-		
 		return documentoguardado;
-		
 	}
 
 

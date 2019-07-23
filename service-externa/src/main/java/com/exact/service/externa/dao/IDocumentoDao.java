@@ -81,9 +81,9 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public Iterable<Documento> findDocumentosByGuiaId(Long guiaId);
 
 
-	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+	@Query("FROM Documento d WHERE   d.envio.sedeId=?1 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6 OR sd.estadoDocumento.id =9)) AND d.envio.sedeId=?1")
+			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6 OR sd.estadoDocumento.id =9))   ")
 	public Iterable<Documento> listarDocumentosParaRecepcionar(Long sedeId);
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd"
