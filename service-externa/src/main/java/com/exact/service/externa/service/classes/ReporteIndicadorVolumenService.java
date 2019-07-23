@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +24,12 @@ import org.springframework.stereotype.Service;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IPlazoDistribucionDao;
 import com.exact.service.externa.dao.IProveedorDao;
+import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
+import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
+import com.exact.service.externa.service.interfaces.IProveedorService;
 import com.exact.service.externa.service.interfaces.IReporteIndicadorVolumenService;
 
 @Service
@@ -40,10 +44,19 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 	@Autowired
 	IPlazoDistribucionDao plazodao;
 	
+	@Autowired
+	IProveedorService proveedorservice;
+	
+	@Autowired
+	IPlazoDistribucionService plazoservice;
+	
 	private static final Log Logger = LogFactory.getLog(ReporteIndicadorVolumenService.class);
 
 	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
 	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Autowired
+	IRegionEdao regiondao;
 
 	
 	@Override
@@ -163,9 +176,9 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 
 
 	@Override
-	public Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>  IndicadorVolumenTabla2(String fechaIni, String fechaFin)
-		throws IOException, JSONException, NumberFormatException, ParseException {
-		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> remultiMap = new HashMap<>();
+	public Map<Integer,Object> IndicadorVolumenTabla2(String fechaIni, String fechaFin)
+		throws Exception  {
+		Map<Integer,Object> remultiMap = new HashMap<>();
 		
 		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
@@ -266,7 +279,6 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 			entidades = reportedao.buscarvolumenporfechas2( Integer.parseInt(dtmeses.format(dateI)) ,Integer.parseInt(dtaño.format(dateI)));
 		}else {
 			entidades = reportedao.buscarvolumenporfechas(dateI,newdatef);
-
 		}
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());

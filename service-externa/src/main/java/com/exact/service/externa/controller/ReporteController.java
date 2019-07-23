@@ -98,7 +98,7 @@ public class ReporteController {
 			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
 		}
 		Map<Integer, Map<String, Float>> reportecurier2 = reporteservice.volumenbyutd(fechaini, fechafin);
-		Map<Integer,Map<Integer, Integer>> reportecurier3 = reporteservice.volumenbyplazo(fechaini, fechafin);
+		Map<Integer, Object> reportecurier3 = reporteservice.volumenbyplazo(fechaini, fechafin);
 		nuevo.put(1, reportecurier);
 		nuevo.put(2, reportecurier2);
 		nuevo.put(3, reportecurier3);
@@ -133,8 +133,8 @@ public class ReporteController {
 		}
 		
 		Map<Long, Map<String, Integer>> cantidades = new HashMap<>();
-		Map<Long, Map<Long, Map<String, Integer>>> cantidadesPorPlazo = new HashMap<>();
-		Map<Integer, Map<Integer, Map<Integer, Integer>>> cantidadproveedorplazo = new HashMap<>();
+		Map<Long, Object> cantidadesPorPlazo = new HashMap<>();
+		Map<Integer, Object> cantidadproveedorplazo = new HashMap<>();
 		cantidades=reporteEficienciaservice.eficienciaPorCourier(fechaini, fechafin);
 		if(cantidades==null) {
 			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
@@ -148,7 +148,7 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer,Object>>(graficoEficiencia, HttpStatus.OK);
 		
 	}
-	
+	/*
 	@GetMapping("/eficiencia/courierporplazo")
 	public ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>> eficienciaPorCourierPorPlazos(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws IOException, JSONException, ParseException, Exception{
 		
@@ -156,7 +156,7 @@ public class ReporteController {
 		cantidades=reporteEficienciaservice.eficienciaPorPlazoPorCourier(fechaini, fechafin);
 		return new ResponseEntity<Map<Long, Map<Long, Map<String, Integer>>>>(cantidades, HttpStatus.OK);
 		
-	}
+	}*/
 	
 	@GetMapping("/volumen/porsede")
 	public ResponseEntity<?> porcentajeporvolumenutd(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
@@ -170,16 +170,16 @@ public class ReporteController {
 		return new ResponseEntity<Map<Integer, Map<String, Float>>>(reportecurier,HttpStatus.OK);
 	}	
 	
-	
+	/*
 	@GetMapping("/volumen/plazodistribucion")
 	public ResponseEntity<?> volumenporplazo(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException {
 		if(fechaini=="" || fechafin==""){
 			return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 		}
-		Map<Integer,Map<Integer, Integer>> reportecurier = reporteservice.volumenbyplazo(fechaini, fechafin);
+		Map<Integer, Object> reportecurier = reporteservice.volumenbyplazo(fechaini, fechafin);
 		return new ResponseEntity<Map<Integer,Map<Integer, Integer>>>(reportecurier,HttpStatus.OK);
-	}	
+	}	*/
 	
 	
 	@GetMapping("/eficacia")
@@ -219,7 +219,7 @@ public class ReporteController {
 	
 	@GetMapping("/indicadorvolumen")
 	public ResponseEntity<?> indicadorvolumentabla3(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
-			throws IOException, JSONException, NumberFormatException, ParseException {
+			throws Exception {
 		Map<Integer, Object> nuevo = new HashMap<>();
 		if (reporteservice.validardia(fechaini, fechafin,2) != 0) {
 			switch (reporteservice.validardia(fechaini, fechafin,2)) {
@@ -247,14 +247,16 @@ public class ReporteController {
 		if(reportecurier==null) {
 			return new ResponseEntity<String>("No existen documentos", HttpStatus.CONFLICT);
 		}
-		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>   reportecurier2 = indicadorservice.IndicadorVolumenTabla2(fechaini,fechafin);
+		Map<Integer,Object>   reportecurier2 = indicadorservice.IndicadorVolumenTabla2(fechaini,fechafin);
 		Map<Integer, Map<Integer, Map<Integer, Integer>>> reportecurier3 = indicadorservice.indicadortabla2cabeceravolumen(fechaini, fechafin); 
 		nuevo.put(1, reportecurier);
 		nuevo.put(2, reportecurier2);
 		nuevo.put(3, reportecurier3);
 		return new ResponseEntity<Map<Integer, Object>>(nuevo,HttpStatus.OK);
-	}	
+	}
 	
+	
+	/*
 	@GetMapping("/indicadorvolumen/tabla2")
 	public ResponseEntity<?> indicadorvolumentabla2(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)
 			throws IOException, JSONException, NumberFormatException, ParseException {
@@ -263,7 +265,9 @@ public class ReporteController {
 		}
 		Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>>   reportecurier = indicadorservice.IndicadorVolumenTabla2(fechaini,fechafin);
 		return new ResponseEntity<Map<Integer,Map<Integer,Map<Integer,  Map<Integer, Integer>>>> >(reportecurier,HttpStatus.OK);
-	}		
+	}*/
+	
+	
 	
 	@GetMapping("/indicadoreficacia")
 	public ResponseEntity<?> indicadoreficacia(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin)

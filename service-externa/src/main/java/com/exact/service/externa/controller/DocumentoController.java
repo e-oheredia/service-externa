@@ -37,6 +37,7 @@ import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoDevolucion;
+import com.exact.service.externa.service.classes.DocumentoGuiaService;
 import com.exact.service.externa.service.classes.DocumentoService;
 import com.exact.service.externa.service.classes.GuiaService;
 import com.exact.service.externa.utils.CommonUtils;
@@ -58,6 +59,9 @@ public class DocumentoController {
 	
 	@Autowired
 	private DocumentoService documentoService;
+	
+	@Autowired
+	private DocumentoGuiaService documentoGuiaService;
 	
 	@PutMapping("/custodia")
 	public ResponseEntity<Integer> custodiarDocumentos(@RequestBody List<Documento> documentos, Authentication authentication) {
@@ -505,6 +509,20 @@ public class DocumentoController {
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
+	}
+	
+	@PutMapping("{id}/desvalidar")
+	public ResponseEntity<?> desvalidarDocumentoGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
+		DocumentoGuia dg = documentoGuiaService.desvalidarDocumento(id);
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
+			
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

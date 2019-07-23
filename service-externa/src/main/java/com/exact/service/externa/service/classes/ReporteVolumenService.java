@@ -30,6 +30,7 @@ import com.exact.service.externa.entity.DocumentoReporte;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
+import com.exact.service.externa.service.interfaces.IRegionService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
 import com.exact.service.externa.service.interfaces.ISedeService;
 
@@ -52,6 +53,9 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	
 	@Autowired
 	IPlazoDistribucionService plazoservice;
+	
+	@Autowired
+	IRegionService regionservice;
 	
 	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat dtmes = new SimpleDateFormat("yyyy-MM");
@@ -153,9 +157,9 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	}
 
 	@Override
-	public Map<Integer,Map<Integer, Integer>> volumenbyplazo(String fechaIni, String fechaFin)
+	public Map<Integer,Object> volumenbyplazo(String fechaIni, String fechaFin)
 			throws IOException, JSONException {
-		Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
+		Map<Integer,Object > multiMap = new HashMap<>();
 
 		Date dateI= null;
 		Date dateF= null;
@@ -176,31 +180,43 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
 		
+		
 		for (Proveedor pro : proveedores) {
 			
+			Iterable<Map<String, Object>> regiones = regionservice.RegionesbyProveedor(pro.getId());
+			//Iterable<PlazoDistribucion> pd = plazoservice.listarPlazosByProveedor(pro);
+
 			//////////////
-			
 			//Iterable<PlazoDistribucion> pd =plazodao.listarplazosactivos(pro.getId());
-			Iterable<PlazoDistribucion> pd = plazoservice.listarPlazosByProveedor(pro);
 			//////////////
-			
-			
-			
-			Map<Integer, Integer> m = new HashMap<Integer, Integer>();
-			
-			for (PlazoDistribucion entidad : pd) {
-				int cantidadproveedor=0;
-				for (DocumentoReporte dr : reportes) {
-					if (entidad.getId() == dr.getPlazoId() && pro.getId()==dr.getProveedorId() ) {
-						cantidadproveedor++;	
+			Map<Integer, Map<Integer, Integer>> re = new HashMap<Integer, Map<Integer, Integer>>();
+
+			for(Map<String, Object> region : regiones) {
+				Map<Integer, Integer> m = new HashMap<Integer, Integer>();
+				Iterable<PlazoDistribucion> pds = plazoservice.listarPlazosByRegionId( Long.valueOf(region.get("id").toString())  );
+				for (PlazoDistribucion entidad : pds) {
+					boolean validar = false;
+					int cantidadproveedor=0;
+					for (DocumentoReporte dr : reportes) {
+						
+						if (entidad.getId() == dr.getPlazoId() && pro.getId()==dr.getProveedorId() && dr.getRegionId() == Long.valueOf(region.get("id").toString())   ) {
+							cantidadproveedor++;
+						}
+							
 					}
+						///poner los plazos segun proveedor
+						m.put((int) (long)entidad.getId() , cantidadproveedor);
+
 				}
-				m.put((int) (long)entidad.getId() , cantidadproveedor);
+				
+				re.put((int) (long)Long.valueOf(region.get("id").toString()), m);
 			}
-			
-			multiMap.put((int) (long)pro.getId(), m );
-			
+			multiMap.put((int) (long)pro.getId(), re );			
+
 		}
+		
+		
+		
 		return multiMap;
 		
 	}

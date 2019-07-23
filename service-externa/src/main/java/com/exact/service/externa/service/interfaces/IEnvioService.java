@@ -16,7 +16,7 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 public interface IEnvioService {
 	Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile multipartFile, String header) throws IOException,ParseException, MessagingException, JSONException ;
 	Iterable<Envio> listarEnviosNoAutorizados() throws IOException, Exception; 
-	Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException;
+	Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header, String nombreUsuario) throws ParseException, IOException, JSONException;
 	Envio denegarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException;
 	Iterable<Envio> listarEnviosCreados(String matricula) throws IOException, Exception;
 	Iterable<Envio> listarEnviosAutorizacion(String fechaIni, String fechaFin) throws IOException, Exception; 

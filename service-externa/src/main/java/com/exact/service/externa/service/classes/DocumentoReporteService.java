@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IEnvioDao;
@@ -27,6 +28,7 @@ import static com.exact.service.externa.enumerator.EstadoCargoEnum.DEVUELTO;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,16 +55,24 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 	@Autowired
 	IBuzonEdao buzonEdao;
 	
+	@Autowired
+	IDocumentoDao documentoDao;
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public void insertarDocumentosReporte(Guia guia) throws IOException, JSONException {
-		
+		List<DocumentoReporte> documentoReportelst = new ArrayList<>(); 
+		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarAll();
 		for (DocumentoGuia dg : guia.getDocumentosGuia()) {
-		
 			Documento documentoBD = dg.getDocumento() ;
 			DocumentoReporte documentoReporte = new DocumentoReporte();
-			Map<String, Object> buzon = buzonEdao.listarById(documentoBD.getEnvio().getBuzonId());
-			Map<String, Object> area = (Map<String, Object>) buzon.get("area");
+			for(Map<String,Object> buzon : buzones) {
+				if(documentoBD.getEnvio().getBuzonId() == Long.valueOf(buzon.get("id").toString())) {
+					Map<String, Object> area = (Map<String, Object>) buzon.get("area");
+					documentoReporte.setArea(Long.valueOf(area.get("id").toString()));
+					break;
+				}
+			}
 			documentoReporte.setProveedorId(guia.getProveedor().getId());
 			documentoReporte.setEstadoDocumento(documentoBD.getUltimoSeguimientoDocumento().getEstadoDocumento().getId());
 			documentoReporte.setPlazoId(guia.getPlazoDistribucion().getId());
@@ -71,34 +81,45 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 			documentoReporte.setTiempoEntrega(FALTA_ENTREGA);
 			documentoReporte.setEstadoCargo(NO_GENERADO);
 			documentoReporte.setSedeId(guia.getSedeId());
-			documentoReporte.setArea(Long.valueOf(area.get("id").toString()));
-			documentoreporteDao.save(documentoReporte);
+			documentoReporte.setRegionId(guia.getRegionId());
+			documentoReportelst.add(documentoReporte);
 		}
+		documentoreporteDao.saveAll(documentoReportelst);
 	}
 
 	@Override
 	public void actualizarDocumentosPorResultado(List<Documento> lstdocumento, List<Long> guiaIds) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
-		
 		Map<Long, Date> fechaGuias = new HashMap<Long, Date>();
+		List<Long> documentosIds = new ArrayList<>();
 		for(int i=0;i<guiaIds.size();i++) {
 			Guia guia = guiadao.findById(guiaIds.get(i)).get();
 			Date fechaLimite = guiaservice.getFechaLimite(guia);
 			fechaGuias.put(guiaIds.get(i), fechaLimite);
 		}
-		for(Documento documento: lstdocumento) {
-			DocumentoGuia dg = documentoGuiadao.findByDocumentoId(documento.getId());
-			Date fechalimitereporte = fechaGuias.get(dg.getGuia().getId());
-			DocumentoReporte documentoreporte = documentoreporteDao.findByDocumentoId(documento.getId());
-			SeguimientoDocumento sg = documento.getUltimoSeguimientoDocumento();
-			if(sg.getFecha().compareTo(fechalimitereporte)>0) {
-				documentoreporte.setTiempoEntrega(FUERA_PLAZO);
-			}else {
-				documentoreporte.setTiempoEntrega(DENTRO_PLAZO);
-			}
-			documentoreporte.setEstadoCargo(PENDIENTE);
-			documentoreporte.setEstadoDocumento(sg.getEstadoDocumento().getId());
-			documentoreporteDao.save(documentoreporte);
+		for(Documento documentouno : lstdocumento) {
+			documentosIds.add(documentouno.getId());
 		}
+		List<DocumentoReporte> documentoReportelst = (List<DocumentoReporte>) documentoreporteDao.findAllByIdIn(documentosIds);
+		for(int j=0;j<guiaIds.size();j++) {
+			Iterable<Documento> documentolst = documentoDao.findDocumentosByGuiaId(guiaIds.get(j));
+			Date fechalimitereporte = fechaGuias.get(guiaIds.get(j));
+			for(Documento documento: documentolst) {
+			SeguimientoDocumento sg = documento.getUltimoSeguimientoDocumento();
+				for(DocumentoReporte documentoreporte:documentoReportelst ) {
+					if(documento.getId()==documentoreporte.getDocumentoId()) {
+						if(sg.getFecha().compareTo(fechalimitereporte)>0) {
+							documentoreporte.setTiempoEntrega(FUERA_PLAZO);
+						}else {
+							documentoreporte.setTiempoEntrega(DENTRO_PLAZO);
+						}
+						documentoreporte.setEstadoCargo(PENDIENTE);
+						documentoreporte.setEstadoDocumento(sg.getEstadoDocumento().getId());
+					}
+				}
+				documentoreporteDao.saveAll(documentoReportelst);
+			}
+		}
+
 	}
 
 	@Override

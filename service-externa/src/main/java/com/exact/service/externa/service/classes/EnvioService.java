@@ -261,18 +261,20 @@ public class EnvioService implements IEnvioService {
 		List<Envio> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false)
 				.collect(Collectors.toList());
 
-		if (enviosCreadosList.size() != 0) {
+		if (!enviosCreadosList.isEmpty()) {
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
-			List<Long> distritoIds = new ArrayList<Long>();
-			enviosCreadosList.stream().forEach(envioCreado -> {
-				envioCreado.getDocumentos().stream().forEach(documento -> {
-					distritoIds.add(documento.getDistritoId());
-				});
-			});
-
-			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIds);
+//			List<Long> distritoIds = new ArrayList<Long>();
+//			enviosCreadosList.stream().forEach(envioCreado -> {
+//				envioCreado.getDocumentos().stream().forEach(documento -> {
+//					distritoIds.add(documento.getDistritoId());
+//				});
+//			});
+			
+			//distritoIds=distritoIds.stream().distinct().collect(Collectors.toList());
+			buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
@@ -282,25 +284,27 @@ public class EnvioService implements IEnvioService {
 				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
 					descryptarseguimiento(sg);
 				}
-				for (Documento documento : envio.getDocumentos()) {
-					int h = 0;
-					while (h < distritos.size()) {
-						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
-							documento.setDistrito(distritos.get(h));
-							break;
-						}
-						h++;
-					}
-				}
+//				for (Documento documento : envio.getDocumentos()) {
+//					int h = 0;
+//					while (h < distritos.size()) {
+//						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
+//							documento.setDistrito(distritos.get(h));
+//							break;
+//						}
+//						h++;
+//					}
+//				}
 
-				int i = 0;
-				while (i < buzones.size()) {
-					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
-						envio.setBuzon(buzones.get(i));
-						break;
-					}
-					i++;
-				}
+				envio.setBuzon(buzones.get(0));
+				
+//				int i = 0;
+//				while (i < buzones.size()) {
+//					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
+//						envio.setBuzon(buzones.get(i));
+//						break;
+//					}
+//					i++;
+//				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
 					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
@@ -325,20 +329,22 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException {
+	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header,String nombreUsuario) throws ParseException, IOException, JSONException {
 
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
 		}
-		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
+		//String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(APROBADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
 		seguimientoAutorizado.setUsuarioId(idUsuario);
+		//ACA VA EL METODO DE ENCRYPTAR NOMBREUSUARIO
 		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
+		encryptarseguimiento(seguimientoAutorizado);
 		envio.getDocumentos().stream().forEach(documento -> {
 			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,
 					documento.getUltimoSeguimientoDocumento().getEstadoDocumento(), observacionAutorizacion);
@@ -409,7 +415,6 @@ public class EnvioService implements IEnvioService {
 		for(Envio envio: lstenvioAutorizaciones) {
 			for( SeguimientoAutorizado sa : envio.getSeguimientosAutorizado()) {
 				descryptarseguimiento(sa);
-				String nu = sa.getNombreUsuario();
 			}
 			envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
 			int i = 0;
@@ -525,8 +530,8 @@ public class EnvioService implements IEnvioService {
 		seguimiento.setNombreUsuario(encryption.decrypt( seguimiento.getNombreUsuarioencryptado()));
 	}
 	
-	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException {
-		seguimiento.setNombreUsuarioencryptado(seguimiento.getNombreUsuario());
+	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws IOException {
+		seguimiento.setNombreUsuarioencryptado(encryption.encrypt(seguimiento.getNombreUsuario()));
 	}	
 
 }

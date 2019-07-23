@@ -16,15 +16,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
+import com.exact.service.externa.service.interfaces.IDocumentoService;
 import com.exact.service.externa.service.interfaces.IEnvioMasivoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
 import com.exact.service.externa.utils.CommonUtils;
@@ -42,6 +45,9 @@ public class EnvioMasivoController {
 	
 	@Autowired
 	IGuiaService guiaService;
+	
+	@Autowired
+	IDocumentoService documentoService;
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
@@ -80,6 +86,7 @@ public class EnvioMasivoController {
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
+		filter.put("EnvioFilter", "documentos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
@@ -106,6 +113,21 @@ public class EnvioMasivoController {
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
+		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	}
+	
+	@GetMapping("{id}/documentos")
+	public ResponseEntity<?> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
+		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorEnvioId(id, datosUsuario.get("matricula").toString());
+		CommonUtils cu = new CommonUtils();
+		Map<String, String> filter = new HashMap<String, String>();
+		filter.put("envioFilter", "documentos");
+		filter.put("documentoFilter", "documentosGuia");
+		filter.put("guiaFilter", "documentosGuia");
+		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
+		String dtoMapAsString = cu.filterListaObjetoJson(documentosBD,filter);
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 }
