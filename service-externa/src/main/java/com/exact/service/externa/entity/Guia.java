@@ -270,7 +270,7 @@ public class Guia implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
 	private Set<SeguimientoGuia> seguimientosGuia;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "guia")
+	@OneToMany(fetch=FetchType.LAZY, cascade = { CascadeType.PERSIST }, mappedBy = "guia")
 	@JsonFilter("documentosGuiaFilter")
 	@JsonProperty("documentosGuia")	
 	private Set<DocumentoGuia> documentosGuia;	

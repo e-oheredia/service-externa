@@ -1,6 +1,7 @@
 package com.exact.service.externa.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -83,6 +85,36 @@ public class Envio implements Serializable {
 	@JsonProperty("inconsistenciasDocumento")
 	private Set<Inconsistencia> inconsistenciasDocumento;
 	
+	@Column(name="fecha")
+	@JsonFormat
+	(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone="America/Lima")
+	private Date fecha;
+	
+	@Transient
+	private int cantidadDocumentos;
+	
+	
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+	
+	@PrePersist
+	private void prePersist() {
+		fecha = new Date();
+	}
+
+	public int getCantidadDocumentos() {
+		return cantidadDocumentos;
+	}
+
+	public void setCantidadDocumentos(int cantidadDocumentos) {
+		this.cantidadDocumentos = cantidadDocumentos;
+	}
+
 	public Set<SeguimientoAutorizado> getSeguimientosAutorizado() {
 		return seguimientosAutorizado;
 	}
