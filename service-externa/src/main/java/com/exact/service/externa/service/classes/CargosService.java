@@ -201,17 +201,21 @@ public class CargosService implements ICargosService {
 		//List<Long> documentoids = new ArrayList<>();
 		
 		
-		for(DocumentoReporte documento : reportes) {
-			if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
-				drs.add(documento);
-			}
-		}
+
 		
 		if(DENUNCIA==tipoDevolucionId) {
+			for(DocumentoReporte documento : reportes) {
+				if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
+					drs.add(documento);
+				}
+			}
+			
 			if(drs.size()==0) {
 				return null;
 
 			}
+		}else {
+			drs= StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		}
 
 		
@@ -298,7 +302,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, REZAGADO, NO_DISTRIBUIBLE);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
@@ -314,18 +318,23 @@ public class CargosService implements ICargosService {
 		//List<Long> documentoids = new ArrayList<>();
 		
 		
-		for(DocumentoReporte documento : reportes) {
-			if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
-				drs.add(documento);
-			}
-		}
+
 		
 		if(DENUNCIA==tipoDevolucionId) {
+			
+			for(DocumentoReporte documento : reportes) {
+				if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
+					drs.add(documento);
+				}
+			}
 			if(drs.size()==0) {
 				return null;
 
 			}
+		}else {
+			drs= StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		}
+
 
 		
 		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
