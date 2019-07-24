@@ -3,14 +3,12 @@ package com.exact.service.externa.service.classes;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.edao.interfaces.IRegionEdao;
 import com.exact.service.externa.edao.interfaces.IFeriadoEdao;
-import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.service.interfaces.IFeriadoService;
 
 @Service

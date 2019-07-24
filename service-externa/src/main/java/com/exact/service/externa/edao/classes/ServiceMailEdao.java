@@ -1,25 +1,20 @@
 package com.exact.service.externa.edao.classes;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.mail.MessagingException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.exact.service.externa.edao.interfaces.IServiceMailEdao;
 import com.exact.service.externa.request.IRequester;
-import com.exact.service.externa.utils.CommonUtils;
 
 @Repository
 public class ServiceMailEdao implements IServiceMailEdao{

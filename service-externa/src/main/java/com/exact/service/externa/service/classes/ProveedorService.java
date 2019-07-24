@@ -3,13 +3,11 @@
 
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -244,12 +242,9 @@ public class ProveedorService implements IProveedorService{
 		List<Long> idsregion = new ArrayList<>();
 		Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(proveedor.getId());
 		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
-		Set<Map<String,Object>> ambitprovee = new HashSet<>();
 		List<Long> ambitoProveedor = new ArrayList<>();
-		List<Long> regionesid = new ArrayList<>();
 		//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
 		List<Map<String,Object>> listaambitos = new ArrayList<>();
-		List<PlazoDistribucion> listaplazos = new ArrayList<>();
 		for(AmbitoProveedor ambitoprovee : ambitosId) {
 			ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
 		}

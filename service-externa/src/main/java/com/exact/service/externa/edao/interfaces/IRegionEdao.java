@@ -3,7 +3,6 @@ package com.exact.service.externa.edao.interfaces;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

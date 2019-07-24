@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.logging.Log;
@@ -18,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -34,17 +32,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
-import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.TipoDevolucion;
 import com.exact.service.externa.service.classes.DocumentoGuiaService;
 import com.exact.service.externa.service.classes.DocumentoService;
-import com.exact.service.externa.service.classes.GuiaService;
 import com.exact.service.externa.utils.CommonUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @EnableGlobalMethodSecurity(securedEnabled=true)
 @RestController
@@ -54,8 +46,7 @@ public class DocumentoController {
 	
 	private static final Log Logger = LogFactory.getLog(DocumentoController.class);
 	
-	@Autowired
-	private GuiaService guiaservice;
+
 	
 	@Autowired
 	private DocumentoService documentoService;

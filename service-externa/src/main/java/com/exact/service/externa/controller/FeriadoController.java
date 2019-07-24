@@ -1,7 +1,6 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exact.service.externa.service.interfaces.IFeriadoService;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 @RequestMapping("/feriados")

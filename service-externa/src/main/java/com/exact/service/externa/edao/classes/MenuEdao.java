@@ -27,9 +27,7 @@ public class MenuEdao implements IMenuEdao{
 	
 	@Autowired
 	private IRequester requester;
-	
-	private final String path = "/empleados";	
-	
+		
 	private final String menusPath = "/menus";	
 
 	@Override

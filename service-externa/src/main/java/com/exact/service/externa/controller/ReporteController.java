@@ -2,9 +2,7 @@ package com.exact.service.externa.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -57,12 +55,10 @@ public class ReporteController {
 	private static final String SINFECHA = "Ingrese las fechas requeridas";
 	private static final String FINALINICIO = "Ingreso de rangos incorrectos";
 	private static final String RANGOINCORRECTO = "Ingrese un máximo de 13 meses";
-	private static final String CORRECTO = "0";
 	HttpStatus status = HttpStatus.OK;
 	String rpta = "";
 	Map<String, Object> respuesta = new HashMap<String, Object>();
 
-	private static final Log Logger = LogFactory.getLog(ReporteController.class);
 
 	
 	@GetMapping("/volumen")

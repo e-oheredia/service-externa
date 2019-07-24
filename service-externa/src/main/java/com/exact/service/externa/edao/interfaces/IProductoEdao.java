@@ -2,7 +2,6 @@ package com.exact.service.externa.edao.interfaces;
 
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import io.jsonwebtoken.io.IOException;

@@ -5,9 +5,7 @@ import java.io.IOException;
 import javax.mail.MessagingException;
 
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.exact.service.externa.entity.Envio;

@@ -3,17 +3,10 @@ package com.exact.service.externa.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-
-import com.exact.service.externa.entity.id.ReporteAsignacionPlazoId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity

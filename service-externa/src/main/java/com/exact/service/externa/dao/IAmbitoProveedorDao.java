@@ -1,6 +1,5 @@
 package com.exact.service.externa.dao;
 
-import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.entity.AmbitoProveedor;
-import com.exact.service.externa.entity.PlazoDistribucion;
 
 public interface IAmbitoProveedorDao extends CrudRepository<AmbitoProveedor,Long >{
 

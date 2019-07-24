@@ -1,7 +1,6 @@
 package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,14 +11,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IDocumentoReporteDao;
@@ -32,7 +29,6 @@ import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IRegionService;
 import com.exact.service.externa.service.interfaces.IReporteVolumenService;
-import com.exact.service.externa.service.interfaces.ISedeService;
 
 @Service
 public class ReporteVolumenService implements IReporteVolumenService {
@@ -60,11 +56,6 @@ public class ReporteVolumenService implements IReporteVolumenService {
 	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat dtmes = new SimpleDateFormat("yyyy-MM");
 	
-	private static final String MALFORMATO = "Ingrese Formato correcto";
-	private static final String SINFECHA = "Ingrese las fechas requeridas";
-	private static final String FINALINICIO = "Ingreso de rangos incorrectos";
-	private static final String RANGOINCORRECTO = "Ingrese un máximo de 13 meses";
-	private static final String CORRECTO = "0";
 	private static final Log Logger = LogFactory.getLog(ReporteVolumenService.class);
 
 	
@@ -133,7 +124,6 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
 		int cantidadtotal = reportes.size();		
-		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		Iterable<Map<String, Object>> sedes = sedeEdao.listarSedesDespacho();
 		
 		for (Map<String, Object> sede : sedes) {
@@ -175,7 +165,6 @@ public class ReporteVolumenService implements IReporteVolumenService {
 		Iterable<DocumentoReporte> entidades = reportedao.buscarvolumenporfechas(dateI,dateF);
 		List<DocumentoReporte> reportes = new ArrayList<>();
 		reportes = StreamSupport.stream(entidades.spliterator(), false).collect(Collectors.toList());
-		int cantidadtotal = reportes.size();
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
@@ -195,7 +184,6 @@ public class ReporteVolumenService implements IReporteVolumenService {
 				Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 				Iterable<PlazoDistribucion> pds = plazoservice.listarPlazosByRegionId( Long.valueOf(region.get("id").toString())  );
 				for (PlazoDistribucion entidad : pds) {
-					boolean validar = false;
 					int cantidadproveedor=0;
 					for (DocumentoReporte dr : reportes) {
 						

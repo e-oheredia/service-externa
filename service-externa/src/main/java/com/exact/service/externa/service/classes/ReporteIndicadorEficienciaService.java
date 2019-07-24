@@ -41,7 +41,6 @@ public class ReporteIndicadorEficienciaService implements IReporteIndicadorEfici
 	@Autowired
 	IPlazoDistribucionService plazoservice;
 	
-	private static final Log Logger = LogFactory.getLog(ReporteIndicadorEficienciaService.class);
 
 	
 	@Override
