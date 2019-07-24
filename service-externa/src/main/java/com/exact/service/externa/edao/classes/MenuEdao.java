@@ -32,7 +32,7 @@ public class MenuEdao implements IMenuEdao{
 	private final String menusPath = "/menus";	
 
 	@Override
-	public Iterable<Map<String, Object>> listarMenuByPermisoIds(List<Long> permisoIds) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarMenuByPermisoIds(List<Long> permisoIds) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(menuPath + menusPath + "?permisoIds=" + String.join(",", permisoIds.stream().map(id -> id.toString())
 				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);

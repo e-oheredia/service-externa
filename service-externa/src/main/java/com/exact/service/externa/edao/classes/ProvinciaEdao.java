@@ -48,7 +48,7 @@ public class ProvinciaEdao implements IProvinciaEdao {
 		}
 	}
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {

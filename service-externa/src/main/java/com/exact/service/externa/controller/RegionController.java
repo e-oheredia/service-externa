@@ -51,15 +51,15 @@ public class RegionController {
 		int rpta = (int) ambitoModificado.get("responsecode");
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(ambitoModificado, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ambitoModificado, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(ambitoModificado, HttpStatus.OK);
+			return new ResponseEntity<>(ambitoModificado, HttpStatus.OK);
 		} 
 		
 	}
 	
 	@GetMapping("/ambitos")
-	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws IOException, JSONException, Exception {
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAllAmbitos() throws Exception {
 		return new ResponseEntity<>(regionservice.listarAmbitos(), HttpStatus.OK);
 	}
 	

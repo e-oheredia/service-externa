@@ -36,7 +36,7 @@ public class FeriadoEdao implements IFeriadoEdao{
 
 
 	@Override
-	public Map<String, Object> Eliminar(Long id ) throws IOException, JSONException, Exception {
+	public Map<String, Object> Eliminar(Long id ) throws Exception {
 		HttpDelete httdel = new HttpDelete(feriadosPath+"/"+path+"/"+ id);
 		httdel.setHeader("Accept", "application/json");
 		httdel.setHeader("Content-type", "application/json");
@@ -59,7 +59,7 @@ public class FeriadoEdao implements IFeriadoEdao{
 	}
 
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException, java.io.IOException {
+	public Iterable<Map<String, Object>> listarAll() throws JSONException, java.io.IOException {
 		HttpGet httpGet = new HttpGet(feriadosPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		
@@ -80,7 +80,7 @@ public class FeriadoEdao implements IFeriadoEdao{
 	}
 
 	@Override
-	public Map<String, Object> guardar(String feriado) throws IOException, JSONException, Exception {
+	public Map<String, Object> guardar(String feriado) throws Exception {
 		HttpPost httpost = new HttpPost(feriadosPath + path);
 		StringEntity entity = new StringEntity(feriado);
 		httpost.setEntity(entity);

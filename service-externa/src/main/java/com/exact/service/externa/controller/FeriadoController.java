@@ -48,23 +48,23 @@ public class FeriadoController {
 	
 	@GetMapping
 	public ResponseEntity<Iterable<Map<String, Object>>> listarferiados() throws IOException, JSONException{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(feriadoservice.listarferiados(), HttpStatus.OK);
+		return new ResponseEntity<>(feriadoservice.listarferiados(), HttpStatus.OK);
 	} 
 	
 	
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> guardar(@RequestBody String feriado) throws io.jsonwebtoken.io.IOException, Exception{
+	public ResponseEntity<Map<String, Object>> guardar(@RequestBody String feriado) throws Exception{
 		
-		Map<String,Object> Ambito = feriadoservice.guardarferiados(feriado);
+		Map<String,Object> ambitoNuevo = feriadoservice.guardarferiados(feriado);
 		
 		
-		int rpta = (int) Ambito.get("responsecode");
+		int rpta = (int) ambitoNuevo.get("responsecode");
 		
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ambitoNuevo, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
+			return new ResponseEntity<>(ambitoNuevo, HttpStatus.OK);
 		} 
 		
 		

@@ -36,13 +36,13 @@ public class BuzonController {
 	public ResponseEntity<Map<String, Object>> listarBuzonById(@PathVariable Long id)
 			throws IOException, JSONException {
 		Map<String, Object> buzon = buzonService.listarById(id);
-		return new ResponseEntity<Map<String, Object>>(buzon, buzon == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+		return new ResponseEntity<>(buzon, buzon == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
 	public ResponseEntity<BuzonPlazoDistribucion> listarPlazoDistribucionByBuzonId(@PathVariable Long id) {
 		BuzonPlazoDistribucion buzonPlazoDistribucion = buzonPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<BuzonPlazoDistribucion>(buzonPlazoDistribucion,
+		return new ResponseEntity<>(buzonPlazoDistribucion,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
@@ -64,14 +64,14 @@ public class BuzonController {
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<Map<String, Object>>>(buzonService.listarAll(), HttpStatus.OK);
+		return new ResponseEntity<>(buzonService.listarAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/buzonesplazo")
 	public ResponseEntity<Iterable<BuzonPlazoDistribucion>> listarAllBuzonPlazo()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<BuzonPlazoDistribucion>>(buzonPlazoDistribucionService.listarBuzonPlazo(), HttpStatus.OK);
+		return new ResponseEntity<>(buzonPlazoDistribucionService.listarBuzonPlazo(), HttpStatus.OK);
 	}
 	
 }

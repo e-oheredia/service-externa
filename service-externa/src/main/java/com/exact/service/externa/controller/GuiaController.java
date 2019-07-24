@@ -108,7 +108,7 @@ public class GuiaController {
 		DocumentoGuia dg = documentoGuiaService.validarDocumentoGuia(guiaId, documentoId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		
 		if (dg == null) {
-			Map<String, Object> respuesta = new HashMap<String, Object>();
+			Map<String, Object> respuesta = new HashMap<>();
 			respuesta.put("mensaje", "No existe el documento asociado a la guia.");	
 			return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
 		}

@@ -31,7 +31,7 @@ public class EmpleadoEdao implements IEmpleadoEdao{
 	private final String path = "/empleados";	
 
 	@Override
-	public Map<String, Object> listarByMatricula(String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Map<String, Object> listarByMatricula(String matricula) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "?matricula=" + matricula);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		
@@ -52,7 +52,7 @@ public class EmpleadoEdao implements IEmpleadoEdao{
 	}
 
 	@Override
-	public Long findSede(String matricula) throws ClientProtocolException, IOException, JSONException {
+	public Long findSede(String matricula) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "?matricula=" + matricula);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		
@@ -72,7 +72,7 @@ public class EmpleadoEdao implements IEmpleadoEdao{
 	}
 
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "/empleados");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		

@@ -47,6 +47,8 @@ public class DocumentoController {
 	
 	private static final String IDUSUARIO = "idUsuario";
 	private static final String FECHAIMCOMPLETA = "VALOR DE FECHAS INCOMPLETAS";
+	private static final String FECHANOVALIDA = "FORMATO DE FECHAS NO VALIDA";
+	private static final String MATRICULA = "matricula";
 	
 	@Autowired
 	private DocumentoService documentoService;
@@ -143,7 +145,7 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(FECHANOVALIDA, HttpStatus.BAD_REQUEST);
 		}
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
@@ -172,7 +174,7 @@ public class DocumentoController {
 	public ResponseEntity<String> listarDocumentosEntregados(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados(datosUsuario.get("matricula").toString());
+		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados(datosUsuario.get(MATRICULA).toString());
 		List<Documento> documentosParaCargo = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosParaCargo.isEmpty()) {
 			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
@@ -213,7 +215,7 @@ public class DocumentoController {
 	public ResponseEntity<String> listarDocumentosDevueltosParaCargos(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos(datosUsuario.get("matricula").toString());
+		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos(datosUsuario.get(MATRICULA).toString());
 		List<Documento> documentosdevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosdevueltos.isEmpty()) {
 			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
@@ -280,7 +282,7 @@ public class DocumentoController {
 				dateI = dt.parse(fechaini);
 				dateF = dt.parse(fechafin); 
 			} catch (Exception e) {
-				return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(FECHANOVALIDA, HttpStatus.BAD_REQUEST);
 			}
 			
 			if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
@@ -324,7 +326,7 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(FECHANOVALIDA, HttpStatus.BAD_REQUEST);
 		}
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
@@ -359,7 +361,7 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(FECHANOVALIDA, HttpStatus.BAD_REQUEST);
 		}
 		
 		Iterable<Documento> documentos = documentoService.listarCargos(dateI,dateF);
@@ -440,7 +442,7 @@ public class DocumentoController {
 	public ResponseEntity<String> listarDocumentosaRecepcionar(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Iterable<Documento> documentos = documentoService.listarDocumentosRecepcion(datosUsuario.get("matricula").toString());
+		Iterable<Documento> documentos = documentoService.listarDocumentosRecepcion(datosUsuario.get(MATRICULA).toString());
 		if(documentos==null) {
 			return new ResponseEntity<>("NO EXISTEN DOCUMENTOS PARA RECEPCIONAR", HttpStatus.NOT_FOUND);
 		}
@@ -459,7 +461,7 @@ public class DocumentoController {
 	public ResponseEntity<String> listarDocumentoRecepcionado(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Documento documento = documentoService.listarDocumentoaRecepcionar(id, datosUsuario.get("matricula").toString());
+		Documento documento = documentoService.listarDocumentoaRecepcionar(id, datosUsuario.get(MATRICULA).toString());
 		if(documento==null) {
 			return new ResponseEntity<>("NO SE PUEDE RECEPCIONAR EL DOCUMENTO", HttpStatus.NOT_FOUND);
 		}

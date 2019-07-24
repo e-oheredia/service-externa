@@ -70,7 +70,7 @@ public class RegionEdao implements IRegionEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listardiaslaborales(Long ambitoid)
-			throws ClientProtocolException, java.io.IOException, JSONException {
+			throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
@@ -88,7 +88,7 @@ public class RegionEdao implements IRegionEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listarhoraslaborales(Long ambitoid)
-			throws ClientProtocolException, java.io.IOException, JSONException {
+			throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
@@ -106,12 +106,12 @@ public class RegionEdao implements IRegionEdao {
 
 	@Override
 	public Iterable<Map<String, Object>> listarambitosdiaslabores()
-			throws ClientProtocolException, java.io.IOException, JSONException {
+			throws java.io.IOException, JSONException {
 		return null;
 	}	
 	
 	@Override
-	public Map<String, Object> modificarAmbito(Long id, String ambito) throws IOException, JSONException, ClientProtocolException, java.io.IOException {
+	public Map<String, Object> modificarAmbito(Long id, String ambito) throws IOException, JSONException, java.io.IOException {
 		HttpPut httput = new HttpPut(regionesPath+"/"+path+"/"+ id);
 		StringEntity entity = new StringEntity(ambito);
 		httput.setEntity(entity);
@@ -154,7 +154,7 @@ public class RegionEdao implements IRegionEdao {
 
 	@Override
 	public Map<String, Object> listardias(Long ambitoid, String fecha1, String fecha2)
-			throws ClientProtocolException, java.io.IOException, JSONException, URISyntaxException {
+			throws java.io.IOException, JSONException, URISyntaxException {
 		URI uri = new URIBuilder(regionesPath+"/"+path+"/"+ ambitoid+subpath4) 
 			    .addParameter("fecha1", fecha1) 
 			    .addParameter("fecha2", fecha2) 
@@ -228,7 +228,7 @@ public class RegionEdao implements IRegionEdao {
 
 	@Override
 	public Map<String, Object> guardarSubAmbito(String subambito)
-			throws ClientProtocolException, java.io.IOException, JSONException {
+			throws java.io.IOException, JSONException {
 		HttpPost httpost = new HttpPost(regionesPath + path2);
 		StringEntity entity = new StringEntity(subambito);
 		httpost.setEntity(entity);
@@ -270,7 +270,7 @@ public class RegionEdao implements IRegionEdao {
 	}
 	
 	@Override
-	public Map<String, Object> listarFechaLimite(Long id, String fecha, double hora, int tipo) throws IOException, JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
+	public Map<String, Object> listarFechaLimite(Long id, String fecha, double hora, int tipo) throws JSONException, URISyntaxException, ClientProtocolException, java.io.IOException {
 		String horas = String.valueOf(hora);
 		String tipoplazo = Integer.toString(tipo);
 		URI uri = new URIBuilder(regionesPath + path +"/"+ id +"/fechalimite") 
@@ -333,8 +333,8 @@ public class RegionEdao implements IRegionEdao {
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
 			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String response = EntityUtils.toString(httpResponse.getEntity());
-				return response;
+				return EntityUtils.toString(httpResponse.getEntity());
+				
 			}else {
 				return null;
 			}

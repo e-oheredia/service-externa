@@ -56,7 +56,7 @@ public class EnvioMasivoController {
 			return new ResponseEntity<>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");

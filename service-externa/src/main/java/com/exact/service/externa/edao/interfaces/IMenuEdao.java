@@ -8,5 +8,5 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 public interface IMenuEdao {
-	Iterable<Map<String, Object>> listarMenuByPermisoIds(List<Long> permisoIds) throws ClientProtocolException, IOException, JSONException;
+	Iterable<Map<String, Object>> listarMenuByPermisoIds(List<Long> permisoIds) throws IOException, JSONException;
 }

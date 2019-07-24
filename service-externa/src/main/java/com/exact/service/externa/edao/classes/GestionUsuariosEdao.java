@@ -25,14 +25,13 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 	private IRequester requester;
 	
 	@Override
-	public String obtenerCorreoAutorizador(Long id, String header) throws ParseException, IOException, JSONException {
+	public String obtenerCorreoAutorizador(Long id, String header) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(serviceUsuariosPath + "/perfil" + "/" + id +"/correousuario");
 		httpGet.addHeader("Authorization", header);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String response = EntityUtils.toString(httpResponse.getEntity());
-				return response;
+				return EntityUtils.toString(httpResponse.getEntity());
 			}else {
 				return null;
 			}
@@ -51,8 +50,8 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				
 				
-				String response = EntityUtils.toString(httpResponse.getEntity());
-				return response;
+				return EntityUtils.toString(httpResponse.getEntity());
+				
 			}else {
 				return null;
 			}
@@ -68,8 +67,8 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String response = EntityUtils.toString(httpResponse.getEntity());
-				return response;
+				return EntityUtils.toString(httpResponse.getEntity());
+				
 			}else {
 				return null;
 			}
@@ -85,8 +84,8 @@ public class GestionUsuariosEdao implements IGestionUsuariosEdao{
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				String response = EntityUtils.toString(httpResponse.getEntity());
-				return response;
+				return EntityUtils.toString(httpResponse.getEntity());
+				
 			}else {
 				return null;
 			}
