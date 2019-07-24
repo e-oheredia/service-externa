@@ -31,6 +31,7 @@ import com.exact.service.externa.service.interfaces.ICargosService;
 
 import static com.exact.service.externa.enumerator.TipoDevolucionEnum.CARGO;
 import static com.exact.service.externa.enumerator.TipoDevolucionEnum.REZAGO;
+import static com.exact.service.externa.enumerator.TipoDevolucionEnum.DENUNCIA;
 import static com.exact.service.externa.enumerator.EstadoCargoEnum.PENDIENTE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
@@ -178,7 +179,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, REZAGADO, NO_DISTRIBUIBLE);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
@@ -187,12 +188,42 @@ public class CargosService implements ICargosService {
 		for(Date mess : meses) {
 			listademeses.add(dt.format(mess)); 
 		}
+		List<DocumentoReporte> drs = new ArrayList<>();
 		
 		List<DocumentoReporte> reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(reportes.size()==0) {
 			return null;
 
 		}
+		//List<Long> documentoids = new ArrayList<>();
+		
+		
+		for(DocumentoReporte documento : reportes) {
+			if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
+				drs.add(documento);
+			}
+		}
+		
+		if(DENUNCIA==tipoDevolucionId) {
+			if(drs.size()==0) {
+				return null;
+
+			}
+		}
+
+		
+		/*
+		for(DocumentoReporte documentor : reportes) {
+			for(Long id : documentoids) {
+				if(id == documentor.getId()) {
+					dr.add(documentor);
+				}
+			}
+		}
+		
+		
+
+		*/
 		
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> cantidades = new HashMap<>();
@@ -205,7 +236,7 @@ public class CargosService implements ICargosService {
 				int cantidadDevuelto = 0;
 				Map<Integer, Map<String, Integer>> mesesCantidad = new HashMap<>();
 				Map<String, Integer> cantDevueltoPendiendte = new HashMap<>();
-				for (DocumentoReporte documentoreporte : documentos) {
+				for (DocumentoReporte documentoreporte : drs) {
 					if(proveedor.getId()==documentoreporte.getProveedorId()) {
 						if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
 							 
@@ -273,8 +304,26 @@ public class CargosService implements ICargosService {
 		if(reportes.size()==0) {
 			return null;
 
+		}		
+		
+		List<DocumentoReporte> drs = new ArrayList<>();
+		
+		//List<Long> documentoids = new ArrayList<>();
+		
+		
+		for(DocumentoReporte documento : reportes) {
+			if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
+				drs.add(documento);
+			}
 		}
 		
+		if(DENUNCIA==tipoDevolucionId) {
+			if(drs.size()==0) {
+				return null;
+
+			}
+		}
+
 		
 		Iterable<AreaPlazoDistribucion> areasBD = areaplazodao.findAll();
 		List<String> listademeses = new ArrayList<>();
@@ -289,7 +338,7 @@ public class CargosService implements ICargosService {
 			for(String mesaño : listademeses) {
 				int cantidadArea =0;
 				Map<Integer, Integer> cantArea = new HashMap<>();
-				for (DocumentoReporte documentoreporte : documentos) {
+				for (DocumentoReporte documentoreporte : drs) {
 					if(area.getAreaId()==documentoreporte.getArea()) {
 						if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
 							cantidadArea++;

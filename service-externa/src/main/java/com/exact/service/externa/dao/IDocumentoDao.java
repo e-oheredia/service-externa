@@ -104,5 +104,15 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "(sd.estadoDocumento.id!=4 AND sd.estadoDocumento.id!=5 AND sd.estadoDocumento.id!=6 AND sd.estadoDocumento.id!=9 AND sd.estadoDocumento.id!=10)) AND "
 			+ "d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.id=?1)")
 	public Iterable<Documento> listardocumentosPendientes(Long guiaId);
+	
+	
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE"
+			+ " dg.guia.id=?1) AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd WHERE sd.id=("
+			+ " SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND sd.estadoDocumento.id = 3)")
+	boolean existeDocumentosPendientes(Long id);
+
+	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+	+ "WHERE sd.motivoEstado.id=16) AND d.id=?1")
+	boolean findDocumentoConDenuncias(Long documentosId);
 
 }
