@@ -3,6 +3,7 @@ package com.exact.service.externa.edao.classes;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
@@ -32,9 +33,17 @@ public class SedeEdao implements ISedeEdao{
 	public Map<String, Object> findSedeByMatricula(String matricula) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "/despacho" +"/" + matricula);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 		
 	}
 	
@@ -42,9 +51,17 @@ public class SedeEdao implements ISedeEdao{
 	public Iterable<Map<String, Object>> listarSedesDespacho() throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "/sedesdespacho");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	
 	}
 

@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -54,9 +55,17 @@ public class RegionEdao implements IRegionEdao {
 	public Iterable<Map<String, Object>> listarAmbitos() throws Exception{
 		HttpGet httpGet = new HttpGet(regionesPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -64,9 +73,17 @@ public class RegionEdao implements IRegionEdao {
 			throws ClientProtocolException, java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -74,9 +91,17 @@ public class RegionEdao implements IRegionEdao {
 			throws ClientProtocolException, java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path + "/" + ambitoid.toString() + subpath2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -93,9 +118,17 @@ public class RegionEdao implements IRegionEdao {
 		httput.setHeader("Accept", "application/json");
 		httput.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPut(httput);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		 	
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		 	
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -106,9 +139,17 @@ public class RegionEdao implements IRegionEdao {
 		httpost.setHeader("Accept", "application/json");
 		httpost.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -120,18 +161,34 @@ public class RegionEdao implements IRegionEdao {
 			    .build();
 		HttpGet httpGet = new HttpGet(uri);		
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitos() throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -139,18 +196,34 @@ public class RegionEdao implements IRegionEdao {
 			throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path +"/"+ id +path2);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path2 +"/activos");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -162,9 +235,17 @@ public class RegionEdao implements IRegionEdao {
 		httpost.setHeader("Accept", "application/json");
 		httpost.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -175,9 +256,17 @@ public class RegionEdao implements IRegionEdao {
 		httput.setHeader("Accept", "application/json");
 		httput.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPut(httput);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		 	
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		 	
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	@Override
@@ -191,44 +280,84 @@ public class RegionEdao implements IRegionEdao {
 			    .build();
 		HttpGet httpGet = new HttpGet(uri);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		 	
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		 	
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitosByIds(List<Long> ids) throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path2 + "?ids=" + String.join(",", ids.stream().map(id -> id.toString()).collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitosByRegion(Long id) throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path2 + "/" + id + "/region" );
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	@Override
 	public String listarAmbitosByNombre(List<String> nombres) throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path2 + "?nombres=" + String.join(",", nombres.stream().map(id -> id.toString()).collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		return response;
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				return response;
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	@Override
 	public Map<String,Object> listarRegionByDistrito(Long id) throws java.io.IOException, JSONException {
 		HttpGet httpGet = new HttpGet(regionesPath + path + "/ambito" + "/" + id);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		 	
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		 	
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	
 	
