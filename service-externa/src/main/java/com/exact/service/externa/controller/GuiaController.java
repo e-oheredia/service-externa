@@ -43,13 +43,13 @@ public class GuiaController {
 	IDocumentoGuiaService documentoGuiaService;
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException,Exception {
+	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
 		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas(datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
@@ -67,7 +67,7 @@ public class GuiaController {
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Guia> guiasCreadas = guiaService.listarGuiasBloques(Long.valueOf(datosUsuario.get("idUsuario").toString()),datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
@@ -80,12 +80,12 @@ public class GuiaController {
 	
 	
 	@PostMapping
-	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		Guia nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
 		if (nuevaGuia == null) {
-			Map<String, Object> respuesta = new HashMap<String, Object>();
+			Map<String, Object> respuesta = new HashMap<>();
 			respuesta.put("mensaje", "No existen documentos custodiados para la Guia");	
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
@@ -105,7 +105,7 @@ public class GuiaController {
 	}
 	
 	@PutMapping("/{guiaId}/documentos/{documentoId}/validacion")
-	public ResponseEntity<?> validarDocumentoGuia(@PathVariable Long guiaId, @PathVariable Long documentoId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<?> validarDocumentoGuia(@PathVariable Long guiaId, @PathVariable Long documentoId, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
@@ -114,7 +114,7 @@ public class GuiaController {
 		if (dg == null) {
 			Map<String, Object> respuesta = new HashMap<String, Object>();
 			respuesta.put("mensaje", "No existe el documento asociado a la guia.");	
-			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
 		}
 		
 		CommonUtils cu = new CommonUtils();
@@ -131,12 +131,12 @@ public class GuiaController {
 	
 	
 	@PutMapping("{guiaId}/retiro")
-	public ResponseEntity<?> eliminarDocumentosGuiaNoValidados(@PathVariable Long guiaId, Authentication authentication)  throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<Map<String, Object>> eliminarDocumentosGuiaNoValidados(@PathVariable Long guiaId, Authentication authentication)  throws IOException, JSONException{
 		
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		
 		valor = guiaService.quitarDocumentosGuia(guiaId);
 		
@@ -157,18 +157,22 @@ public class GuiaController {
 			rpta="NO EXISTE ELEMENTOS NO VALIDADOS";
 				status=HttpStatus.BAD_REQUEST;
 				break;
+		default:
+			rpta="ERROR EN ELIMINAR DOCUMENTOS GUIA";
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		}
 		
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 	}
 	
 	
 	@PutMapping("{guiaId}/envio")
-	public ResponseEntity<?> enviarGuia(@PathVariable Long guiaId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<Map<String, Object>> enviarGuia(@PathVariable Long guiaId, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
@@ -192,19 +196,23 @@ public class GuiaController {
 			rpta ="NO SE PUEDE REALIZAR LA ACCIÓN, LA GUIA YA HA SIDO ENVIADA";
 			status=HttpStatus.BAD_REQUEST;
 			break;
+		default:
+			rpta ="ERROR EN ENVIAR GUIA";
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		}
 		
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 		
 			
 	}
 	
 	@PutMapping("{guiaId}")
-	public ResponseEntity<?> modificarGuia(@PathVariable Long guiaId, @RequestBody Guia guia) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<Map<String, Object>> modificarGuia(@PathVariable Long guiaId, @RequestBody Guia guia) throws IOException, JSONException{
 		
 		
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
@@ -229,12 +237,12 @@ public class GuiaController {
 		}
 		
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 	}
 	
 	@DeleteMapping("{guiaId}")
-	public ResponseEntity<?> eliminarGuia(@PathVariable Long guiaId) throws ClientProtocolException, IOException, JSONException{
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+	public ResponseEntity<Map<String, Object>> eliminarGuia(@PathVariable Long guiaId) throws IOException, JSONException{
+		Map<String, Object> respuesta = new HashMap<>();
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
@@ -252,16 +260,20 @@ public class GuiaController {
 				rpta ="ESTADO DE GUIA NO VALIDO";
 				status=HttpStatus.BAD_REQUEST;
 				break;
+		default:
+				rpta ="ERROR EN ELIMINAR";
+				status=HttpStatus.BAD_REQUEST;
+				break;
 		}
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 	}
 	
 	@GetMapping("/procesarguias")
-	public ResponseEntity<String> listarGuiasRegularParaProveedor() throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasRegularParaProveedor() throws Exception {
 		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasParaProveedor();
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
@@ -269,47 +281,35 @@ public class GuiaController {
 		filter.put("GuiaFilter", "documentosGuia");	
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/sincerrar")
-	public ResponseEntity<String> listarGuiasSinCerrar() throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasSinCerrar() throws Exception {
 		Iterable<Guia> guiasSinCerrar = guiaService.listarGuiasSinCerrar();
 		CommonUtils cu = new CommonUtils();	  
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("GuiaFilter", "documentosGuia");			
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasSinCerrar,filter);
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
-//	@PutMapping("{id}/desvalidar")
-//	public ResponseEntity<?> desvalidarDocumentoGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
-//		DocumentoGuia dg = documentoGuiaService.desvalidarDocumento(id);
-//		CommonUtils cu = new CommonUtils();
-//		Map<String, String> filter = new HashMap<String, String>();
-//		filter.put("envioFilter", "documentos");
-//		filter.put("documentoFilter", "documentosGuia");
-//		filter.put("guiaFilter", "documentosGuia");
-//		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-//		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
-//			
-//		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
-//	}
+
 	
 	@GetMapping("{id}/reporteguias")
-	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia, @RequestParam(name="verificador", required=false) Long verificador, @PathVariable Long id) throws ClientProtocolException, IOException, JSONException, ParseException, Exception 
+	public ResponseEntity<String> listarGuiasParaReporte(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="numeroGuia", required=false) String numeroGuia, @RequestParam(name="verificador", required=false) Long verificador, @PathVariable Long id) throws Exception 
 	{
 		if(numeroGuia!=null){
 			Guia guia = guiaService.listarPorNumeroGuia(numeroGuia,verificador,id);
 			if(guia==null) {
-				return new ResponseEntity<String>("No existe Guia con ese numero", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("No existe Guia con ese numero", HttpStatus.BAD_REQUEST);
 			}
 			CommonUtils cu = new CommonUtils();
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentoFilter", "documentosGuia");
 			filter.put("documentosGuiaFilter", "guia");
@@ -317,18 +317,18 @@ public class GuiaController {
 			filter.put("GuiaFilter", "documentosGuia");	
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(guia,filter);
-			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		}
 		else{
 			if(fechaini=="" || fechafin==""){
-				return new ResponseEntity<String>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Valores de fecha incompletos", HttpStatus.BAD_REQUEST);
 			}
 			Iterable<Guia> guias = guiaService.listarGuiasPorFechas(fechaini, fechafin,verificador,id);
 			if(guias==null) {
-				return new ResponseEntity<String>("Error en Listar Guías", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("Error en Listar Guías", HttpStatus.BAD_REQUEST);
 			}
 			CommonUtils cu = new CommonUtils();
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentoFilter", "documentosGuia");
 			filter.put("documentosGuiaFilter", "guia");
@@ -336,17 +336,17 @@ public class GuiaController {
 			filter.put("GuiaFilter", "documentosGuia");	
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(guias,filter);
-		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		}
 	}
 	
 	@PutMapping("{id}/descarga")
-	public ResponseEntity<?> fechaDescargaGuia(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<?> fechaDescargaGuia(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Guia guia = guiaService.fechaDescargaGuia(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
@@ -355,12 +355,12 @@ public class GuiaController {
 		filter.put("GuiaFilter", "documentosGuia");		
 		String dtoMapAsString = cu.filterObjetoJson(guia, filter);
 			
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	
 	@PutMapping("{guiaId}/enviobloque")
-	public ResponseEntity<String> enviarGuiaBloque(@PathVariable Long guiaId, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> enviarGuiaBloque(@PathVariable Long guiaId, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Guia guia = guiaService.enviarGuiaBloque(guiaId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
@@ -377,13 +377,13 @@ public class GuiaController {
 	}
 	
 	@GetMapping("/guiasbloque")
-	public ResponseEntity<String> listarGuiasBloqueCompletadas(Authentication authentication) throws ClientProtocolException, IOException, JSONException, Exception {
+	public ResponseEntity<String> listarGuiasBloqueCompletadas(Authentication authentication) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Guia> guiasParaProveedor = guiaService.listarGuiasBloqueCompletadas(Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
 		
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "guia");
@@ -391,14 +391,14 @@ public class GuiaController {
 		filter.put("GuiaFilter", "documentosGuia");	
 	    String dtoMapAsString = cu.filterListaObjetoJson(guiasParaProveedor,filter);
 		
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}/documentos")
 	public ResponseEntity<String> listarDocumentosPorGuiaId(@PathVariable Long id) throws Exception{
 		Iterable<Documento> documentosBD = guiaService.listarDocumentosPorGuiaId(id);
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -406,14 +406,14 @@ public class GuiaController {
 		filter.put("GuiaFilter", "documentosGuia");	
 		
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosBD,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PutMapping("/cargadevolucionbloque")
-	public ResponseEntity<?> cargarResultadosDevolucion(@RequestBody List<Documento> documentos, Authentication authentication) throws NumberFormatException, Exception{
+	public ResponseEntity<Map<String, Object>> cargarResultadosDevolucion(@RequestBody List<Documento> documentos, Authentication authentication) throws Exception{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		Map<Integer,String> resultado = guiaService.cargarResultadosDevolucion(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		int[] resultadoArray = resultado.keySet().stream().mapToInt(Integer::intValue).toArray();
 		int valor = resultadoArray[0];
@@ -423,7 +423,7 @@ public class GuiaController {
 			status=HttpStatus.OK;
 		}
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 	}
 	
 }

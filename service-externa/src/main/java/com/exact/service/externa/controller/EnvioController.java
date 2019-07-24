@@ -8,9 +8,6 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,18 +66,18 @@ public class EnvioController {
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioRegistrado, filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		
 	}
 	
 	@PutMapping("/{id}/autorizacion")
-	public ResponseEntity<String> autorizarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> autorizarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws IOException, JSONException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
 		Envio envioAutorizado = envioService.autorizarEnvio(id,Long.valueOf(datosUsuario.get(IDUSUARIO).toString()),header,datosUsuario.get("usuario").toString());
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -88,17 +85,17 @@ public class EnvioController {
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioAutorizado, filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}/denegacion")
-	public ResponseEntity<String> denegarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> denegarEnvio(@PathVariable Long id, Authentication authentication, HttpServletRequest req) throws IOException, JSONException {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
 		Envio envioDenegado = envioService.denegarEnvio(id,Long.valueOf(datosUsuario.get(IDUSUARIO).toString()),header);
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -142,7 +139,7 @@ public class EnvioController {
 	@GetMapping("/enviosautorizacion")
 	public ResponseEntity<String> listarEnviosAutorizacion(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin) throws Exception {
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -154,16 +151,16 @@ public class EnvioController {
 	}
 	
 	@PutMapping("/{id}/modificautorizacion")
-	public ResponseEntity<?> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody PlazoDistribucion plazo, Authentication authentication, HttpServletRequest req) throws Exception, IOException {
+	public ResponseEntity<String> modificarPlazoAutorizacion(@PathVariable Long id, @RequestBody PlazoDistribucion plazo, Authentication authentication, HttpServletRequest req) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
 		String header = req.getHeader("Authorization");
 		Envio envioModificado = envioService.modificaPlazo(id, plazo,Long.valueOf(datosUsuario.get(IDUSUARIO).toString()),header);
 		if(envioModificado==null) {
-			return new ResponseEntity<String>("NO SE PUEDE MODIFICAR EL MISMO PLAZO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO SE PUEDE MODIFICAR EL MISMO PLAZO", HttpStatus.BAD_REQUEST);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -181,15 +178,9 @@ public class EnvioController {
 		if(formatoDelTexto.parse(fechaini).compareTo(formatoDelTexto.parse(fechafin))>0) {
 			 return new ResponseEntity<>("El rango de fechas es incorrecto", HttpStatus.BAD_REQUEST);
 		}
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 
 		Iterable<Envio> enviosInconsistencia = envioService.listarEnviosInconsistencias(fechaini, fechafin);
-
-		
-//		if(enviosInconsistencia==null) {
-//			 return new ResponseEntity<String>("NO EXISTEN ENVIOS CON INCONSISTENCIAS", HttpStatus.OK);
-//		}
-		
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
