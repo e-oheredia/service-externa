@@ -28,13 +28,13 @@ public class EstadoDocumentoController {
 	IEstadoDocumentoService estadoDocumentoService;
 	
 	@GetMapping
-	public ResponseEntity<String> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarAll() throws IOException, JSONException {
 		Iterable<EstadoDocumento> eD = estadoDocumentoService.listarAll();
 		List<EstadoDocumento> estadoDocumentos = StreamSupport.stream(eD.spliterator(), false).collect(Collectors.toList());
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("estadosDocumentoPermitidosFilter", "estadosDocumentoPermitidos");
 		String dtoMapAsString = cu.filterListaObjetoJson(estadoDocumentos,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 }

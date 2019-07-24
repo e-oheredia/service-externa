@@ -88,9 +88,14 @@ public class CommonUtils {
 		File convFile = new File(multipartFile.getOriginalFilename());
 	    convFile.createNewFile();
 	    FileOutputStream fos = new FileOutputStream(convFile);
-	    fos.write(multipartFile.getBytes());
-	    fos.close();
-	    return convFile;		
+	    try {
+	    	fos.write(multipartFile.getBytes());
+		    return convFile;
+		} finally {
+			fos.close();
+		}
+	    
+	    
 	}
 	
 	public String filterListaObjetoJson(Iterable<?> lista,Map<String, String> filtro) throws ClientProtocolException, IOException, JSONException{

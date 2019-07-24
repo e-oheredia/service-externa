@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.exact.service.externa.enumerator.EstadoCargoEnum.NO_GENERADO;
 
@@ -89,8 +90,12 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 	public void actualizarDocumentosPorResultado(List<Documento> lstdocumento, List<Long> guiaIds) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		Map<Long, Date> fechaGuias = new HashMap<Long, Date>();
 		List<Long> documentosIds = new ArrayList<>();
+		Guia guia = new Guia();
 		for(int i=0;i<guiaIds.size();i++) {
-			Guia guia = guiadao.findById(guiaIds.get(i)).get();
+			Optional<Guia> guiaOptional = guiadao.findById(guiaIds.get(i));
+			if(guiaOptional.isPresent()) {
+				guia = guiaOptional.get();
+			}
 			Date fechaLimite = guiaservice.getFechaLimite(guia);
 			fechaGuias.put(guiaIds.get(i), fechaLimite);
 		}

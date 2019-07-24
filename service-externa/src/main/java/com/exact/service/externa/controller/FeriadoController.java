@@ -30,18 +30,16 @@ public class FeriadoController {
 
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) throws io.jsonwebtoken.io.IOException, Exception{
+	public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) throws Exception{
 		Logger.info("ddaas");
-		//Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String,Object> ambito = feriadoservice.eliminar(id);
 		
-		Map<String,Object> Ambito = feriadoservice.eliminar(id);
-		
-		int rpta = (int) Ambito.get("responsecode");
+		int rpta = (int) ambito.get("responsecode");
 		
 		if(rpta==400) {
-			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ambito, HttpStatus.BAD_REQUEST);
 		}else {
-			return new ResponseEntity<Map<String, Object>>(Ambito, HttpStatus.OK);
+			return new ResponseEntity<>(ambito, HttpStatus.OK);
 		} 
 	}
 	

@@ -32,7 +32,7 @@ public class AreaController {@Autowired
 	@GetMapping("/{id}/plazodistribucionpermitido")
 	public ResponseEntity<AreaPlazoDistribucion> listarPlazoDistribucionByAreaId(@PathVariable Long id) {
 		AreaPlazoDistribucion areaPlazoDistribucion = areaPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<AreaPlazoDistribucion>(areaPlazoDistribucion,
+		return new ResponseEntity<>(areaPlazoDistribucion,
 				areaPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
@@ -44,7 +44,7 @@ public class AreaController {@Autowired
 		areaPlazoDistribucion.setAreaId(id);
 		AreaPlazoDistribucion areaPlazoDistribucionActualizado = areaPlazoDistribucionService
 				.actualizar(areaPlazoDistribucion,file);
-		return new ResponseEntity<PlazoDistribucion>(
+		return new ResponseEntity<>(
 				areaPlazoDistribucionActualizado == null ? null
 						: areaPlazoDistribucionActualizado.getPlazoDistribucion(),
 				areaPlazoDistribucionActualizado == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
@@ -54,14 +54,14 @@ public class AreaController {@Autowired
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<Map<String, Object>>>(areaService.listarAll(), HttpStatus.OK);
+		return new ResponseEntity<>(areaService.listarAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/areasplazo")
 	public ResponseEntity<Iterable<AreaPlazoDistribucion>> listarAreaPlazos()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<AreaPlazoDistribucion>>(areaPlazoDistribucionService.listarAreaPlazos(), HttpStatus.OK);
+		return new ResponseEntity<>(areaPlazoDistribucionService.listarAreaPlazos(), HttpStatus.OK);
 	}
 	
 }

@@ -11,6 +11,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,30 @@ public class Encryption {
 
 	private  final String initVector = "5865214578523659";
 	public String encrypt(String value) throws IOException {
+		String key = "";
 		File archivo = new File (rutaLlave);
-		FileReader fr = new FileReader (archivo);
-		BufferedReader br = new BufferedReader(fr);
-		String key = br.readLine();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try{
+			fr = new FileReader (archivo);
+			br = new BufferedReader(fr);
+			key = br.readLine();
+		} finally {
+			if(br!=null) {
+				try {
+					br.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(fr!=null) {
+				try {
+					fr.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		byte[] keybytes = key.getBytes("UTF-8");
 
 	    try {
@@ -46,10 +67,30 @@ public class Encryption {
 	}
 	
 	public String decrypt(String encrypted) throws IOException {
+		String key = "";
 		File archivo = new File (rutaLlave);
-		FileReader fr = new FileReader (archivo);
-		BufferedReader br = new BufferedReader(fr);
-		String key = br.readLine();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try{
+			fr = new FileReader (archivo);
+			br = new BufferedReader(fr);
+			key = br.readLine();
+		} finally {
+			if(br!=null) {
+				try {
+					br.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(fr!=null) {
+				try {
+					fr.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		byte[] keybytes = key.getBytes("UTF-8");
 	    try {
 	        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));

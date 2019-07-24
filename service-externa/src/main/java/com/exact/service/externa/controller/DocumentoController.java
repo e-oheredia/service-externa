@@ -46,7 +46,8 @@ public class DocumentoController {
 	
 	private static final Log Logger = LogFactory.getLog(DocumentoController.class);
 	
-
+	private static final String IDUSUARIO = "idUsuario";
+	private static final String FECHAIMCOMPLETA = "VALOR DE FECHAS INCOMPLETAS";
 	
 	@Autowired
 	private DocumentoService documentoService;
@@ -58,40 +59,40 @@ public class DocumentoController {
 	public ResponseEntity<Integer> custodiarDocumentos(@RequestBody List<Documento> documentos, Authentication authentication) {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		return new ResponseEntity<Integer>(
-				documentoService.custodiarDocumentos(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString())), 
+		return new ResponseEntity<>(
+				documentoService.custodiarDocumentos(documentos, Long.valueOf(datosUsuario.get(IDUSUARIO).toString())), 
 				HttpStatus.OK);
 	}
 	
 
 	@GetMapping("/custodiados")
-	public ResponseEntity<String> listarDocumentosCustodiados() throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosCustodiados() throws IOException, JSONException{
 		
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	
 	}
 	
 	
 	@PutMapping("/cargaresultado")
-	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws ClientProtocolException, IOException, JSONException, NumberFormatException, URISyntaxException, ParseException {
+	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws IOException, JSONException, URISyntaxException, ParseException {
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		int valor;
 		String rpta="";
 		HttpStatus status = HttpStatus.OK;
 		
-		Map<Integer,String> resultado = documentoService.cargarResultados(documentos, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Map<Integer,String> resultado = documentoService.cargarResultados(documentos, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		int[] resultadoArray = resultado.keySet().stream().mapToInt(Integer::intValue).toArray();
 
 		valor = resultadoArray[0];
@@ -119,7 +120,9 @@ public class DocumentoController {
 		case 6:	
 			status=HttpStatus.BAD_REQUEST;
 			break;
-		
+		default:
+			status=HttpStatus.BAD_REQUEST;
+			break;
 		}
 		
 		respuesta.put("mensaje", rpta);	
@@ -127,10 +130,10 @@ public class DocumentoController {
 }
 
 	@GetMapping("/consultabcp")
-	public ResponseEntity<String> listarReporteBCP(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @RequestParam(name="idbuzon") Long idbuzon ) throws ClientProtocolException, IOException, JSONException, ParseException, Exception {
+	public ResponseEntity<String> listarReporteBCP(@RequestParam(name="fechaini") String fechaini, @RequestParam(name="fechafin") String fechafin, @RequestParam(name="idbuzon") Long idbuzon ) throws Exception {
 		if(fechaini=="" || fechafin=="") 
 		{
-			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(FECHAIMCOMPLETA, HttpStatus.BAD_REQUEST);
 		}
 		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -167,34 +170,34 @@ public class DocumentoController {
 	}
 	
 	@GetMapping("/entregados")
-	public ResponseEntity<String> listarDocumentosEntregados(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosEntregados(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentos = documentoService.listarDocumentosEntregados(datosUsuario.get("matricula").toString());
 		List<Documento> documentosParaCargo = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		if(documentosParaCargo.size()==0) {
-			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
+		if(documentosParaCargo.isEmpty()) {
+			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosParaCargo,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	
 	}
 	
 	@PutMapping("{id}/recepcioncargo")
-	public ResponseEntity<String> recepcionarEntregados(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> recepcionarEntregados(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		CommonUtils cu = new CommonUtils();
-		Documento documento = documentoService.recepcionarDocumentoEntregado(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Documento documento = documentoService.recepcionarDocumentoEntregado(id, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		if(documento==null) {
-			return new ResponseEntity<String>("NO ES UN DOCUMENTO ENTREGADO O YA SE ENCUENTRA RECEPCIONADO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO ES UN DOCUMENTO ENTREGADO O YA SE ENCUENTRA RECEPCIONADO", HttpStatus.BAD_REQUEST);
 		}
 		
 		Map<String, String> filter = new HashMap<String, String>();
@@ -204,17 +207,17 @@ public class DocumentoController {
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);	
 	}
 	
 	@GetMapping("/pordevolver")
-	public ResponseEntity<String> listarDocumentosDevueltosParaCargos(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosDevueltosParaCargos(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentos = documentoService.listarDocumentosDevueltos(datosUsuario.get("matricula").toString());
 		List<Documento> documentosdevueltos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		if(documentosdevueltos.size()==0) {
-			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
+		if(documentosdevueltos.isEmpty()) {
+			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -228,15 +231,15 @@ public class DocumentoController {
 	}
 	
 	@PutMapping("{id}/recepciondevueltos")
-	public ResponseEntity<String> recepcionardevueltos(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> recepcionardevueltos(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		CommonUtils cu = new CommonUtils();
-		Documento documento = documentoService.recepcionarDocumentoDevuelto(id, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Documento documento = documentoService.recepcionarDocumentoDevuelto(id, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		if(documento==null) {
-			return new ResponseEntity<String>("NO ES UN DOCUMENTO REZAGADO O DEVUELTO ", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO ES UN DOCUMENTO REZAGADO O DEVUELTO ", HttpStatus.BAD_REQUEST);
 		}
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -246,7 +249,7 @@ public class DocumentoController {
 		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
 	}
 	@GetMapping("/consultautd")
-	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws ClientProtocolException, IOException, JSONException, ParseException, Exception 
+	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws IOException, JSONException, ParseException, Exception 
 	{
 		if(autogenerado!=null) {
 			Documento documento = documentoService.listarDocumentoUTD(autogenerado);
@@ -254,20 +257,20 @@ public class DocumentoController {
 				return new ResponseEntity<String>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
 			}
 			CommonUtils cu = new CommonUtils();
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		}
 		else
 		{
 			if(fechaini=="" || fechafin=="") 
 			{
-				return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(FECHAIMCOMPLETA, HttpStatus.BAD_REQUEST);
 			}
 			
 			SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -278,14 +281,14 @@ public class DocumentoController {
 				dateI = dt.parse(fechaini);
 				dateF = dt.parse(fechafin); 
 			} catch (Exception e) {
-				return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
 			}
 			
 			if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 			{
 				Iterable<Documento> documentosUbcp = documentoService.listarReporteUTD(dateI, dateF);
 				CommonUtils cu = new CommonUtils();
-				Map<String, String> filter = new HashMap<String, String>();
+				Map<String, String> filter = new HashMap<>();
 				filter.put("envioFilter", "documentos");
 				filter.put("documentosGuiaFilter", "documento");
 				filter.put("guiaFilter", "documentosGuia");
@@ -294,25 +297,25 @@ public class DocumentoController {
 			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
 			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 			}
-			return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	
 	@GetMapping("/documentosvolumen")
-	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws ClientProtocolException, IOException, JSONException, ParseException, URISyntaxException 
+	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws IOException, JSONException, ParseException, URISyntaxException 
 	{ 
 		Logger.info("FECHA INI : "+ fechaini);
 		Logger.info("FECHA FIN : "+ fechafin);
 		
 		if(fechaini=="" || fechafin=="") 
 		{
-			return new ResponseEntity<String>("VALOR DE FECHAS INCOMPLETAS", HttpStatus.BAD_REQUEST  );
+			return new ResponseEntity<>(FECHAIMCOMPLETA, HttpStatus.BAD_REQUEST  );
 		}
 		
 		
 		if(estado==null) {
-			return new ResponseEntity<String>("NO SE ENCUENTRA ESTADO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO SE ENCUENTRA ESTADO", HttpStatus.BAD_REQUEST);
 		}
 		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -322,7 +325,7 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
 		}
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
@@ -332,7 +335,7 @@ public class DocumentoController {
 			//List<Documento> documentosVolu = StreamSupport.stream(documentosUbcp.spliterator(), false).collect(Collectors.toList());
 			
 			if(documentosUbcp==null) {
-				return new ResponseEntity<String>("no existen documentos", HttpStatus.OK);
+				return new ResponseEntity<>("no existen documentos", HttpStatus.OK);
 			}
 			
 //			for(Documento documento : documentosUbcp) {
@@ -344,21 +347,21 @@ public class DocumentoController {
 //			}	
 			
 			CommonUtils cu = new CommonUtils();	
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
-		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		}
 		
-		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/documentoscargos")
-	public ResponseEntity<String> listarDocumentosEntregadosParaCargos(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosEntregadosParaCargos(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin) throws IOException, JSONException{
 		
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateI= null;
@@ -368,13 +371,13 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
 		}
 		
 		Iterable<Documento> documentos = documentoService.listarCargos(dateI,dateF);
 		List<Documento> documentosCargos = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		if(documentosCargos.size()==0) {
-			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS PARA CARGOS", HttpStatus.NOT_FOUND);
+		if(documentosCargos.isEmpty()) {
+			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS PARA CARGOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -384,18 +387,18 @@ public class DocumentoController {
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosCargos,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	
 	}
 	
 	@PostMapping("/{id}/cambioestado")
-	public ResponseEntity<String> cambiarEstadoDocumento(@PathVariable Long id,@RequestBody SeguimientoDocumento seguimientoDocumento, Authentication authentication ) throws ClientProtocolException, IOException, JSONException, ParseException 
+	public ResponseEntity<String> cambiarEstadoDocumento(@PathVariable Long id,@RequestBody SeguimientoDocumento seguimientoDocumento, Authentication authentication ) throws IOException, JSONException 
 	{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Documento documento = documentoService.cambiarEstadoDocumento(id, seguimientoDocumento, Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Documento documento = documentoService.cambiarEstadoDocumento(id, seguimientoDocumento, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		if(documento==null) {
-			return new ResponseEntity<String>("Cambio de estado no permitido ", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Cambio de estado no permitido ", HttpStatus.BAD_REQUEST);
 		}
 			CommonUtils cu = new CommonUtils();
 			Map<String, String> filter = new HashMap<String, String>();
@@ -405,14 +408,14 @@ public class DocumentoController {
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 			String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-			return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PostMapping("/{id}/codigodevolucion")
-	public ResponseEntity<String> guardarCodigoDevolucion(@PathVariable Long id, @RequestBody String codigoDevolucion, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> guardarCodigoDevolucion(@PathVariable Long id, @RequestBody String codigoDevolucion, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		Documento documento = documentoService.guardarCodigoDevolucion(id, codigoDevolucion,Long.valueOf(datosUsuario.get("idUsuario").toString()));
+		Documento documento = documentoService.guardarCodigoDevolucion(id, codigoDevolucion,Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		if(documento==null) {
 			return new ResponseEntity<String>("No se pudo guardar el codigo devolución", HttpStatus.BAD_REQUEST);
 		}
@@ -431,7 +434,7 @@ public class DocumentoController {
 	public ResponseEntity<String> listarDocumentosPorGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
 		Iterable<Documento> documentos = documentoService.listarDocumentosByGuia(id);
 		List<Documento> documentosGuia = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		if(documentosGuia.size()==0) {
+		if(documentosGuia.isEmpty()) {
 			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS PARA ESTA GUIA", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
@@ -488,7 +491,7 @@ public class DocumentoController {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		CommonUtils cu = new CommonUtils();
-		Documento documento = documentoService.recepcionDocumento(id, Long.valueOf(datosUsuario.get("idUsuario").toString()),tiposDevolucion);
+		Documento documento = documentoService.recepcionDocumento(id, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()),tiposDevolucion);
 		if(documento==null) {
 			return new ResponseEntity<String>("NO SE PUDO RECEPCIONAR", HttpStatus.BAD_REQUEST);
 		}

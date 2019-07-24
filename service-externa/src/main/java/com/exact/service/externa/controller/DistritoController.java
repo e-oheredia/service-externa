@@ -3,7 +3,6 @@ package com.exact.service.externa.controller;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,7 @@ public class DistritoController {
 	IDistritoService distritoService;
 	
 	@GetMapping
-	public ResponseEntity<Iterable<Map<String, Object>>> listarAll() throws ClientProtocolException, IOException, JSONException{
-		return new ResponseEntity<Iterable<Map<String,Object>>>(distritoService.listarAll(), HttpStatus.OK);
+	public ResponseEntity<Iterable<Map<String, Object>>> listarAll() throws IOException, JSONException{
+		return new ResponseEntity<>(distritoService.listarAll(), HttpStatus.OK);
 	}
 }

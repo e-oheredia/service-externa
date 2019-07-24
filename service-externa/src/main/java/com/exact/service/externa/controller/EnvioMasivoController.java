@@ -46,7 +46,7 @@ public class EnvioMasivoController {
 
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
-	public ResponseEntity<String> registrarEnvioMasivo(@RequestParam("envioMasivo") String envioMasivoJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication,HttpServletRequest req ) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
+	public ResponseEntity<String> registrarEnvioMasivo(@RequestParam("envioMasivo") String envioMasivoJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication,HttpServletRequest req ) throws IOException, JSONException, MessagingException{
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
@@ -70,7 +70,7 @@ public class EnvioMasivoController {
 	}
 	
 	@GetMapping("/creados")
-	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarEnviosCreados(Authentication authentication) throws IOException, JSONException {
 		CommonUtils cu = new CommonUtils();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
@@ -80,15 +80,15 @@ public class EnvioMasivoController {
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
-		filter.put("EnvioFilter", "inconsistenciasDocumento");
+//		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		filter.put("EnvioFilter", "documentos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(envioMasivoService.listarEnviosMasivosCreados(datosUsuario.get("matricula").toString()), filter);
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PostMapping("/bloque")
-	public ResponseEntity<String> registrarEnvioBloque(@RequestParam("envioBloque") String envioJsonString,  @RequestParam(value="codigoGuia") String codigoGuia , @RequestParam(value="proveedorId") Long proveedorId, Authentication authentication, HttpServletRequest req) throws IOException, JSONException, NumberFormatException, ParseException, MessagingException{
+	public ResponseEntity<String> registrarEnvioBloque(@RequestParam("envioBloque") String envioJsonString,  @RequestParam(value="codigoGuia") String codigoGuia , @RequestParam(value="proveedorId") Long proveedorId, Authentication authentication, HttpServletRequest req) throws IOException, JSONException, MessagingException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		ObjectMapper mapper = new ObjectMapper();
@@ -96,11 +96,11 @@ public class EnvioMasivoController {
 		String header = req.getHeader("Authorization");
 		EnvioMasivo envioBloqueNuevo = envioMasivoService.registrarEnvioMasivo(envioBloque,Long.valueOf(datosUsuario.get("idUsuario").toString()), null, datosUsuario.get("matricula").toString(),header,datosUsuario.get("perfil").toString());
 		if(envioBloqueNuevo==null) {
-			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
 		}
 		guiaService.crearGuiaBloque(envioBloqueNuevo, Long.valueOf(datosUsuario.get("idUsuario").toString()), codigoGuia, proveedorId,  datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
@@ -108,11 +108,11 @@ public class EnvioMasivoController {
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioBloqueNuevo, filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}/documentos")
-	public ResponseEntity<?> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<?> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorEnvioId(id, datosUsuario.get("matricula").toString());

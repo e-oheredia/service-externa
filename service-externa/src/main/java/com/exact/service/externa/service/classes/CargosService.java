@@ -93,6 +93,9 @@ public class CargosService implements ICargosService {
 				Map<String, Integer> cantidadPendienteDevuelto = new HashMap<>();
 				for (DocumentoReporte documentoreporte : documentoslst) {
 					Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
+					if(documento==null) {
+						return null;
+					}
 					SeguimientoDocumento sd = documento.getUltimoSeguimientoDocumento();
 					if (proveedor.getId() == documentoreporte.getProveedorId()) {
 						if (documentoreporte.getEstadoCargo() == PENDIENTE) {
