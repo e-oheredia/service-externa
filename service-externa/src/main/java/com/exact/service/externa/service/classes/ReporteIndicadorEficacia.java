@@ -47,7 +47,7 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 	private static final Log Logger = LogFactory.getLog(DiaService.class);
 
 	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
-	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
+	SimpleDateFormat dtaño = new SimpleDateFormat("yyyy");				
 
 	@Override
 	public Map<Integer, Map<Integer, Float>> indicadorgrafico(String fechaIni, String fechaFin)

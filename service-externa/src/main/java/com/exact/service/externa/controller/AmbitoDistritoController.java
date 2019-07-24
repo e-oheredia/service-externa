@@ -28,18 +28,18 @@ public class AmbitoDistritoController {
 	@GetMapping()
 	public ResponseEntity<Iterable<AmbitoDistrito>> listarAll()
 			throws IOException, JSONException {
-		return new ResponseEntity<Iterable<AmbitoDistrito>>(ambitoDistritoService.listarAmbitoDistritos(), HttpStatus.OK);
+		return new ResponseEntity<>(ambitoDistritoService.listarAmbitoDistritos(), HttpStatus.OK);
 	}
 	@PutMapping()
 	public ResponseEntity<Map<String, Object>> subirUbigeos(@RequestBody List<Map<String, Object>> distritos)throws IOException, JSONException {
 		
-		Map<String, Object> respuesta = new HashMap<String, Object>();
+		Map<String, Object> respuesta = new HashMap<>();
 		Iterable<AmbitoDistrito> ambitosactualizados = ambitoDistritoService.validarActualizarAmbitoDistrito(distritos);
 		if(ambitosactualizados==null) {
 			respuesta.put("mensaje", "No se actualizaron los ubigeos");
 		}
 			respuesta.put("mensaje", "Se actualizaron los ubigeos");
-		return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.OK);
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
 	
 	

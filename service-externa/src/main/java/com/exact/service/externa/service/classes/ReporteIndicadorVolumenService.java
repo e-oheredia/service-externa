@@ -50,7 +50,7 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 	
 	private static final Log Logger = LogFactory.getLog(ReporteIndicadorVolumenService.class);
 
-	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
+	SimpleDateFormat dtaño = new SimpleDateFormat("yyyy");				
 	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Autowired

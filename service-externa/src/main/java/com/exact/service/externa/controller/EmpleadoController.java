@@ -3,7 +3,6 @@ package com.exact.service.externa.controller;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class EmpleadoController {
 	IEmpleadoService empleadoService;
 	
 	@GetMapping("/autenticado")
-	public ResponseEntity<String> listarEmpleadoAutenticado(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarEmpleadoAutenticado(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		String matricula = (String) datosUsuario.get("matricula");
@@ -33,12 +32,12 @@ public class EmpleadoController {
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	    String dtoMapAsString = mapper.writeValueAsString(empleado);	    
-		return new ResponseEntity<String>(dtoMapAsString, dtoMapAsString == null ? HttpStatus.NOT_FOUND: HttpStatus.OK);		
+		return new ResponseEntity<>(dtoMapAsString, dtoMapAsString == null ? HttpStatus.NOT_FOUND: HttpStatus.OK);		
 	}
 	
 	@GetMapping()
-	public ResponseEntity<Iterable<Map<String, Object>>> listarEmpleados() throws ClientProtocolException, IOException, JSONException{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(empleadoService.listarEmpleados(), HttpStatus.OK);
+	public ResponseEntity<Iterable<Map<String, Object>>> listarEmpleados() throws IOException, JSONException{
+		return new ResponseEntity<>(empleadoService.listarEmpleados(), HttpStatus.OK);
 	}
 	
 }

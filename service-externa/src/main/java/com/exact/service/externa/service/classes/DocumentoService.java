@@ -631,7 +631,7 @@ public class DocumentoService implements IDocumentoService {
 			return null;
 		}
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
-		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
+		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
@@ -758,7 +758,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		Documento documento = d.get();
 		DocumentoGuia dg = documentoGuiadao.findByDocumentoId(id);
-		SeguimientoDocumento seguimientoDocumento= null;
+		SeguimientoDocumento seguimientoDocumento= new SeguimientoDocumento();
 		Iterable<EstadoDocumento> estadosDocumento = documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getEstadosDocumentoPermitidos();
 		List<EstadoDocumento> lstEstadosDocumento = StreamSupport.stream(estadosDocumento.spliterator(), false).collect(Collectors.toList());	
 		

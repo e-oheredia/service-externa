@@ -53,10 +53,11 @@ public class BuzonController {
 		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
 		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		buzonPlazoDistribucion.setBuzonId(id);
-		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
-				.actualizar(buzonPlazoDistribucion,file);
-		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
-				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService.actualizar(buzonPlazoDistribucion,file);
+		if(buzonPlazoDistribucionActualizado==null) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(buzonPlazoDistribucionActualizado.getPlazoDistribucion(),HttpStatus.OK);
 	}
 	
 	@GetMapping()

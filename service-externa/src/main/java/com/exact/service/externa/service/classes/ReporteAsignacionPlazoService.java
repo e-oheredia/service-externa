@@ -100,7 +100,7 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 					.collect(Collectors.toList());
 			List<Long> areaIds = new ArrayList();
 			for (int i = 0; i < areaslst.size(); i++) {
-				areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
+				areaIds.add(areaslst.get(i).getAreaId());
 			}
 			List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
 			for(AreaPlazoDistribucion area: areaplazos) {
@@ -129,7 +129,7 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 			List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
 			List<Long> buzonIds = new ArrayList();
 			for (int i = 0; i < buzoneslst.size(); i++) {
-				buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
+				buzonIds.add(buzoneslst.get(i).getBuzonId());
 			}
 			List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			for(BuzonPlazoDistribucion buzon : buzonplazos) {

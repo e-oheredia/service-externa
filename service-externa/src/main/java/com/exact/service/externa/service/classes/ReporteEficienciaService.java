@@ -262,6 +262,9 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 	public Long calcularHoras(DocumentoReporte documentoreporte)
 			throws ClientProtocolException, java.io.IOException, JSONException, URISyntaxException, ParseException {
 		Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
+		if(documento==null) {
+			return null;
+		}
 		SeguimientoDocumento seguimientoDocumento = documento.getSeguimientoDocumentoByEstadoId(ENTREGADO);
 		DocumentoGuia dc = documentoguiaDao.findByDocumentoId(documentoreporte.getDocumentoId());
 		Guia guia = guiaDao.findById(dc.getGuia().getId()).orElse(null);
