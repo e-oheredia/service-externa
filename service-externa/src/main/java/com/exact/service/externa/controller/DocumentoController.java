@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -126,7 +125,7 @@ public class DocumentoController {
 		}
 		
 		respuesta.put("mensaje", rpta);	
-		return new ResponseEntity<Map<String, Object>>(respuesta,status);
+		return new ResponseEntity<>(respuesta,status);
 }
 
 	@GetMapping("/consultabcp")
@@ -144,7 +143,7 @@ public class DocumentoController {
 			dateI = dt.parse(fechaini);
 			dateF = dt.parse(fechafin); 
 		} catch (Exception e) {
-			return new ResponseEntity<String>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("FORMATO DE FECHAS NO VALIDA", HttpStatus.BAD_REQUEST);
 		}
 		
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
@@ -152,21 +151,21 @@ public class DocumentoController {
 			Iterable<Documento> documentosUbcp = documentoService.listarReporteBCP(dateI, dateF, idbuzon);
 			
 			if(documentosUbcp==null) {
-				return new ResponseEntity<String>("NO SE ENCONTRARON DOCUMENTOS", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>("NO SE ENCONTRARON DOCUMENTOS", HttpStatus.NOT_FOUND);
 			}
 			
 			CommonUtils cu = new CommonUtils();	    
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
 			filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 			///////////////////////////////////////////////////////////
 		    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
-		    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 		    
 		}
-		return new ResponseEntity<String>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/entregados")
@@ -200,7 +199,7 @@ public class DocumentoController {
 			return new ResponseEntity<>("NO ES UN DOCUMENTO ENTREGADO O YA SE ENCUENTRA RECEPCIONADO", HttpStatus.BAD_REQUEST);
 		}
 		
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
@@ -220,14 +219,14 @@ public class DocumentoController {
 			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS DEVUELTOS O REZAGADOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosdevueltos,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PutMapping("{id}/recepciondevueltos")
@@ -246,15 +245,15 @@ public class DocumentoController {
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);		
 	}
 	@GetMapping("/consultautd")
-	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws IOException, JSONException, ParseException, Exception 
+	public ResponseEntity<String> listarReporteUTD(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam(name="autogenerado", required=false) String autogenerado ) throws Exception 
 	{
 		if(autogenerado!=null) {
 			Documento documento = documentoService.listarDocumentoUTD(autogenerado);
 			if(documento==null) {
-				return new ResponseEntity<String>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>("NO EXISTE DOCUMENTO CON ESE AUTOGENERADO ", HttpStatus.BAD_REQUEST);
 			}
 			CommonUtils cu = new CommonUtils();
 			Map<String, String> filter = new HashMap<>();
@@ -295,7 +294,7 @@ public class DocumentoController {
 				filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 				///////////////////////////////////////////////////////////
 			    String dtoMapAsString = cu.filterListaObjetoJson(documentosUbcp,filter);
-			    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+			    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 			}
 			return new ResponseEntity<>("RANGO DE FECHA NO VALIDA", HttpStatus.BAD_REQUEST);
 		}
@@ -331,21 +330,10 @@ public class DocumentoController {
 		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) 
 		{
 		
-			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF,estado);
-			//List<Documento> documentosVolu = StreamSupport.stream(documentosUbcp.spliterator(), false).collect(Collectors.toList());
-			
+			Iterable<Documento> documentosUbcp = documentoService.listarDocumentosParaVolumen(dateI, dateF,estado);			
 			if(documentosUbcp==null) {
 				return new ResponseEntity<>("no existen documentos", HttpStatus.OK);
 			}
-			
-//			for(Documento documento : documentosUbcp) {
-//				for(DocumentoGuia documentoguia :documento.getDocumentosGuia()) {
-//					Guia guia = documentoguia.getGuia();
-//					guia.setFechaLimite(guiaservice.getFechaLimite(guia));
-//					documentoguia.setGuia(guia);	
-//				}	
-//			}	
-			
 			CommonUtils cu = new CommonUtils();	
 			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
@@ -380,7 +368,7 @@ public class DocumentoController {
 			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS ENTREGADOS PARA CARGOS", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
@@ -401,7 +389,7 @@ public class DocumentoController {
 			return new ResponseEntity<>("Cambio de estado no permitido ", HttpStatus.BAD_REQUEST);
 		}
 			CommonUtils cu = new CommonUtils();
-			Map<String, String> filter = new HashMap<String, String>();
+			Map<String, String> filter = new HashMap<>();
 			filter.put("envioFilter", "documentos");
 			filter.put("documentosGuiaFilter", "documento");
 			filter.put("guiaFilter", "documentosGuia");
@@ -417,106 +405,106 @@ public class DocumentoController {
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Documento documento = documentoService.guardarCodigoDevolucion(id, codigoDevolucion,Long.valueOf(datosUsuario.get(IDUSUARIO).toString()));
 		if(documento==null) {
-			return new ResponseEntity<String>("No se pudo guardar el codigo devolución", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("No se pudo guardar el codigo devolución", HttpStatus.BAD_REQUEST);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}/documentoguia")
-	public ResponseEntity<String> listarDocumentosPorGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosPorGuia(@PathVariable Long id) throws IOException, JSONException{
 		Iterable<Documento> documentos = documentoService.listarDocumentosByGuia(id);
 		List<Documento> documentosGuia = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		if(documentosGuia.isEmpty()) {
-			return new ResponseEntity<String>("NO SE ENCUENTRA DOCUMENTOS PARA ESTA GUIA", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("NO SE ENCUENTRA DOCUMENTOS PARA ESTA GUIA", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosGuia,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/documentosrecepcion")
-	public ResponseEntity<String> listarDocumentosaRecepcionar(Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentosaRecepcionar(Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentos = documentoService.listarDocumentosRecepcion(datosUsuario.get("matricula").toString());
 		if(documentos==null) {
-			return new ResponseEntity<String>("NO EXISTEN DOCUMENTOS PARA RECEPCIONAR", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("NO EXISTEN DOCUMENTOS PARA RECEPCIONAR", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterListaObjetoJson(documentos,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}/listarecepcion")
-	public ResponseEntity<String> listarDocumentoRecepcionado(@PathVariable Long id, Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> listarDocumentoRecepcionado(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Documento documento = documentoService.listarDocumentoaRecepcionar(id, datosUsuario.get("matricula").toString());
 		if(documento==null) {
-			return new ResponseEntity<String>("NO SE PUEDE RECEPCIONAR EL DOCUMENTO", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("NO SE PUEDE RECEPCIONAR EL DOCUMENTO", HttpStatus.NOT_FOUND);
 		}
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PutMapping("{id}/recepcion")
-	public ResponseEntity<String> recepcionCargosDocumentos(@PathVariable Long id, @RequestBody List<TipoDevolucion> tiposDevolucion,Authentication authentication) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> recepcionCargosDocumentos(@PathVariable Long id, @RequestBody List<TipoDevolucion> tiposDevolucion,Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		CommonUtils cu = new CommonUtils();
 		Documento documento = documentoService.recepcionDocumento(id, Long.valueOf(datosUsuario.get(IDUSUARIO).toString()),tiposDevolucion);
 		if(documento==null) {
-			return new ResponseEntity<String>("NO SE PUDO RECEPCIONAR", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO SE PUDO RECEPCIONAR", HttpStatus.BAD_REQUEST);
 		}
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentosGuiaFilter", "documento");
 		filter.put("guiaFilter","documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(documento,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);	
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);	
 	}
 	
 	@PutMapping("{id}/desvalidar")
-	public ResponseEntity<?> desvalidarDocumentoGuia(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException{
+	public ResponseEntity<String> desvalidarDocumentoGuia(@PathVariable Long id) throws IOException, JSONException{
 		DocumentoGuia dg = documentoGuiaService.desvalidarDocumento(id);
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		String dtoMapAsString = cu.filterObjetoJson(dg, filter);
 			
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 }

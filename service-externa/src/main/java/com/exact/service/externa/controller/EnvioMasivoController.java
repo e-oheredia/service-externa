@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +53,7 @@ public class EnvioMasivoController {
 		EnvioMasivo envioMasivo = mapper.readValue(envioMasivoJsonString, EnvioMasivo.class);		
 		EnvioMasivo envioMasivoRegistrado = envioMasivoService.registrarEnvioMasivo(envioMasivo,Long.valueOf(datosUsuario.get("idUsuario").toString()), file,datosUsuario.get("matricula").toString() ,header,datosUsuario.get("perfil").toString());
 		if(envioMasivoRegistrado==null) {
-			return new ResponseEntity<String>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO SE PUDO REGISTRAR EL ENVIO", HttpStatus.BAD_REQUEST);
 		}
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<String, String>();
@@ -65,7 +63,7 @@ public class EnvioMasivoController {
 		filter.put("EnvioFilter", "inconsistenciasDocumento");
 		///////////////////////////////////////////////////////////
 		String dtoMapAsString = cu.filterObjetoJson(envioMasivoRegistrado, filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);		
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);		
 		
 	}
 	
@@ -74,7 +72,7 @@ public class EnvioMasivoController {
 		CommonUtils cu = new CommonUtils();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("documentosFilter", "envio");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
@@ -112,17 +110,17 @@ public class EnvioMasivoController {
 	}
 	
 	@GetMapping("{id}/documentos")
-	public ResponseEntity<?> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
+	public ResponseEntity<String> findDocumentosPorEnvio(@PathVariable Long id, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		Iterable<Documento> documentosBD = documentoService.listarDocumentosPorEnvioId(id, datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();
-		Map<String, String> filter = new HashMap<String, String>();
+		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
 		filter.put("documentoFilter", "documentosGuia");
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		String dtoMapAsString = cu.filterListaObjetoJson(documentosBD,filter);
-		return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 }

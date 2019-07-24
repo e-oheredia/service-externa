@@ -26,12 +26,12 @@ public class SedeController {
 	public ResponseEntity<Map<String, Object>> findSedeByMatricula(@PathVariable String matricula)
 			throws IOException, JSONException {
 		Map<String, Object> sede = sedeService.findSedeByMatricula(matricula);
-		return new ResponseEntity<Map<String, Object>>(sede, sede == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+		return new ResponseEntity<>(sede, sede == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 	
 	@GetMapping("/sedesdespacho")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarSedesDespacho() throws IOException, JSONException{
-		return new ResponseEntity<Iterable<Map<String, Object>>>(sedeService.listarSedesDespacho(), HttpStatus.OK);
+		return new ResponseEntity<>(sedeService.listarSedesDespacho(), HttpStatus.OK);
 	}
 	
 }

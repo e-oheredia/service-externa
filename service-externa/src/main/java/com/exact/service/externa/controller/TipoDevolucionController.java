@@ -19,6 +19,6 @@ public class TipoDevolucionController {
 	
 	@GetMapping
 	public ResponseEntity<Iterable<TipoDevolucion>> listarAll(){
-		return new ResponseEntity<Iterable<TipoDevolucion>>(tipodevolucionService.listarAll(), HttpStatus.OK);
+		return new ResponseEntity<>(tipodevolucionService.listarAll(), HttpStatus.OK);
 	}
 }

@@ -20,6 +20,6 @@ public class TipoPlazoDistribucionController {
 	
 	@GetMapping
 	public ResponseEntity<Iterable<TipoPlazoDistribucion>> listarAll(){
-		return new ResponseEntity<Iterable<TipoPlazoDistribucion>>(tipoPlazoService.listarAll(), HttpStatus.OK);
+		return new ResponseEntity<>(tipoPlazoService.listarAll(), HttpStatus.OK);
 	}
 }
