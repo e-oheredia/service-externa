@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -37,9 +38,18 @@ public class MenuEdao implements IMenuEdao{
 		HttpGet httpGet = new HttpGet(menuPath + menusPath + "?permisoIds=" + String.join(",", permisoIds.stream().map(id -> id.toString())
 				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
+		
 	}
 	
 }

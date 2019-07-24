@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -40,8 +41,17 @@ public class HandleFileEdao implements IHandleFileEdao {
 		HttpEntity entity = builder.build();
 		post.setEntity(entity);
 		CloseableHttpResponse httpResponse = requester.request(post);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		return Integer.parseInt(response);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				return Integer.parseInt(response);
+			}else {
+				return 0;
+			}
+		} finally {
+			httpResponse.close();
+		}
+		
 	}
 
 }

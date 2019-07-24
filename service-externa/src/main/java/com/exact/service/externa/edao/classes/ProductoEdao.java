@@ -3,7 +3,7 @@ package com.exact.service.externa.edao.classes;
 
 import java.util.Map;
 
-
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -38,9 +38,17 @@ public class ProductoEdao implements IProductoEdao{
 	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException, Exception{
 		HttpGet httpGet = new HttpGet(productosPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -51,9 +59,17 @@ public class ProductoEdao implements IProductoEdao{
 		httpost.setHeader("Accept", "application/json");
 		httpost.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPost(httpost);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
@@ -64,18 +80,34 @@ public class ProductoEdao implements IProductoEdao{
 		httput.setHeader("Accept", "application/json");
 		httput.setHeader("Content-type", "application/json");
 		CloseableHttpResponse httpResponse = requester.requestPut(httput);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONObject responseJson = new JSONObject(response);		 	
-		return CommonUtils.jsonToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject responseJson = new JSONObject(response);		 	
+				return CommonUtils.jsonToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarActivos() throws IOException, JSONException, Exception {
 		HttpGet httpGet = new HttpGet(productosPath + path +"/activos");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 }
