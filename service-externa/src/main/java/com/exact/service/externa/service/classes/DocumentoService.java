@@ -401,12 +401,10 @@ public class DocumentoService implements IDocumentoService {
 			
 			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
 		}
-		
 		documentoDao.saveAll(documentosBDList);
 		if(guia.getTipoGuia().getId()==GUIA_REGULAR) {
 			documentoReporteservice.actualizarDocumentosPorResultado(documentosBDList, guiaids);
 		}
-		
 		boolean rpta = guiadao.existeDocumentosPendientes(guia.getId());
 		if(!rpta) {
 			List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
