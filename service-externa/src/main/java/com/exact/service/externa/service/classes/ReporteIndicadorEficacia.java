@@ -92,7 +92,6 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 			listademeses.add(dt.format(mess)); 
 		}
 
-		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
 		int cantidadtotal = reportes.size();
 		if(cantidadtotal==0) {
 			return null;
@@ -213,7 +212,6 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 		Iterable<Proveedor> iterableproveedores = proveedordao.findAll();
 		List<Proveedor> proveedores = StreamSupport.stream(iterableproveedores.spliterator(), false)
 				.collect(Collectors.toList());
-		Iterable<PlazoDistribucion> pd =plazodao.findAll();
 		for (Proveedor pro : proveedores) {
 			Map<Integer,Map<Integer,Map<Integer, Integer>>> multiMap = new HashMap<>();
 			
@@ -282,7 +280,6 @@ public class ReporteIndicadorEficacia implements IReporteIndicadorEficacia {
 			listademeses.add(dt.format(mess)); 
 		}
 
-		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
 		int cantidadtotal = reportes.size();		
 	    if(cantidadtotal==0) {
 	    	return null;

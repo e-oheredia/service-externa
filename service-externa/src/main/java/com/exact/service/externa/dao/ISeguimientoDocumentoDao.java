@@ -5,8 +5,6 @@ import java.util.Date;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 
 @Repository

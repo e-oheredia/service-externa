@@ -7,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.exact.service.externa.entity.EstadoDocumento;
-import com.exact.service.externa.entity.SeguimientoDocumento;
 
 @Repository
 public interface IEstadoDocumentoDao extends CrudRepository<EstadoDocumento,Long>{

@@ -1,6 +1,5 @@
 package com.exact.service.externa.service.classes;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,9 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -33,10 +30,7 @@ import com.exact.service.externa.entity.TipoDevolucion;
 import com.exact.service.externa.service.interfaces.ICargosService;
 
 import static com.exact.service.externa.enumerator.TipoDevolucionEnum.CARGO;
-import static com.exact.service.externa.enumerator.TipoDevolucionEnum.DENUNCIA;
 import static com.exact.service.externa.enumerator.TipoDevolucionEnum.REZAGO;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static com.exact.service.externa.enumerator.EstadoCargoEnum.DEVUELTO;
 import static com.exact.service.externa.enumerator.EstadoCargoEnum.PENDIENTE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
@@ -90,7 +84,6 @@ public class CargosService implements ICargosService {
 		List<Proveedor> proveedoreslst = StreamSupport.stream(proveedores.spliterator(), false)
 				.collect(Collectors.toList());
 		Iterable<TipoDevolucion> tiposDevolucion = tipodevolucionDao.findAll();
-		Iterable<Map<String, Object>> areasBD = areaDao.listarAll();
 		Map<Long, Map<Long, Map<String, Integer>>> cantidadesProveedor = new HashMap<>();
 		for (Proveedor proveedor : proveedoreslst) {
 			Map<Long, Map<String, Integer>> cantidadTipo = new HashMap<>();

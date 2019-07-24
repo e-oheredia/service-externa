@@ -1,17 +1,11 @@
 package com.exact.service.externa.service.classes;
-
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
-import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
-import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 
@@ -19,8 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,15 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -52,28 +40,22 @@ import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoGuiaDao;
-import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
-import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
-import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.TipoDevolucion;
-import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
-import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
-import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 @Service
 public class DocumentoService implements IDocumentoService {
@@ -82,14 +64,10 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	private IDocumentoDao documentoDao;
 
-	@Autowired
-	private IAutogeneradoUtils autogeneradoUtils;
 
 	@Autowired
 	private ISeguimientoDocumentoDao seguimientoDocumentodao;
 
-	@Autowired
-	private IHandleFileEdao handleFileEdao;
 	
 	@Autowired
 	IBuzonEdao buzonEdao;

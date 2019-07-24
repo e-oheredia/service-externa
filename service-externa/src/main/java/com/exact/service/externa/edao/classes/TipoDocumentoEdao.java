@@ -1,7 +1,6 @@
 package com.exact.service.externa.edao.classes;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

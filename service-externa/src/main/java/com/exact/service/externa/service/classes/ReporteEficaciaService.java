@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
 import com.exact.service.externa.dao.IProveedorDao;
 import com.exact.service.externa.entity.DocumentoReporte;
-import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IReporteEficaciaService;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
@@ -45,7 +44,6 @@ public class ReporteEficaciaService implements IReporteEficaciaService {
 	public Map<Integer, Map<Integer, Integer>> eficaciaporproveedor(String fechaIni, String fechaFin)
 			throws IOException, JSONException {
 		
-		int rpta=0;
 		Map<Integer,Map<Integer, Integer>> multiMap = new HashMap<>();
 
 		Date dateI= null;

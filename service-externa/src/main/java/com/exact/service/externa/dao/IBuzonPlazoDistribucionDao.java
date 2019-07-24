@@ -2,15 +2,11 @@ package com.exact.service.externa.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import com.exact.service.externa.entity.AreaPlazoDistribucion;
 import com.exact.service.externa.entity.BuzonPlazoDistribucion;
-import com.exact.service.externa.entity.Documento;
 
 @Repository
 public interface IBuzonPlazoDistribucionDao extends CrudRepository<BuzonPlazoDistribucion, Long> {

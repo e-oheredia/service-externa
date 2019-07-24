@@ -3,52 +3,32 @@ package com.exact.service.externa.service.classes;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
-import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoEnvio.ENVIO_REGULAR;
-import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
-import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.APROBADA;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.DENEGADA;
 import static com.exact.service.externa.enumerator.EstadoAutorizacionEnum.PENDIENTE;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
-
-
-
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-import org.simplejavamail.email.Email;
-import org.simplejavamail.email.EmailBuilder;
-import org.simplejavamail.mailer.Mailer;
-import org.simplejavamail.mailer.MailerBuilder;
-import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,7 +49,6 @@ import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoAutorizado;
 import com.exact.service.externa.entity.EstadoDocumento;
-import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.SeguimientoAutorizado;
 import com.exact.service.externa.entity.SeguimientoDocumento;
@@ -274,7 +253,6 @@ public class EnvioService implements IEnvioService {
 			
 			//distritoIds=distritoIds.stream().distinct().collect(Collectors.toList());
 			buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
-			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
 					.listarByIds(tipoDocumentoIds);
