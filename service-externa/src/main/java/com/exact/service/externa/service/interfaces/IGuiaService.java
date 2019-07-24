@@ -11,7 +11,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import com.exact.service.externa.entity.Documento;
-import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.Guia;
 

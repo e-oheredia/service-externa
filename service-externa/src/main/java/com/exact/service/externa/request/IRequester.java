@@ -1,7 +1,6 @@
 package com.exact.service.externa.request;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;

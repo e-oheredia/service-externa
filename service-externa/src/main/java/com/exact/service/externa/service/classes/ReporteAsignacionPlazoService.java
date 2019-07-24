@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,8 +11,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IAreaPlazoDistribucionDao;
@@ -25,8 +23,7 @@ import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 import com.exact.service.externa.service.interfaces.IReporteAsignacionPlazoService;
 
-import static com.exact.service.externa.enumerator.TipoAsignacionEnum.AREA;
-import static com.exact.service.externa.enumerator.TipoAsignacionEnum.BUZON;
+
 
 @Service
 public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoService{
@@ -49,7 +46,6 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 	@Override
 	public Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
 		List<ReporteAsignacionPlazo> reportes = new ArrayList<>();
-		ReporteAsignacionPlazo repor = new ReporteAsignacionPlazo();
 		int id=1;
 	//	Map<String,Object> prueba = new HashMap<>();
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");

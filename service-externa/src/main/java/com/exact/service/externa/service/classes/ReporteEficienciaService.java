@@ -39,7 +39,6 @@ import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IGuiaService;
-import com.exact.service.externa.service.interfaces.IPeriodoService;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IProveedorService;
 import com.exact.service.externa.service.interfaces.IRegionService;
@@ -48,7 +47,6 @@ import com.exact.service.externa.service.interfaces.IReporteEficienciaService;
 import io.jsonwebtoken.io.IOException;
 
 import static com.exact.service.externa.enumerator.EstadoTiempoEntregaEnum.DENTRO_PLAZO;
-import static com.exact.service.externa.enumerator.EstadoTiempoEntregaEnum.FUERA_PLAZO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 
 @Service
@@ -87,7 +85,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 	@Autowired
 	IProveedorService proveedorservice;
 
-	private static final Log Logger = LogFactory.getLog(ReporteEficienciaService.class);
 
 	@Override
 	public Map<Long, Map<String, Integer>> eficienciaPorCourier(String fechaIni, String fechaFin)
@@ -163,7 +160,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 			Map<Long, Object> cantidadregion = new HashMap<>();
 			
 			for(Map<String, Object> region : regiones) {
-				Map<Integer, Integer> m = new HashMap<Integer, Integer>();
 				Iterable<PlazoDistribucion> pds = plazoservice.listarPlazosByRegionId( Long.valueOf(region.get("id").toString())  );
 				Map<Long, Map<String, Integer>> cantidadPlazo = new HashMap<>();
 				for (PlazoDistribucion plazo : pds) {
@@ -227,7 +223,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 			Long proveedorId) throws IOException, JSONException, ClientProtocolException, java.io.IOException,
 			URISyntaxException, ParseException {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		Date dateI = null;
 		Date dateF = null;
 		try {
@@ -246,18 +241,11 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 		Iterable<PlazoDistribucion> plazos = plazoservice.listarPlazosByProveedor(proveedor);
 		
 		for (PlazoDistribucion plazo : plazos  ) {
-			Map<Integer, Integer> cantidadTiempoEnvio = new HashMap<>();
-			Map<Long, Map<Integer, Integer>> cantidadPlazo = new HashMap<>();
-			int cantidadPlazos = 0;
 			for (DocumentoReporte documentoreporte : documentoslst) {
-				Map<Long, Map<Integer, Integer>> cantidadPlazso = new HashMap<>();
 				if (plazo.getId() == documentoreporte.getPlazoId()) {
-					Long valor = calcularHoras(documentoreporte);
-
 					// faltaprobar
 				}
 			}
-
 		}
 		return cantidadDetalle;
 	}
@@ -298,7 +286,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 
 		Date dateI = null;
 		Date dateF = null;
-		Map<Long, Map<String, Integer>> total = new HashMap<>();
 		try {
 			dateI = dt.parse(fechaIni);
 			dateF = dt.parse(fechaFin);
@@ -306,7 +293,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 			return null;
 		}
 
-		Map<Long, Map<Long, Map<String, Integer>>> proveedorcantidad = new HashMap<>();
 		Iterable<DocumentoReporte> documentosPlazo = documentoReporteDao.buscarvolumenporfechas4(dateI, dateF);
 		List<DocumentoReporte> documentoslst = StreamSupport.stream(documentosPlazo.spliterator(), false)
 				.collect(Collectors.toList());
@@ -315,7 +301,6 @@ public class ReporteEficienciaService implements IReporteEficienciaService {
 				.collect(Collectors.toList());
 		//List<PlazoDistribucion> plazoss= new ArrayList<>();
 		Map<Integer, Object   > cantidadporproveedorplazos = new HashMap<>();
-		Map<Long, Long> cantidadTiempoEnvio = new HashMap<>();
 
 		
 		/*for(DocumentoReporte dr : documentoslst) {

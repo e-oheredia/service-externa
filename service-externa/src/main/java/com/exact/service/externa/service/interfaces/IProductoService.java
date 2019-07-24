@@ -2,7 +2,6 @@ package com.exact.service.externa.service.interfaces;
 
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import io.jsonwebtoken.io.IOException;
