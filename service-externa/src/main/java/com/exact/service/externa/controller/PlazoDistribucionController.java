@@ -44,7 +44,6 @@ public class PlazoDistribucionController {
 			}
 			return new ResponseEntity<PlazoDistribucion>(pd, HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -55,7 +54,6 @@ public class PlazoDistribucionController {
 		try {
 			return new ResponseEntity<PlazoDistribucion>(plazoDistribucionService.modificar(plazoDist), HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ResponseEntity<PlazoDistribucion>(HttpStatus.BAD_REQUEST);
 		}
 	}

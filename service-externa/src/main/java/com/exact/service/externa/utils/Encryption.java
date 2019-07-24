@@ -11,9 +11,11 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class Encryption {
@@ -21,6 +23,9 @@ public class Encryption {
 	@Value("${key.string}")
 	String rutaLlave;	
 
+	private static final Log Logger = LogFactory.getLog(Encryption.class);
+
+	
 	//5852459632586596
 
 	private  final String initVector = "5865214578523659";
@@ -38,14 +43,14 @@ public class Encryption {
 				try {
 					br.close();
 				} catch (Exception e) {
-					e.printStackTrace();
-				}
+					Logger.info("ERROR");				
+					}
 			}
 			if(fr!=null) {
 				try {
 					fr.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.info("ERROR");				
 				}
 			}
 		}
@@ -61,7 +66,7 @@ public class Encryption {
 	        byte[] encrypted = cipher.doFinal(value.getBytes());
 	        return Base64.getEncoder().encodeToString(encrypted);
 	    } catch (Exception ex) {
-	        ex.printStackTrace();
+			Logger.info("ERROR");				
 	    }
 	    return null;
 	}
@@ -80,14 +85,14 @@ public class Encryption {
 				try {
 					br.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.info("ERROR");				
 				}
 			}
 			if(fr!=null) {
 				try {
 					fr.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.info("ERROR");				
 				}
 			}
 		}
@@ -101,7 +106,7 @@ public class Encryption {
 	 
 	        return new String(original);
 	    } catch (Exception ex) {
-	        ex.printStackTrace();
+			Logger.info("ERROR");				
 	    }
 	 
 	    return null;

@@ -61,7 +61,6 @@ public class ProveeedorController {
 		try {
 			return new ResponseEntity<Proveedor>(proveedorService.modificar(proveedor), HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
 		}
 	}
