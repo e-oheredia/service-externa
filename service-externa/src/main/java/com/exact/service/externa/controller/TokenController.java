@@ -42,7 +42,7 @@ public class TokenController {
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		String response = EntityUtils.toString(httpResponse.getEntity());
 		
-		return new ResponseEntity<String>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 			
 	}
 

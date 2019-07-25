@@ -51,7 +51,7 @@ public class BuzonEdao implements IBuzonEdao {
 
 	}
 	
-	public Iterable<Map<String, Object>> listarByIds(List<Long> ids) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarByIds(List<Long> ids) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(empleadosPath + path + "?ids=" + String.join(",", ids.stream().map(id -> id.toString())
 				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);

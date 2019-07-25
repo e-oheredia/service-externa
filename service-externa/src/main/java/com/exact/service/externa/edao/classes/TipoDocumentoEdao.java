@@ -53,7 +53,7 @@ public class TipoDocumentoEdao implements ITipoDocumentoEdao {
 	}
 
 	@Override
-	public Iterable<Map<String, Object>> listarByIds(Iterable<Long> ids) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarByIds(Iterable<Long> ids) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(tiposDocumentosPath + path + "?ids=" + 
 			String.join(",", StreamSupport.stream(ids.spliterator(),false).map(id -> id.toString()).collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
@@ -88,7 +88,7 @@ public class TipoDocumentoEdao implements ITipoDocumentoEdao {
 	}
 
 	@Override
-	public Map<String, Object> guardar(String tipoDocumento) throws ClientProtocolException, IOException, JSONException {
+	public Map<String, Object> guardar(String tipoDocumento) throws IOException, JSONException {
 		HttpPost httpost = new HttpPost(tiposDocumentosPath + path);
 		StringEntity entity = new StringEntity(tipoDocumento);
 		httpost.setEntity(entity);
@@ -109,7 +109,7 @@ public class TipoDocumentoEdao implements ITipoDocumentoEdao {
 	}
 
 	@Override
-	public Map<String, Object> modificar(Long id, String tipoDocumento) throws ClientProtocolException, IOException, JSONException {
+	public Map<String, Object> modificar(Long id, String tipoDocumento) throws IOException, JSONException {
 		HttpPut httput = new HttpPut(tiposDocumentosPath + path+ "/"+ id);
 		StringEntity entity = new StringEntity(tipoDocumento);
 		httput.setEntity(entity);

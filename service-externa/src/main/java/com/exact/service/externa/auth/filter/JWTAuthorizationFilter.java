@@ -46,7 +46,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		String header = request.getHeader("Authorization");
 		
 		if (!requiresAuthentication(header)) {
-			//chain.doFilter(request, response);
 			return;
 		}
 		
@@ -91,10 +90,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 				}
 		);
 		datosUsuario.put("permisos", permisos);
-//		Collection<? extends GrantedAuthority> authorities = 
-//				Arrays.asList(new ObjectMapper().addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
-//						.readValue(nombresPermisos.toString().getBytes(), SimpleGrantedAuthority[].class));
-		
 		authentication = new UsernamePasswordAuthenticationToken(datosUsuario, null, authorities);		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		chain.doFilter(request, response);
