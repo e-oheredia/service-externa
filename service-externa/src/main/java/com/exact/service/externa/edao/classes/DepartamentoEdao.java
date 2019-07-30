@@ -32,7 +32,7 @@ public class DepartamentoEdao implements IDepartamentoEdao {
 	
 	@Override
 	public Iterable<Map<String, Object>> listarDepartamentosByPaisId(Long paisId)
-			throws ClientProtocolException, IOException, JSONException {
+			throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + paisesPath + "/" + paisId.toString() + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		
@@ -48,7 +48,7 @@ public class DepartamentoEdao implements IDepartamentoEdao {
 			httpResponse.close();
 		}
 		
-
+		
 	}
 
 	@Override
