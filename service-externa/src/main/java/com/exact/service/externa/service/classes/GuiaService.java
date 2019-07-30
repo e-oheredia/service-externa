@@ -376,10 +376,10 @@ public class GuiaService implements IGuiaService{
 			}
 		}
 		
-		if (esCreado == false) {
+		if (!esCreado) {
 			return 2;
 		}	
-		
+		documentoGuiaDao.eliminarPorGuiaId(guiaSeleccionada.getId());
 		guiaDao.delete(guiaSeleccionada);
 		
 		return 1;
