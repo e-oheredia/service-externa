@@ -8,13 +8,11 @@ import org.springframework.stereotype.Service;
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
 import com.exact.service.externa.dao.IDocumentoReporteDao;
-import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.DocumentoReporte;
-import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
@@ -33,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.exact.service.externa.enumerator.EstadoCargoEnum.NO_GENERADO;
 
@@ -91,8 +90,12 @@ public class DocumentoReporteService implements IDocumentoReporteService{
 	public void actualizarDocumentosPorResultado(List<Documento> lstdocumento, List<Long> guiaIds) throws ClientProtocolException, IOException, JSONException, URISyntaxException, ParseException {
 		Map<Long, Date> fechaGuias = new HashMap<Long, Date>();
 		List<Long> documentosIds = new ArrayList<>();
+		Guia guia = new Guia();
 		for(int i=0;i<guiaIds.size();i++) {
-			Guia guia = guiadao.findById(guiaIds.get(i)).get();
+			Optional<Guia> guiaOptional = guiadao.findById(guiaIds.get(i));
+			if(guiaOptional.isPresent()) {
+				guia = guiaOptional.get();
+			}
 			Date fechaLimite = guiaservice.getFechaLimite(guia);
 			fechaGuias.put(guiaIds.get(i), fechaLimite);
 		}

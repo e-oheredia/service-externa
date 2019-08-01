@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exact.service.externa.converter.convertertiposeguridad;
 import com.exact.service.externa.entity.TipoSeguridad;
+import com.exact.service.externa.model.MTipoSeguridad;
 import com.exact.service.externa.service.interfaces.ITipoSeguridadService;
 
 @RestController
@@ -21,29 +23,34 @@ public class TipoSeguridadController {
 	@Autowired
 	ITipoSeguridadService tipoSeguridadService;
 	
+	@Autowired
+	convertertiposeguridad converter;
+	
 	@GetMapping("/activos")
-	public ResponseEntity<Iterable<TipoSeguridad>> listarTipoSeguridadActivos(){
-		return new ResponseEntity<Iterable<TipoSeguridad>>(tipoSeguridadService.listarTipoSeguridadActivos(), HttpStatus.OK);
+	public ResponseEntity<Iterable<MTipoSeguridad>> listarTipoSeguridadActivos(){
+		return new ResponseEntity<Iterable<MTipoSeguridad>>(tipoSeguridadService.listarTipoSeguridadActivos(), HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<TipoSeguridad> guardar(@RequestBody TipoSeguridad tipoSeguridad){
-		tipoSeguridad.setActivo(true);
+	public ResponseEntity<MTipoSeguridad> guardar(@RequestBody MTipoSeguridad mtipoSeguridad){
+		TipoSeguridad tiposeguridad =  converter.convertirETipoSeguridad(mtipoSeguridad);
+		tiposeguridad.setActivo(true);
 		try {
-			return new ResponseEntity<TipoSeguridad>(tipoSeguridadService.guardar(tipoSeguridad), HttpStatus.OK);
+			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tiposeguridad), HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<TipoSeguridad>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<MTipoSeguridad>(HttpStatus.BAD_REQUEST);
 		}
 		
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<TipoSeguridad> modificar(@PathVariable Long id, @RequestBody TipoSeguridad tipoSeguridad){
-		tipoSeguridad.setId(id);
+	public ResponseEntity<MTipoSeguridad> modificar(@PathVariable Long id, @RequestBody MTipoSeguridad mtipoSeguridad){
+		TipoSeguridad tiposeguridad =  converter.convertirETipoSeguridad(mtipoSeguridad);
+		tiposeguridad.setId(id);
 		try {
-			return new ResponseEntity<TipoSeguridad>(tipoSeguridadService.guardar(tipoSeguridad), HttpStatus.OK);
+			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tiposeguridad), HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<TipoSeguridad>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<MTipoSeguridad>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	

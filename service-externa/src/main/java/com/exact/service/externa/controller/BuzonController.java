@@ -11,12 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,13 +36,13 @@ public class BuzonController {
 	public ResponseEntity<Map<String, Object>> listarBuzonById(@PathVariable Long id)
 			throws IOException, JSONException {
 		Map<String, Object> buzon = buzonService.listarById(id);
-		return new ResponseEntity<Map<String, Object>>(buzon, buzon == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+		return new ResponseEntity<>(buzon, buzon == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}/plazodistribucionpermitido")
 	public ResponseEntity<BuzonPlazoDistribucion> listarPlazoDistribucionByBuzonId(@PathVariable Long id) {
 		BuzonPlazoDistribucion buzonPlazoDistribucion = buzonPlazoDistribucionService.listarById(id);
-		return new ResponseEntity<BuzonPlazoDistribucion>(buzonPlazoDistribucion,
+		return new ResponseEntity<>(buzonPlazoDistribucion,
 				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 	}
 
@@ -57,24 +53,25 @@ public class BuzonController {
 		BuzonPlazoDistribucion buzonPlazoDistribucion = new BuzonPlazoDistribucion();
 		buzonPlazoDistribucion.setPlazoDistribucion(plazoDistribucion);
 		buzonPlazoDistribucion.setBuzonId(id);
-		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService
-				.actualizar(buzonPlazoDistribucion,file);
-		return new ResponseEntity<PlazoDistribucion>(buzonPlazoDistribucionActualizado == null ? null: buzonPlazoDistribucionActualizado.getPlazoDistribucion() ,
-				buzonPlazoDistribucion == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+		BuzonPlazoDistribucion buzonPlazoDistribucionActualizado = buzonPlazoDistribucionService.actualizar(buzonPlazoDistribucion,file);
+		if(buzonPlazoDistribucionActualizado==null) {
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(buzonPlazoDistribucionActualizado.getPlazoDistribucion(),HttpStatus.OK);
 	}
 	
 	@GetMapping()
 	public ResponseEntity<Iterable<Map<String, Object>>> listarAll()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<Map<String, Object>>>(buzonService.listarAll(), HttpStatus.OK);
+		return new ResponseEntity<>(buzonService.listarAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/buzonesplazo")
 	public ResponseEntity<Iterable<BuzonPlazoDistribucion>> listarAllBuzonPlazo()
 			throws IOException, JSONException {
 
-		return new ResponseEntity<Iterable<BuzonPlazoDistribucion>>(buzonPlazoDistribucionService.listarBuzonPlazo(), HttpStatus.OK);
+		return new ResponseEntity<>(buzonPlazoDistribucionService.listarBuzonPlazo(), HttpStatus.OK);
 	}
 	
 }

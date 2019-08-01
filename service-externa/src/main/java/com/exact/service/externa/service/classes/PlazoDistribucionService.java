@@ -14,8 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.dao.IAmbitoDistritoDao;
 import com.exact.service.externa.dao.IAmbitoProveedorDao;
@@ -27,7 +25,6 @@ import com.exact.service.externa.entity.AmbitoProveedor;
 import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.entity.RegionPlazoDistribucion;
-import com.exact.service.externa.entity.id.AmbitoProveedorId;
 import com.exact.service.externa.entity.id.RegionPlazoDistribucionId;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 
@@ -71,9 +68,7 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		List<Long> idsregion = new ArrayList<>();
 		Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(proveedorId);
 		Iterable<Map<String,Object>> ambitos = ambitodiasdao.listarSubAmbitos();
-		Set<Map<String,Object>> ambitprovee = new HashSet<>();
 		List<Long> ambitoProveedor = new ArrayList<>();
-		List<Long> regionesid = new ArrayList<>();
 		//Iterable<AmbitoPlazoDistribucion> ambitosplazo= ambitoPlazoDao.findAll();
 		List<Map<String,Object>> listaambitos = new ArrayList<>();
 		List<PlazoDistribucion> listaplazos = new ArrayList<>();
@@ -172,16 +167,12 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		Iterable<Map<String,Object>> regiones = ambitodiasdao.listarAmbitos();
 		Iterable<PlazoDistribucion> plazos =  plazoDistribucionDao.findAll();
 		List<PlazoDistribucion> plazoslst = StreamSupport.stream(plazos.spliterator(), false).collect(Collectors.toList());
-		Iterable<RegionPlazoDistribucion> regisplazo= regionplazoDao.findAll();
 		
 
 		for(PlazoDistribucion pd : plazoslst) {
 			Set<Map<String,Object>> regionesplaz = new HashSet<>();
 
 			Iterable<RegionPlazoDistribucion> regionesId= regionplazoDao.listarRegionIds(pd.getId());
-			Set<Map<String,Object>> regionprovee = new HashSet<>();
-			List<Long> regionPlazo = new ArrayList<>();
-			List<Long> regionPlazos = new ArrayList<>();
 			
 			/*for(RegionPlazoDistribucion regionpro : regionesId) {
 				regionPlazo.add(regionpro.getId().getRegionId());
@@ -364,6 +355,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 	@Override
 	public Iterable<PlazoDistribucion> listarPlazosByDistritoId(Long distritoId) throws IOException, JSONException {
 		AmbitoDistrito ambitodistrito = ambitodistritoDao.findById(distritoId).orElse(null);
+		if(ambitodistrito==null) {
+			return null;
+		}
 		Map<String,Object> region = ambitodiasdao.listarRegionByDistrito(ambitodistrito.getAmbitoId());
 		List<PlazoDistribucion> listarplazos = new ArrayList<>();
 		 Iterable<RegionPlazoDistribucion> regionplazoss = regionplazoDao.getPlazosDistribucionByRegion(Long.valueOf(region.get("id").toString()));
@@ -388,7 +382,6 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 		Iterable<AmbitoProveedor> ambitosId= ambitoproveedorDao.listarAmbitosIds(proveedor.getId());
 		Set<Map<String,Object>> ambitprovee = new HashSet<>();
 		List<Long> ambitoProveedor = new ArrayList<>();
-		List<Long> ambitoPlazos = new ArrayList<>();
 		for(AmbitoProveedor ambitoprovee : ambitosId) {
 			ambitoProveedor.add(ambitoprovee.getId().getAmbitoId());
 		}

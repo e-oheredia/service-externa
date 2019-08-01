@@ -2,11 +2,9 @@ package com.exact.service.externa.service.classes;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -58,7 +56,6 @@ public class RegionService implements IRegionService{
 	@Override
 	public Iterable<Map<String, Object>> listarAmbitos() throws IOException, JSONException {
 		Iterable<Map<String,Object>> ambitos =  RegionEdao.listarSubAmbitos();
-		Iterable<PlazoDistribucion> plazos = plazoDistribucionDao.findAll();
 		/*
 		for(Map<String,Object> ambito : ambitos) {
 			//IMPACTO//////////////////////////////////

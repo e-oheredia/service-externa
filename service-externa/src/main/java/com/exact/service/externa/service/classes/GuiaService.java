@@ -1,22 +1,19 @@
 package com.exact.service.externa.service.classes;
 
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CREADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_DESCARGADO;
-import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_BLOQUE;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
-import static com.exact.service.externa.enumerator.RegionEnum.LIMA;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_ACTIVA;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_NORMAL;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
 
 
 
@@ -25,9 +22,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -36,12 +30,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.logging.Log;
@@ -49,8 +41,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -70,7 +60,6 @@ import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.RegionPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
-import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
@@ -88,7 +77,6 @@ import com.exact.service.externa.service.interfaces.IGuiaService;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 
 
 @Service
@@ -388,10 +376,10 @@ public class GuiaService implements IGuiaService{
 			}
 		}
 		
-		if (esCreado == false) {
+		if (!esCreado) {
 			return 2;
 		}	
-		
+		documentoGuiaDao.eliminarPorGuiaId(guiaSeleccionada.getId());
 		guiaDao.delete(guiaSeleccionada);
 		
 		return 1;
@@ -1008,7 +996,7 @@ public class GuiaService implements IGuiaService{
 	@Override
 	@Transactional
 	public Map<Integer,String> cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
-		Map<Integer,String> map = new HashMap<Integer,String>();
+		Map<Integer,String> map = new HashMap<>();
 		List<String> autogeneradoList = new ArrayList<>();		
 		for(Documento documento : documentoDevueltos) {
 		autogeneradoList.add(documento.getDocumentoAutogenerado());
@@ -1021,20 +1009,26 @@ public class GuiaService implements IGuiaService{
 		}
 		Guia guia = guiaDao.findGuiabyAutogenerado(documentoDevueltos.get(0).getDocumentoAutogenerado());
 		int i=0;
+		EstadoDocumento estadoDocumento = new EstadoDocumento();
+		estadoDocumento.setId(RECEPCIONADO);
 		for(Documento documento : documentosBDList) {
 			if(documento.getDocumentoAutogenerado().equals(documentoDevueltos.get(i).getDocumentoAutogenerado())) {
 				documento.setTiposDevolucion(documentoDevueltos.get(i).getTiposDevolucion());
 			}
+			
 			List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<>(documento.getSeguimientosDocumento());
 			SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
 			documento.setRecepcionado(true);
 			SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(usuarioId, sdMax.getEstadoDocumento(),"Documento(s) recibido(s)");
 			seguimientodocumento.setUsuarioId(usuarioId);
 			seguimientodocumento.setDocumento(documento);
+			seguimientodocumento.setEstadoDocumento(estadoDocumento);
+			seguimientodocumento.setMotivoEstado(documento.getUltimoSeguimientoDocumento().getMotivoEstado());
+			seguimientodocumento.setLinkImagen(documento.getUltimoSeguimientoDocumento().getLinkImagen());
 			seguimientosDocumentolst.add(seguimientodocumento);
 			seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
-			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
-			documento.setSeguimientosDocumento(sd);
+//			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+//			documento.setSeguimientosDocumento(sd);
 			i++;
 		}
 		documentoDao.saveAll(documentosBDList);
@@ -1078,7 +1072,6 @@ public class GuiaService implements IGuiaService{
 		}
 		Date utilDate = envio.getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
 		Map<String, Object> fecha =  ambitodiasdao.listarFechaLimite(guia.getRegionId(),format.format(utilDate).toString(),horas, (int)(long)tipoPlazo);
 		try {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -32,43 +33,87 @@ public class DistritoEdao implements IDistritoEdao {
 	private final String provinciasPath = "/provincias";
 	
 	@Override
-	public Iterable<Map<String, Object>> listarDistritosByIdProvincia(Long provinciaId) throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarDistritosByIdProvincia(Long provinciaId) throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + provinciasPath + "/" + provinciaId.toString() + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		
+		try {
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
+
 	}
 
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		
+		try {
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
+		
+
 	}
 
 	@Override
 	public Iterable<Map<String, Object>> listarByIds(List<Long> ids)
-			throws ClientProtocolException, IOException, JSONException {
+			throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + path + "?ids=" + String.join(",", ids.stream().map(id -> id.toString())
 				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		
+		try {
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
+		
+
 	}
 	
 	@Override
 	public Iterable<Map<String, Object>> listarDistritoIdsByUbigeos(List<String> ids)
-			throws ClientProtocolException, IOException, JSONException {
-		HttpGet httpGet = new HttpGet(lugaresPath + path + "?ubigeos=" + String.join(",", ids.stream().map(id -> id.toString())
+			throws IOException, JSONException {
+		HttpGet httpGet = new HttpGet(lugaresPath + path + "?ubigeos=" + String.join(",", ids.stream().map(id -> id)
 				.collect(Collectors.toList())));
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		
+		try {
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
+		
+
 	}
 
 }

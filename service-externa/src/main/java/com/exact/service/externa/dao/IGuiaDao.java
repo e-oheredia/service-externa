@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.entity.Documento;
-import com.exact.service.externa.entity.DocumentoGuia;
 import com.exact.service.externa.entity.Guia;
 
 @Repository

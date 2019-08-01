@@ -3,6 +3,7 @@ package com.exact.service.externa.edao.classes;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,17 +35,33 @@ public class ProvinciaEdao implements IProvinciaEdao {
 			throws ClientProtocolException, IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + departamentosPath + "/" + departamentoId.toString() + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException {
+	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException {
 		HttpGet httpGet = new HttpGet(lugaresPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
-		String response = EntityUtils.toString(httpResponse.getEntity());
-		JSONArray responseJson = new JSONArray(response);		
-		return CommonUtils.jsonArrayToMap(responseJson);
+		try {
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String response = EntityUtils.toString(httpResponse.getEntity());
+				JSONArray responseJson = new JSONArray(response);		
+				return CommonUtils.jsonArrayToMap(responseJson);
+			}else {
+				return null;
+			}
+		} finally {
+			httpResponse.close();
+		}
 	}
 
 }

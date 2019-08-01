@@ -19,6 +19,20 @@ public class TipoSeguridad {
 	@Column(nullable=false)
 	private boolean activo;
 		
+
+	public TipoSeguridad(Long id, String nombre, boolean activo) {
+		this.id = id;
+		this.nombre = nombre;
+		this.activo = activo;
+	}
+	
+
+	public TipoSeguridad() {
+	}
+
+
+
+
 	public boolean isActivo() {
 		return activo;
 	}
@@ -37,5 +51,7 @@ public class TipoSeguridad {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
+	
 	
 }

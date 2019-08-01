@@ -1,10 +1,7 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.exact.service.externa.entity.PlazoDistribucion;
 import com.exact.service.externa.entity.Proveedor;
 import com.exact.service.externa.service.interfaces.IPlazoDistribucionService;
 import com.exact.service.externa.service.interfaces.IProveedorService;
@@ -35,26 +31,26 @@ public class ProveeedorController {
 	IPlazoDistribucionService plazoDistribucionService;
 	
 	@GetMapping("/activos")
-	public ResponseEntity<Iterable<Proveedor>> listarProveedoresActivos() throws ClientProtocolException, IOException, JSONException {
-		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.listarProveedoresActivos(),HttpStatus.OK);
+	public ResponseEntity<Iterable<Proveedor>> listarProveedoresActivos() throws IOException, JSONException {
+		return new ResponseEntity<>(proveedorService.listarProveedoresActivos(),HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}/plazosdistribucion")
-	public ResponseEntity<String> listarPlazosDistribucionPorProveedor(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException {
+	public ResponseEntity<String> listarPlazosDistribucionPorProveedor(@PathVariable Long id) throws IOException, JSONException {
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	    String dtoMapAsString = mapper.writeValueAsString(plazoDistribucionService.listarByProveedorId(id));
-	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
+	    return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	}
 	
 	@PostMapping
 	public ResponseEntity<Proveedor> guardar(@RequestBody Proveedor proveedor) {
 		proveedor.setActivo(true);
 		try {
-			return new ResponseEntity<Proveedor>(proveedorService.guardar(proveedor), HttpStatus.OK);
+			return new ResponseEntity<>(proveedorService.guardar(proveedor), HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -62,21 +58,20 @@ public class ProveeedorController {
 	public ResponseEntity<Proveedor> modificar(@PathVariable Long id, @RequestBody Proveedor proveedor) {
 		proveedor.setId(id);
 		try {
-			return new ResponseEntity<Proveedor>(proveedorService.modificar(proveedor), HttpStatus.OK);
+			return new ResponseEntity<>(proveedorService.modificar(proveedor), HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Proveedor>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@GetMapping
-	public ResponseEntity<Iterable<Proveedor>> listarAll() throws ClientProtocolException, IOException, JSONException {
-		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.listarProveedores(),HttpStatus.OK);
+	public ResponseEntity<Iterable<Proveedor>> listarAll() throws IOException, JSONException {
+		return new ResponseEntity<>(proveedorService.listarProveedores(),HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}/proveedorplazo")
-	public ResponseEntity<Iterable<Proveedor>> listarProveedorByPlazo(@PathVariable Long id) throws ClientProtocolException, IOException, JSONException {
-		return new ResponseEntity<Iterable<Proveedor>>(proveedorService.buscarProveedorByPlazoId(id),HttpStatus.OK);
+	public ResponseEntity<Iterable<Proveedor>> listarProveedorByPlazo(@PathVariable Long id) throws IOException, JSONException {
+		return new ResponseEntity<>(proveedorService.buscarProveedorByPlazoId(id),HttpStatus.OK);
 	}
 	
 }

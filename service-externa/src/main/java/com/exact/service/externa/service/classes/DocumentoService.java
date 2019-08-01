@@ -1,17 +1,11 @@
 package com.exact.service.externa.service.classes;
-
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CREADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CUSTODIADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.PENDIENTE_ENTREGA;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.REZAGADO;
-import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_ENVIADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.DENEGADO;
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ELIMINADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.NO_DISTRIBUIBLE;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.CERRADO;
-import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_CERRADO;
 import static com.exact.service.externa.enumerator.EstadoGuiaEnum.GUIA_COMPLETA;
 import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 
@@ -19,8 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,15 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -52,28 +40,22 @@ import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
 import com.exact.service.externa.dao.ISeguimientoGuiaDao;
-import com.exact.service.externa.edao.classes.SedeEdao;
 import com.exact.service.externa.edao.interfaces.IBuzonEdao;
 import com.exact.service.externa.edao.interfaces.IDistritoEdao;
-import com.exact.service.externa.edao.interfaces.IHandleFileEdao;
 import com.exact.service.externa.edao.interfaces.IProductoEdao;
 import com.exact.service.externa.edao.interfaces.ISedeEdao;
 import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
-import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
 import com.exact.service.externa.entity.Guia;
 import com.exact.service.externa.entity.SeguimientoDocumento;
 import com.exact.service.externa.entity.SeguimientoGuia;
 import com.exact.service.externa.entity.TipoDevolucion;
-import com.exact.service.externa.entity.id.DocumentoGuiaId;
 import com.exact.service.externa.service.interfaces.IDocumentoReporteService;
 import com.exact.service.externa.service.interfaces.IDocumentoService;
-import com.exact.service.externa.service.interfaces.IEstadoDocumentoService;
 import com.exact.service.externa.service.interfaces.IGuiaService;
-import com.exact.service.externa.utils.IAutogeneradoUtils;
 
 @Service
 public class DocumentoService implements IDocumentoService {
@@ -82,14 +64,10 @@ public class DocumentoService implements IDocumentoService {
 	@Autowired
 	private IDocumentoDao documentoDao;
 
-	@Autowired
-	private IAutogeneradoUtils autogeneradoUtils;
 
 	@Autowired
 	private ISeguimientoDocumentoDao seguimientoDocumentodao;
 
-	@Autowired
-	private IHandleFileEdao handleFileEdao;
 	
 	@Autowired
 	IBuzonEdao buzonEdao;
@@ -202,43 +180,87 @@ public class DocumentoService implements IDocumentoService {
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> distritosIdslst = new ArrayList();
-		List<Long> buzonIds = new ArrayList();
+		//List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
 			distritosIds.add(documento.getDistritoId());
-			buzonIds.add(documento.getEnvio().getBuzonId());
+			//buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
 		distritosIdslst=distritosIds.stream().distinct().collect(Collectors.toList());
+		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritosIdslst);
-		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
+		Map<String, Object> buzon = buzonEdao.listarById(idbuzon);
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
-		
+		List<Integer> tamanoslist = new ArrayList<>();
+		tamanoslist.add(distritos.size());
+		tamanoslist.add(sedes.size());
+		tamanoslist.add(productos.size());
+		tamanoslist.add(tiposDocumento.size());
+		int mayor = tamanoslist.stream().mapToInt(i -> i).max().getAsInt();
+
+
 		for (Documento documento : documentosUbcp) {
-			
+			documento.getEnvio().setBuzon(buzon);
+			int i = 0;
+			boolean distritoboolean = false;
+			boolean sedeboolean = false;
+			boolean productoboolean = false;
+			boolean clasificacionboolean = false;
+			while(i< mayor) {
+				
+				if(!distritoboolean) {
+					if (documento.getDistritoId().longValue() ==  Long.valueOf(distritos.get(i).get("id").toString())) {
+						documento.setDistrito(distritos.get(i));
+						distritoboolean=true;
+					}
+				}
+
+				
+				if(!sedeboolean) {
+					if (documento.getEnvio().getSedeId() == Long.valueOf(sedes.get(i).get("id").toString())) {
+						documento.getEnvio().setSede(sedes.get(i));
+						sedeboolean=true;
+
+					}
+				}
+
+				if(!productoboolean) {
+					if (documento.getEnvio().getProductoId() == Long.valueOf(productos.get(i).get("id").toString())) {
+						documento.getEnvio().setProducto(productos.get(i));
+						productoboolean=true;
+
+					}
+					
+				}
+				
+				if(!clasificacionboolean) {
+					if (documento.getEnvio().getTipoClasificacionId() == Long.valueOf(tiposDocumento.get(i).get("id").toString())) {
+						documento.getEnvio().setClasificacion(tiposDocumento.get(i));
+						clasificacionboolean=true;
+
+					}
+				}
+				
+				if(distritoboolean && sedeboolean && productoboolean && clasificacionboolean) {
+					break;
+				}
+				i++;
+			}
+			/*
 			int i = 0; 
 			while(i < distritos.size()) {
-				
-				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-				
-				if (documento.getDistritoId().longValue() == distritoId.longValue()) {
+				//Long distritoId=
+				if (documento.getDistritoId().longValue() ==  Long.valueOf(distritos.get(i).get("id").toString())) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
 				i++;
 			}
 			
-			int j = 0; 
-			while(j < buzones.size()) {
-				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
-					documento.getEnvio().setBuzon(buzones.get(j));
-					break;
-				}
-				j++;
-			}
 			
 			int k = 0; 
 			while(k < sedes.size()) {
@@ -266,7 +288,11 @@ public class DocumentoService implements IDocumentoService {
 				}
 				n++;
 			}
+			*/
 		}
+		
+
+		
 		return documentosUbcp;
 	}
 
@@ -375,12 +401,10 @@ public class DocumentoService implements IDocumentoService {
 			
 			documentoBD.addSeguimientoDocumento(seguimientoDocumentoNuevo);
 		}
-		
 		documentoDao.saveAll(documentosBDList);
 		if(guia.getTipoGuia().getId()==GUIA_REGULAR) {
 			documentoReporteservice.actualizarDocumentosPorResultado(documentosBDList, guiaids);
 		}
-		
 		boolean rpta = guiadao.existeDocumentosPendientes(guia.getId());
 		if(!rpta) {
 			List<SeguimientoGuia> seguimientoGuiaList = new ArrayList<SeguimientoGuia>();
@@ -605,7 +629,7 @@ public class DocumentoService implements IDocumentoService {
 			return null;
 		}
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
-		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId().longValue());
+		Map<String, Object> buzones = buzonEdao.listarById(documento.getEnvio().getBuzonId());
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
@@ -732,7 +756,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		Documento documento = d.get();
 		DocumentoGuia dg = documentoGuiadao.findByDocumentoId(id);
-		SeguimientoDocumento seguimientoDocumento= null;
+		SeguimientoDocumento seguimientoDocumento= new SeguimientoDocumento();
 		Iterable<EstadoDocumento> estadosDocumento = documento.getUltimoSeguimientoDocumento().getEstadoDocumento().getEstadosDocumentoPermitidos();
 		List<EstadoDocumento> lstEstadosDocumento = StreamSupport.stream(estadosDocumento.spliterator(), false).collect(Collectors.toList());	
 		
@@ -791,27 +815,32 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	public Iterable<Documento> listarDocumentosRecepcion(String matricula) throws ClientProtocolException, IOException, JSONException {
+		
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
+		
 		Iterable<Documento> documentosBD = documentoDao.listarDocumentosParaRecepcionar(Long.valueOf(sede.get("id").toString()));
-		List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
+		
+		//List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		List<Long> buzonIds = new ArrayList();
 		
-		for (Documento documento : documentolst) {
+		for (Documento documento : documentosBD) {
 			buzonIds.add(documento.getEnvio().getBuzonId());
 		}
+		
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
-		for (Documento documento : documentolst) {
+		
+		for (Documento documento : documentosBD) {
 			int i = 0; 
 			while(i < buzones.size()) {
 				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
 					documento.getEnvio().setBuzon(buzones.get(i));
 					break;
-				}
+				}	
 				i++;
 			}
+			
 		}
-		
-		return documentolst;
+		return documentosBD;
 	}
 
 	@Override
@@ -833,7 +862,7 @@ public class DocumentoService implements IDocumentoService {
 		}
 		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
 		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
-		
+		//SeguimientoDocumento sdMax = seguimientoDocumentodao.segmax(documentoId);
 		if(sdMax.getEstadoDocumento().getId()!=ENTREGADO && sdMax.getEstadoDocumento().getId()!=REZAGADO && sdMax.getEstadoDocumento().getId()!=NO_DISTRIBUIBLE) {
 			return null;
 		}
@@ -847,17 +876,15 @@ public class DocumentoService implements IDocumentoService {
 		seguimientoDocumento.setLinkImagen(sdMax.getLinkImagen());
 		seguimientoDocumento.setDocumento(documento);
 		seguimientoDocumento.setFecha(new Date());
-		seguimientosDocumentolst.add(seguimientoDocumento);
-		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
-		
-		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+		seguimientoDocumento.setMotivoEstado(sdMax.getMotivoEstado());
+		//seguimientosDocumentolst.add(seguimientoDocumento);
+		//seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
+		Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>();
+		sd.add(seguimientoDocumento);
 		documento.setSeguimientosDocumento(sd);
 		Documento documentoguardado = documentoDao.save(documento);
-		
 		documentoReporteservice.actualizarDocumentosRecepcionados(documentoguardado.getId());
-		
 		return documentoguardado;
-		
 	}
 
 	@Override

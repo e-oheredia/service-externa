@@ -8,6 +8,6 @@ import org.json.JSONException;
 
 public interface IProvinciaEdao {
 	public Iterable<Map<String, Object>> listarProvinciasByDepartamentoId(Long departamentoId)
-			throws ClientProtocolException, IOException, JSONException;
-	Iterable<Map<String, Object>> listarAll() throws ClientProtocolException, IOException, JSONException;
+			throws IOException, JSONException;
+	Iterable<Map<String, Object>> listarAll() throws IOException, JSONException;
 }

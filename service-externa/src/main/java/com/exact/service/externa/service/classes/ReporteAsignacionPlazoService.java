@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,8 +11,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import com.exact.service.externa.dao.IAreaPlazoDistribucionDao;
@@ -25,8 +23,7 @@ import com.exact.service.externa.entity.BuzonPlazoDistribucion;
 import com.exact.service.externa.entity.ReporteAsignacionPlazo;
 import com.exact.service.externa.service.interfaces.IReporteAsignacionPlazoService;
 
-import static com.exact.service.externa.enumerator.TipoAsignacionEnum.AREA;
-import static com.exact.service.externa.enumerator.TipoAsignacionEnum.BUZON;
+
 
 @Service
 public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoService{
@@ -49,7 +46,6 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 	@Override
 	public Iterable<ReporteAsignacionPlazo> listarReportes(String fechaIni, String fechaFin) throws IOException, Exception{
 		List<ReporteAsignacionPlazo> reportes = new ArrayList<>();
-		ReporteAsignacionPlazo repor = new ReporteAsignacionPlazo();
 		int id=1;
 	//	Map<String,Object> prueba = new HashMap<>();
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -104,7 +100,7 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 					.collect(Collectors.toList());
 			List<Long> areaIds = new ArrayList();
 			for (int i = 0; i < areaslst.size(); i++) {
-				areaIds.add(Long.valueOf(areaslst.get(i).getAreaId()));
+				areaIds.add(areaslst.get(i).getAreaId());
 			}
 			List<Map<String, Object>> areas = (List<Map<String, Object>>) areaEdao.listarByIds(areaIds);
 			for(AreaPlazoDistribucion area: areaplazos) {
@@ -133,7 +129,7 @@ public class ReporteAsignacionPlazoService implements IReporteAsignacionPlazoSer
 			List<BuzonPlazoDistribucion> buzoneslst = StreamSupport.stream(buzonplazos.spliterator(), false).collect(Collectors.toList());
 			List<Long> buzonIds = new ArrayList();
 			for (int i = 0; i < buzoneslst.size(); i++) {
-				buzonIds.add(Long.valueOf(buzoneslst.get(i).getBuzonId()));
+				buzonIds.add(buzoneslst.get(i).getBuzonId());
 			}
 			List<Map<String, Object>> buzonesls = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			for(BuzonPlazoDistribucion buzon : buzonplazos) {

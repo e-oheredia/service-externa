@@ -6,7 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
 
 @Repository
@@ -29,5 +28,9 @@ public interface IDocumentoGuiaDao extends CrudRepository<DocumentoGuia, Long> {
 	@Query("SELECT d FROM DocumentoGuia d WHERE d.guia.id=?1")
 	public Iterable<DocumentoGuia> findByGuiaId(Long guiaId);
 	
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM DocumentoGuia dg WHERE dg.guia.id = ?1")
+	public void eliminarPorGuiaId(Long guiaId);
 	
 }

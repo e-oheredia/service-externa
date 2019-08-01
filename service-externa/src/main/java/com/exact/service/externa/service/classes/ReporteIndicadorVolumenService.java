@@ -1,13 +1,11 @@
 package com.exact.service.externa.service.classes;
 
-import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.ENTREGADO;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +50,7 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 	
 	private static final Log Logger = LogFactory.getLog(ReporteIndicadorVolumenService.class);
 
-	SimpleDateFormat dtaño = new SimpleDateFormat("YYYY");				
+	SimpleDateFormat dtaño = new SimpleDateFormat("yyyy");				
 	SimpleDateFormat dtcompleta = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Autowired
@@ -103,7 +101,6 @@ public class ReporteIndicadorVolumenService implements IReporteIndicadorVolumenS
 			listademeses.add(dt.format(mess)); 
 		}
 
-		Map<Integer, Integer> ms = new HashMap<Integer, Integer>();
 		int cantidadtotal = reportes.size();
 		if(cantidadtotal==0) {
 			return null;
