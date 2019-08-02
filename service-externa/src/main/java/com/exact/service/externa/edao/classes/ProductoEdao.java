@@ -35,7 +35,7 @@ public class ProductoEdao implements IProductoEdao{
 	private final String path = "/productos";
 	
 	@Override
-	public Iterable<Map<String, Object>> listarAll() throws IOException, JSONException, Exception{
+	public Iterable<Map<String, Object>> listarAll() throws Exception{
 		HttpGet httpGet = new HttpGet(productosPath + path);
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {
@@ -52,7 +52,7 @@ public class ProductoEdao implements IProductoEdao{
 	}
 
 	@Override
-	public Map<String, Object> guardar(String producto) throws IOException, JSONException, Exception {
+	public Map<String, Object> guardar(String producto) throws Exception {
 		HttpPost httpost = new HttpPost(productosPath + path);
 		StringEntity entity = new StringEntity(producto);
 		httpost.setEntity(entity);
@@ -73,7 +73,7 @@ public class ProductoEdao implements IProductoEdao{
 	}
 
 	@Override
-	public Map<String, Object> modificar(Long id, String producto) throws IOException, JSONException, Exception{
+	public Map<String, Object> modificar(Long id, String producto) throws Exception{
 		HttpPut httput = new HttpPut(productosPath + path+ "/"+ id);
 		StringEntity entity = new StringEntity(producto);
 		httput.setEntity(entity);
@@ -94,7 +94,7 @@ public class ProductoEdao implements IProductoEdao{
 	}
 
 	@Override
-	public Iterable<Map<String, Object>> listarActivos() throws IOException, JSONException, Exception {
+	public Iterable<Map<String, Object>> listarActivos() throws Exception {
 		HttpGet httpGet = new HttpGet(productosPath + path +"/activos");
 		CloseableHttpResponse httpResponse = requester.request(httpGet);
 		try {

@@ -197,7 +197,7 @@ public class EnvioController {
 		Map<String, String> filter = new HashMap<>();
 		Iterable<Inconsistencia> inconsistencias = inconsistenciaService.listarInconsistenciasPorEnvioId(id);
 		if(inconsistencias==null) {
-			return new ResponseEntity<String>("NO EXISTEN INCONSISTENCIAS PARA ESTE ENVIO", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("NO EXISTEN INCONSISTENCIAS PARA ESTE ENVIO", HttpStatus.BAD_REQUEST);
 		}
 		filter.put("documentosFilter", "envio");
 		filter.put("documentosGuiaFilter", "documento");

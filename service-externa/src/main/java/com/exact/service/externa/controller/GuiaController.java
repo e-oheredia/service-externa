@@ -1,14 +1,10 @@
 package com.exact.service.externa.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -112,7 +108,7 @@ public class GuiaController {
 		DocumentoGuia dg = documentoGuiaService.validarDocumentoGuia(guiaId, documentoId, Long.valueOf(datosUsuario.get("idUsuario").toString()));
 		
 		if (dg == null) {
-			Map<String, Object> respuesta = new HashMap<String, Object>();
+			Map<String, Object> respuesta = new HashMap<>();
 			respuesta.put("mensaje", "No existe el documento asociado a la guia.");	
 			return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
 		}

@@ -15,24 +15,24 @@ public interface IRegionEdao {
 
 	
 	public Iterable<Map<String, Object>> listardiaslaborales(Long ambitoid)
-			throws ClientProtocolException, IOException, JSONException;
+			throws IOException, JSONException;
 	
 	public Iterable<Map<String, Object>> listarhoraslaborales(Long ambitoid)
-			throws ClientProtocolException, IOException, JSONException;
+			throws IOException, JSONException;
 
 	public Iterable<Map<String, Object>> listarambitosdiaslabores()
-			throws ClientProtocolException, IOException, JSONException;
+			throws IOException, JSONException;
 
 
 	public Map<String, Object> modificarAmbito(Long id, String subambito) 
-			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;
+			throws JSONException, IOException;
 	
 
 	public Map<String, Object> guardarferiado(Long id, String feriado) 
-			throws io.jsonwebtoken.io.IOException, JSONException, UnsupportedEncodingException, ClientProtocolException, IOException;	
+			throws JSONException, IOException;	
 	
 	public Map<String, Object> listardias(Long ambitoid,String fecha1,String fecha2)
-			throws ClientProtocolException, IOException, JSONException, URISyntaxException;
+			throws IOException, JSONException, URISyntaxException;
 
 	public Iterable<Map<String, Object>> listarSubAmbitos() throws IOException, JSONException;
 	
@@ -40,7 +40,7 @@ public interface IRegionEdao {
 	
 	public Iterable<Map<String, Object>> listarSubAmbitosActivos() throws IOException, JSONException;
 	
-	public Map<String, Object> guardarSubAmbito(String ambito) throws ClientProtocolException, IOException, JSONException;
+	public Map<String, Object> guardarSubAmbito(String ambito) throws IOException, JSONException;
 	
 	public Map<String, Object> modificarSubAmbito(Long id, String ambito) throws IOException, JSONException;	
 	

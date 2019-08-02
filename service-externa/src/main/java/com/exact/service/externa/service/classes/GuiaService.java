@@ -13,6 +13,7 @@ import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXP
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_ACTIVA;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_NORMAL;
+import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
 
 
 
@@ -375,10 +376,10 @@ public class GuiaService implements IGuiaService{
 			}
 		}
 		
-		if (esCreado == false) {
+		if (!esCreado) {
 			return 2;
 		}	
-		
+		documentoGuiaDao.eliminarPorGuiaId(guiaSeleccionada.getId());
 		guiaDao.delete(guiaSeleccionada);
 		
 		return 1;
@@ -995,7 +996,7 @@ public class GuiaService implements IGuiaService{
 	@Override
 	@Transactional
 	public Map<Integer,String> cargarResultadosDevolucion(List<Documento> documentoDevueltos, Long usuarioId) throws ClientProtocolException, IOException, JSONException, Exception {
-		Map<Integer,String> map = new HashMap<Integer,String>();
+		Map<Integer,String> map = new HashMap<>();
 		List<String> autogeneradoList = new ArrayList<>();		
 		for(Documento documento : documentoDevueltos) {
 		autogeneradoList.add(documento.getDocumentoAutogenerado());
@@ -1008,20 +1009,26 @@ public class GuiaService implements IGuiaService{
 		}
 		Guia guia = guiaDao.findGuiabyAutogenerado(documentoDevueltos.get(0).getDocumentoAutogenerado());
 		int i=0;
+		EstadoDocumento estadoDocumento = new EstadoDocumento();
+		estadoDocumento.setId(RECEPCIONADO);
 		for(Documento documento : documentosBDList) {
 			if(documento.getDocumentoAutogenerado().equals(documentoDevueltos.get(i).getDocumentoAutogenerado())) {
 				documento.setTiposDevolucion(documentoDevueltos.get(i).getTiposDevolucion());
 			}
+			
 			List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<>(documento.getSeguimientosDocumento());
 			SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
 			documento.setRecepcionado(true);
 			SeguimientoDocumento seguimientodocumento = new SeguimientoDocumento(usuarioId, sdMax.getEstadoDocumento(),"Documento(s) recibido(s)");
 			seguimientodocumento.setUsuarioId(usuarioId);
 			seguimientodocumento.setDocumento(documento);
+			seguimientodocumento.setEstadoDocumento(estadoDocumento);
+			seguimientodocumento.setMotivoEstado(documento.getUltimoSeguimientoDocumento().getMotivoEstado());
+			seguimientodocumento.setLinkImagen(documento.getUltimoSeguimientoDocumento().getLinkImagen());
 			seguimientosDocumentolst.add(seguimientodocumento);
 			seguimientoDocumentodao.saveAll(seguimientosDocumentolst);
-			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
-			documento.setSeguimientosDocumento(sd);
+//			Set<SeguimientoDocumento> sd = new HashSet<SeguimientoDocumento>(seguimientosDocumentolst);
+//			documento.setSeguimientosDocumento(sd);
 			i++;
 		}
 		documentoDao.saveAll(documentosBDList);
