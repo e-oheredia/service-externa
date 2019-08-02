@@ -155,9 +155,11 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
 			envioMasivo.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
+			//
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
+			//
 			Long tipoPlazo = envioMasivo.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
 			if(tipoPlazo==EXPRESS){
 				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(EXPRESS, header);

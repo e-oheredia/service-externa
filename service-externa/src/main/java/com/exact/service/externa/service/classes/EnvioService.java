@@ -125,6 +125,10 @@ public class EnvioService implements IEnvioService {
 
 		for (Documento documento : envio.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
+			documento.setContactoDestino( documento.getContactoDestino().toUpperCase());
+			documento.setRazonSocialDestino( documento.getRazonSocialDestino().toUpperCase());
+			documento.setDireccion(documento.getDireccion().toUpperCase());
+			documento.setReferencia(documento.getReferencia().toUpperCase());
 			documento.setDocumentoAutogenerado(autogeneradoNuevo);
 			documento.setEnvio(envio);
 			SeguimientoDocumento seguimientoDocumento = new SeguimientoDocumento(idUsuario,

@@ -85,10 +85,10 @@ public class CommonUtils {
 	}
 	
 	public static File multipartFileToFile(MultipartFile multipartFile) throws IOException {
+		/*
 		File convFile = new File(multipartFile.getOriginalFilename());
 		boolean result;
 		result = convFile.createNewFile();
-		
 		if(result) {
 		    FileOutputStream fos = new FileOutputStream(convFile);
 		    try {
@@ -100,6 +100,14 @@ public class CommonUtils {
 		}else {
 			return null;
 		}
+		*/
+		
+		File convFile = new File(multipartFile.getOriginalFilename());
+	    convFile.createNewFile();
+	    FileOutputStream fos = new FileOutputStream(convFile);
+	    fos.write(multipartFile.getBytes());
+	    fos.close();
+	    return convFile;
 		
 	}
 	
