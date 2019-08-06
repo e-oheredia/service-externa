@@ -79,10 +79,17 @@ public class GuiaController {
 	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Guia nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
+		Map<String, Object> respuesta = new HashMap<>();
+		Guia nuevaGuia = new Guia();
+		try {
+			nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
+		}catch(Exception e){
+			respuesta.put("mensaje", "El Número de la guía ya existe");	
+			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
+		}
+		
 		if (nuevaGuia == null) {
-			Map<String, Object> respuesta = new HashMap<>();
-			respuesta.put("mensaje", "No existen documentos custodiados para la Guia");	
+			respuesta.put("mensaje", "No existen documentos custodiados para la Guía");	
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
 		
