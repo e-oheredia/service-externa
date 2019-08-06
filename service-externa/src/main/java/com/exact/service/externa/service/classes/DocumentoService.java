@@ -422,7 +422,7 @@ public class DocumentoService implements IDocumentoService {
 			guiadao.save(guia);
 		}
 		
-		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		map.put(1, "Se registraron los resultados");
 		return map;
 	}
 

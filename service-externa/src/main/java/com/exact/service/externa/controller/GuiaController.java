@@ -146,7 +146,7 @@ public class GuiaController {
 				status=HttpStatus.OK;
 				break;
 		case 2:	
-			rpta ="ELEMENTOS RETIRADOS SATISFACTORIAMENTE";
+			rpta ="Documentos retirados";
 				status=HttpStatus.OK;
 				break;
 		case 3:
