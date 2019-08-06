@@ -336,8 +336,13 @@ public class DocumentoService implements IDocumentoService {
 			}
 			
 			Documento documentoBD = d.get();
-			
+			Date fechaenvio = new Date();
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
+			for(SeguimientoDocumento sg : documentoBD.getSeguimientosDocumento()) {
+				if(sg.getId()==3) {
+					fechaenvio=sg.getFecha();
+				}
+			}
 			
 			
 			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA && 
@@ -370,8 +375,14 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.setLinkImagen("");
 			}
 			
-			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha())>=0) {
-				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha()) < 0) {
+				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MENOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				return map;
+			}
+			
+			if(fechaenvio.compareTo(seguimientoDocumentoExcel.getFecha()) > 0) {
+				map.put(8, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ENVÍO");
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}

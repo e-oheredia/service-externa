@@ -82,6 +82,15 @@ public class DocumentoController {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@PutMapping("/cargaresultado")
 	public ResponseEntity<?> cargarResultados(@RequestBody List<Documento> documentos, Authentication authentication) throws IOException, JSONException, URISyntaxException, ParseException {
 		
