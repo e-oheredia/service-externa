@@ -44,48 +44,15 @@ SET IDENTITY_INSERT [dbo].[tipo_servicio] ON
 
 INSERT [dbo].[tipo_servicio] ([tipo_servicio_id], [activo], [nombre]) VALUES (1, 1, N'DISTRIBUCIÓN')
 SET IDENTITY_INSERT [dbo].[tipo_servicio] OFF
-SET IDENTITY_INSERT [dbo].[guia] ON 
 
-INSERT [dbo].[guia] ([guia_id], [numero_guia], [producto_id], [region_id], [sede_id], [tipo_clasificacion_id], [plazo_distribucion_id], [proveedor_id], [tipo_guia_id], [tipo_seguridad_id], [tipo_servicio_id]) VALUES (1, N'8488485', 1, 1, 5, 1, 1, 1, 1, 1, 1)
-SET IDENTITY_INSERT [dbo].[guia] OFF
-SET IDENTITY_INSERT [dbo].[seguimiento_guia] ON 
 
-INSERT [dbo].[seguimiento_guia] ([seguimiento_guia_id], [fecha], [usuario_id], [estado_guia_id], [guia_id]) VALUES (1, CAST(N'2019-07-24T16:13:45.5570000' AS DateTime2), 3, 1, 1)
-INSERT [dbo].[seguimiento_guia] ([seguimiento_guia_id], [fecha], [usuario_id], [estado_guia_id], [guia_id]) VALUES (2, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 3, 2, 1)
-INSERT [dbo].[seguimiento_guia] ([seguimiento_guia_id], [fecha], [usuario_id], [estado_guia_id], [guia_id]) VALUES (3, CAST(N'2019-07-24T16:14:59.6990000' AS DateTime2), 3, 4, 1)
-SET IDENTITY_INSERT [dbo].[seguimiento_guia] OFF
 SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
 
 INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (1, N'ENVIO REGULAR')
 INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (2, N'ENVIO BLOQUE')
 SET IDENTITY_INSERT [dbo].[tipo_envio] OFF
-SET IDENTITY_INSERT [dbo].[envio] ON 
 
-INSERT [dbo].[envio] ([envio_id], [buzon_id], [fecha], [producto_id], [ruta_autorizacion], [sede_id], [tipo_clasificacion_id], [plazo_distribucion_id], [tipo_envio_id], [tipo_seguridad_id], [tipo_servicio_id]) VALUES (1, 5, CAST(N'2019-07-24T16:12:55.3630000' AS DateTime2), 1, NULL, 5, 1, 1, 1, 1, 1)
-SET IDENTITY_INSERT [dbo].[envio] OFF
-SET IDENTITY_INSERT [dbo].[documento] ON 
 
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (1, NULL, N'RONALD SANTOS', N'DIR69', 1, N'EX00000001', N'DOC000007', N'RONALD SANTOS', 0, N'ABC', N'5562', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (2, NULL, N'RONALD SANTOS', N'DIR66', 1, N'EX00000002', N'DOC000004', N'RONALD SANTOS', 0, N'ABC', N'5559', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (3, NULL, N'RONALD SANTOS', N'DIR67', 1, N'EX00000003', N'DOC000005', N'RONALD SANTOS', 0, N'ABC', N'5560', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (4, NULL, N'RONALD SANTOS', N'DIR72', 1, N'EX00000004', N'DOC000010', N'RONALD SANTOS', 0, N'ABC', N'5565', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (5, NULL, N'RONALD SANTOS', N'DIR65', 1, N'EX00000005', N'DOC000003', N'RONALD SANTOS', 0, N'ABC', N'5558', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (6, NULL, N'RONALD SANTOS', N'DIR68', 1, N'EX00000006', N'DOC000006', N'RONALD SANTOS', 0, N'ABC', N'5561', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (7, NULL, N'RONALD SANTOS', N'DIR63', 1, N'EX00000007', N'DOC000001', N'RONALD SANTOS', 0, N'ABC', N'5556', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (8, NULL, N'RONALD SANTOS', N'DIR71', 1, N'EX00000008', N'DOC000009', N'RONALD SANTOS', 0, N'ABC', N'5564', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (9, NULL, N'RONALD SANTOS', N'DIR64', 1, N'EX00000009', N'DOC000002', N'RONALD SANTOS', 0, N'ABC', N'5557', 1)
-INSERT [dbo].[documento] ([documento_id], [codigo_devolucion], [contacto_destino], [direccion], [distrito_id], [documento_autogenerado], [nro_documento], [razon_social_destino], [recepcionado], [referencia], [telefono], [envio_id]) VALUES (10, NULL, N'RONALD SANTOS', N'DIR72', 1, N'EX00000010', N'DOC000008', N'RONALD SANTOS', 0, N'ABC', N'5563', 1)
-SET IDENTITY_INSERT [dbo].[documento] OFF
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (1, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (2, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (3, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (4, 1, CAST(N'2019-07-24T16:13:45.5540000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (5, 1, CAST(N'2019-07-24T16:13:45.5570000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (6, 1, CAST(N'2019-07-24T16:13:45.5570000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (7, 1, CAST(N'2019-07-24T16:13:45.5570000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (8, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (9, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
-INSERT [dbo].[documento_guia] ([documento_id], [guia_id], [fecha_asociacion], [validado]) VALUES (10, 1, CAST(N'2019-07-24T16:13:45.5550000' AS DateTime2), 1)
 SET IDENTITY_INSERT [dbo].[tipo_estado_documento] ON 
 
 INSERT [dbo].[tipo_estado_documento] ([tipo_estado_documento_id], [nombre]) VALUES (1, N'ESTADOS UTD')
@@ -133,49 +100,6 @@ INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (25, N'SIN RECOJO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (26, N'RETENIDO', 6)
 SET IDENTITY_INSERT [dbo].[motivo_estado] OFF
-SET IDENTITY_INSERT [dbo].[seguimiento_documento] ON 
-
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (1, CAST(N'2019-07-24T16:12:55.3800000' AS DateTime2), NULL, NULL, 5, 1, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (2, CAST(N'2019-07-24T16:12:55.3830000' AS DateTime2), NULL, NULL, 5, 2, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (3, CAST(N'2019-07-24T16:12:55.3840000' AS DateTime2), NULL, NULL, 5, 3, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (4, CAST(N'2019-07-24T16:12:55.3850000' AS DateTime2), NULL, NULL, 5, 4, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (5, CAST(N'2019-07-24T16:12:55.3850000' AS DateTime2), NULL, NULL, 5, 5, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (6, CAST(N'2019-07-24T16:12:55.3860000' AS DateTime2), NULL, NULL, 5, 6, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (7, CAST(N'2019-07-24T16:12:55.3870000' AS DateTime2), NULL, NULL, 5, 7, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (8, CAST(N'2019-07-24T16:12:55.3880000' AS DateTime2), NULL, NULL, 5, 8, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (9, CAST(N'2019-07-24T16:12:55.3890000' AS DateTime2), NULL, NULL, 5, 9, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (10, CAST(N'2019-07-24T16:12:55.3890000' AS DateTime2), NULL, NULL, 5, 10, 1, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (11, CAST(N'2019-07-24T16:13:26.4120000' AS DateTime2), NULL, NULL, 3, 1, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (12, CAST(N'2019-07-24T16:13:26.4120000' AS DateTime2), NULL, NULL, 3, 2, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (13, CAST(N'2019-07-24T16:13:26.4130000' AS DateTime2), NULL, NULL, 3, 3, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (14, CAST(N'2019-07-24T16:13:26.4130000' AS DateTime2), NULL, NULL, 3, 4, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (15, CAST(N'2019-07-24T16:13:26.4140000' AS DateTime2), NULL, NULL, 3, 5, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (16, CAST(N'2019-07-24T16:13:26.4140000' AS DateTime2), NULL, NULL, 3, 6, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (17, CAST(N'2019-07-24T16:13:26.4150000' AS DateTime2), NULL, NULL, 3, 7, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (18, CAST(N'2019-07-24T16:13:26.4150000' AS DateTime2), NULL, NULL, 3, 8, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (19, CAST(N'2019-07-24T16:13:26.4160000' AS DateTime2), NULL, NULL, 3, 9, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (20, CAST(N'2019-07-24T16:13:26.4160000' AS DateTime2), NULL, NULL, 3, 10, 2, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (21, CAST(N'2019-07-24T16:14:20.3490000' AS DateTime2), NULL, NULL, 3, 7, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (22, CAST(N'2019-07-24T16:14:20.3500000' AS DateTime2), NULL, NULL, 3, 10, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (23, CAST(N'2019-07-24T16:14:20.3500000' AS DateTime2), NULL, NULL, 3, 2, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (24, CAST(N'2019-07-24T16:14:20.3510000' AS DateTime2), NULL, NULL, 3, 3, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (25, CAST(N'2019-07-24T16:14:20.3510000' AS DateTime2), NULL, NULL, 3, 4, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (26, CAST(N'2019-07-24T16:14:20.3510000' AS DateTime2), NULL, NULL, 3, 1, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (27, CAST(N'2019-07-24T16:14:20.3520000' AS DateTime2), NULL, NULL, 3, 5, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (28, CAST(N'2019-07-24T16:14:20.3520000' AS DateTime2), NULL, NULL, 3, 9, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (29, CAST(N'2019-07-24T16:14:20.3530000' AS DateTime2), NULL, NULL, 3, 8, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (30, CAST(N'2019-07-24T16:14:20.3530000' AS DateTime2), NULL, NULL, 3, 6, 3, NULL)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (31, CAST(N'2019-07-25T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 1, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (32, CAST(N'2019-07-26T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 2, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (33, CAST(N'2019-07-27T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 3, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (34, CAST(N'2019-07-28T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 4, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (35, CAST(N'2019-07-29T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 5, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (36, CAST(N'2019-07-30T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 6, 4, 2)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (37, CAST(N'2019-07-31T00:00:00.0000000' AS DateTime2), N'Link', NULL, 3, 7, 5, 11)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (38, CAST(N'2019-08-01T00:00:00.0000000' AS DateTime2), N'', NULL, 3, 8, 6, 18)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (39, CAST(N'2019-08-02T00:00:00.0000000' AS DateTime2), N'', NULL, 3, 9, 6, 16)
-INSERT [dbo].[seguimiento_documento] ([seguimiento_documento_id], [fecha], [link_imagen], [observacion], [usuario_id], [documento_id], [estado_documento_id], [motivo_estado_id]) VALUES (40, CAST(N'2019-08-03T00:00:00.0000000' AS DateTime2), N'', NULL, 3, 10, 6, 16)
-SET IDENTITY_INSERT [dbo].[seguimiento_documento] OFF
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 2)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (2, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
 INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (3, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
@@ -208,9 +132,8 @@ SET IDENTITY_INSERT [dbo].[tipo_devolucion] OFF
 INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (4, 1)
 INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 1)
 INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 2)
-INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 2)
+--INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 2)
 INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 3)
-INSERT [dbo].[envio_masivo] ([masivo_autogenerado], [envio_id]) VALUES (N'MEX00000001', 1)
 SET IDENTITY_INSERT [dbo].[estado_autorizado] ON 
 
 INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (1, N'PENDIENTE')
@@ -2104,16 +2027,4 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1864, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1865, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1866, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1867, 4)
-SET IDENTITY_INSERT [dbo].[documento_reporte] ON 
 
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (1, 1, 7, 2, 5, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 3)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (2, 1, 10, 2, 6, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 3)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (3, 1, 2, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (4, 1, 3, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (5, 1, 4, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (6, 1, 1, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (7, 1, 5, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (8, 1, 9, 2, 6, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 3)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (9, 1, 8, 2, 6, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 3)
-INSERT [dbo].[documento_reporte] ([documento_reporte_id], [area_id], [documento_id], [estado_cargo], [estado_documento_id], [fecha], [plazo_id], [proveedor_id], [region_id], [sede_id], [tiempo_entrega]) VALUES (10, 1, 6, 2, 4, CAST(N'2019-07-24T16:14:20.3160000' AS DateTime2), 1, 1, 1, 5, 2)
-SET IDENTITY_INSERT [dbo].[documento_reporte] OFF
