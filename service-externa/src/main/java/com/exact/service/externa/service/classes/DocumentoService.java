@@ -307,6 +307,8 @@ public class DocumentoService implements IDocumentoService {
 		
 		List<Long> guiaids = new ArrayList();
 		
+		
+		
 		for(Documento documento : documentosExcelList) {
 			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
@@ -339,7 +341,7 @@ public class DocumentoService implements IDocumentoService {
 			Date fechaenvio = new Date();
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
 			for(SeguimientoDocumento sg : documentoBD.getSeguimientosDocumento()) {
-				if(sg.getId()==3) {
+				if(sg.getEstadoDocumento().getId() ==3) {
 					fechaenvio=sg.getFecha();
 				}
 			}
@@ -375,8 +377,10 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.setLinkImagen("");
 			}
 			
-			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha()) < 0) {
-				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MENOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+			Date dateactual = new Date();
+			
+			if (seguimientoDocumentoExcel.getFecha().compareTo(dateactual) > 0) {
+				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MENOR A LA FECHA Y HORA A LA FECHA ACTUAL");
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}

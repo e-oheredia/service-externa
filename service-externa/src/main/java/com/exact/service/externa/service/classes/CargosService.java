@@ -104,14 +104,26 @@ public class CargosService implements ICargosService {
 							List<TipoDevolucion> tiposdefectolst = StreamSupport
 									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
 							if (tiposdefectolst.contains(tipoDevolucion)) {
-								cantProveedorPendiente++;
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+										cantProveedorPendiente++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
 							}
 						} else {
 							Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
 							List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport
 									.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
 							if (tiposdevolucionDocumentolst.contains(tipoDevolucion)) {
-								cantProveedorDevuelto++;
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+										cantProveedorDevuelto++;
+									}
+								}else {
+									cantProveedorDevuelto++;
+								}
 							}
 						}
 					}
@@ -182,7 +194,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO,NO_DISTRIBUIBLE);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
@@ -302,7 +314,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO, NO_DISTRIBUIBLE);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
