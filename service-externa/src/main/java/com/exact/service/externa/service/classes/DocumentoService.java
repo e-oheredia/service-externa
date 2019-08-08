@@ -909,7 +909,19 @@ public class DocumentoService implements IDocumentoService {
 	public Iterable<Documento> listarDocumentosPorEnvioId(Long envioId, String matricula)
 			throws ClientProtocolException, IOException, JSONException {
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
-		return documentoDao.findDocumentosByEnvioId(envioId, Long.valueOf(sede.get("id").toString()));
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		Iterable<Documento> documentos = documentoDao.findDocumentosByEnvioId(envioId, Long.valueOf(sede.get("id").toString()));
+		for (Documento documento : documentos ) {
+			int h = 0;
+			while (h < distritos.size()) {
+				if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+					documento.setDistrito(distritos.get(h));
+					break;
+				}
+				h++;
+			}
+		}
+		return documentos;
 	}
 
 

@@ -248,14 +248,18 @@ public class EnvioService implements IEnvioService {
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId)
 					.collect(Collectors.toList());
-//			List<Long> distritoIds = new ArrayList<Long>();
-//			enviosCreadosList.stream().forEach(envioCreado -> {
-//				envioCreado.getDocumentos().stream().forEach(documento -> {
-//					distritoIds.add(documento.getDistritoId());
-//				});
-//			});
+			List<Long> distritoIds = new ArrayList<Long>();
+			List<Long> newdistritoIds = new ArrayList<Long>();
+
+			enviosCreadosList.stream().forEach(envioCreado -> {
+				envioCreado.getDocumentos().stream().forEach(documento -> {
+					distritoIds.add(documento.getDistritoId());
+				});
+			});
 			
-			//distritoIds=distritoIds.stream().distinct().collect(Collectors.toList());
+			newdistritoIds=distritoIds.stream().distinct().collect(Collectors.toList());
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(newdistritoIds);
+
 			buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao
@@ -266,16 +270,16 @@ public class EnvioService implements IEnvioService {
 				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
 					descryptarseguimiento(sg);
 				}
-//				for (Documento documento : envio.getDocumentos()) {
-//					int h = 0;
-//					while (h < distritos.size()) {
-//						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
-//							documento.setDistrito(distritos.get(h));
-//							break;
-//						}
-//						h++;
-//					}
-//				}
+				for (Documento documento : envio.getDocumentos()) {
+					int h = 0;
+					while (h < distritos.size()) {
+						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
+							documento.setDistrito(distritos.get(h));
+							break;
+						}
+						h++;
+					}
+				}
 
 				envio.setBuzon(buzones.get(0));
 				

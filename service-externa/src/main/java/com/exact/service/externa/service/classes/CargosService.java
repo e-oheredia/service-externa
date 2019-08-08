@@ -97,8 +97,10 @@ public class CargosService implements ICargosService {
 					if(documento==null) {
 						return null;
 					}
-					SeguimientoDocumento sd = documento.getUltimoSeguimientoDocumento();
+					SeguimientoDocumento sd = documento.getSeguimientoDocumentoByEstadoId(documentoreporte.getEstadoDocumento());
 					if (proveedor.getId() == documentoreporte.getProveedorId()) {
+											
+						/*
 						if (documentoreporte.getEstadoCargo() == PENDIENTE) {
 							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
 							List<TipoDevolucion> tiposdefectolst = StreamSupport
@@ -106,12 +108,15 @@ public class CargosService implements ICargosService {
 							if (tiposdefectolst.contains(tipoDevolucion)) {
 								if(tipoDevolucion.getId()==DENUNCIA) {
 									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
-										cantProveedorPendiente++;
+									cantProveedorPendiente++;
 									}
 								}else {
 									cantProveedorPendiente++;
 								}
 							}
+							
+							
+							
 						} else {
 							Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
 							List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport
@@ -125,8 +130,54 @@ public class CargosService implements ICargosService {
 									cantProveedorDevuelto++;
 								}
 							}
+						}*/
+						
+						if (documentoreporte.getEstadoCargo() == PENDIENTE) {
+							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+							List<TipoDevolucion> tiposdefectolst = StreamSupport
+									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
+							
+							
+							if (tiposdefectolst.contains(tipoDevolucion)) {
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+									cantProveedorPendiente++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
+							}
+								
+						} else {
+							
+							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+							List<TipoDevolucion> tiposdefectolst = StreamSupport
+									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
+							Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
+							List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport
+									.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
+							if (tiposdefectolst.contains(tipoDevolucion)) {
+								
+								if(tiposdevolucionDocumentolst.contains(tipoDevolucion)) {
+									if(tipoDevolucion.getId()==DENUNCIA) {
+										if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+											cantProveedorDevuelto++;
+										}
+									}else {
+										cantProveedorDevuelto++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
+							}
+
+							
+							
 						}
+						
 					}
+					
+					
 				}
 				cantidadPendienteDevuelto.put("pendiente", cantProveedorPendiente);
 				cantidadPendienteDevuelto.put("devuelto", cantProveedorDevuelto);
