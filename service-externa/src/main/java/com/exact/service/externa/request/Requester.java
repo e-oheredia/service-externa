@@ -40,9 +40,6 @@ public class Requester implements IRequester {
 	}
 
 
-
-
-	
 	
 	
 }

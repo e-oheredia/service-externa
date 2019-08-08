@@ -42,7 +42,6 @@ public class GuiaController {
 	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		
 		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas(datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
 		Map<String, String> filter = new HashMap<>();
@@ -51,9 +50,7 @@ public class GuiaController {
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("GuiaFilter", "documentosGuia");				
-		
 		String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
-		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
@@ -221,7 +218,13 @@ public class GuiaController {
 		HttpStatus status = HttpStatus.OK;
 		guia.setId(guiaId);
 		
-		valor = guiaService.modificarGuia(guia);
+		try {
+			valor = guiaService.modificarGuia(guia);
+		}catch(Exception e) {
+			respuesta.put("mensaje", "EL NÚMERO DE LA GUÍA YA EXISTE");	
+			return new ResponseEntity<>(respuesta,HttpStatus.BAD_REQUEST);
+		}
+		
 		
 		switch(valor) {
 		case 0: 
