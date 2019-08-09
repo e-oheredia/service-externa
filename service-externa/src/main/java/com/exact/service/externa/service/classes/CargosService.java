@@ -245,7 +245,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO,NO_DISTRIBUIBLE);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
@@ -261,10 +261,6 @@ public class CargosService implements ICargosService {
 			return null;
 
 		}
-		//List<Long> documentoids = new ArrayList<>();
-		
-		
-
 		
 		if(DENUNCIA==tipoDevolucionId) {
 			for(DocumentoReporte documento : reportes) {
@@ -281,20 +277,6 @@ public class CargosService implements ICargosService {
 			drs= StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		}
 
-		
-		/*
-		for(DocumentoReporte documentor : reportes) {
-			for(Long id : documentoids) {
-				if(id == documentor.getId()) {
-					dr.add(documentor);
-				}
-			}
-		}
-		
-		
-
-		*/
-		
 		Iterable<Proveedor> proveedores = proveedorDao.findAll();
 		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> cantidades = new HashMap<>();
 		
@@ -309,11 +291,41 @@ public class CargosService implements ICargosService {
 				for (DocumentoReporte documentoreporte : drs) {
 					if(proveedor.getId()==documentoreporte.getProveedorId()) {
 						if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
-							 
+							
+							Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
+							if(documento==null) {
+								return null;
+							}
+							SeguimientoDocumento sd = documento.getSeguimientoDocumentoByEstadoId(documentoreporte.getEstadoDocumento());
+							List<Long> tiposDevolucionIds = new ArrayList<>();
 							 if(documentoreporte.getEstadoCargo()==PENDIENTE) {
-									cantidadPendiente++;
+								 	cantidadPendiente++;
 								}else {
-									cantidadDevuelto++;
+									Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+									List<TipoDevolucion> tiposdefectolst = StreamSupport.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());	 
+									for(int m=0;m<tiposdefectolst.size();m++) {
+										tiposDevolucionIds.add(tiposdefectolst.get(m).getId());
+									}
+									Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
+									List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
+									List<Long> tiposDevolucionDevueltosIds = new ArrayList<>();
+									for(int n=0;n<tiposdevolucionDocumentolst.size();n++) {
+										tiposDevolucionDevueltosIds.add(tiposdevolucionDocumentolst.get(n).getId());
+									}
+									if(tiposDevolucionIds.contains(tipoDevolucionId)) {
+										if(tiposDevolucionDevueltosIds.contains(tipoDevolucionId)) {
+											if(tipoDevolucionId==DENUNCIA) {
+												if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+													cantidadDevuelto++;
+												}
+											}else {
+												cantidadDevuelto++;
+											}
+										}
+										else {
+											cantidadPendiente++;
+										}
+									}
 								}
 					}
 				}
@@ -365,7 +377,7 @@ public class CargosService implements ICargosService {
 		if (tipoDevolucionId == CARGO) {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
 		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO, NO_DISTRIBUIBLE);
+			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
 		} else {
 			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
 		}
