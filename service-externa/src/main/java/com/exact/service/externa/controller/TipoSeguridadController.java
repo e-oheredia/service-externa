@@ -32,11 +32,10 @@ public class TipoSeguridadController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<MTipoSeguridad> guardar(@RequestBody MTipoSeguridad mtipoSeguridad){
-		TipoSeguridad tiposeguridad =  converter.convertirETipoSeguridad(mtipoSeguridad);
-		tiposeguridad.setActivo(true);
+	public ResponseEntity<MTipoSeguridad> guardar(@RequestBody TipoSeguridad  tipoSeguridad){
+		tipoSeguridad.setActivo(true);
 		try {
-			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tiposeguridad), HttpStatus.OK);
+			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tipoSeguridad), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<MTipoSeguridad>(HttpStatus.BAD_REQUEST);
 		}
@@ -44,11 +43,10 @@ public class TipoSeguridadController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<MTipoSeguridad> modificar(@PathVariable Long id, @RequestBody MTipoSeguridad mtipoSeguridad){
-		TipoSeguridad tiposeguridad =  converter.convertirETipoSeguridad(mtipoSeguridad);
-		tiposeguridad.setId(id);
+	public ResponseEntity<MTipoSeguridad> modificar(@PathVariable Long id, @RequestBody TipoSeguridad tipoSeguridad){
+		tipoSeguridad.setId(id);
 		try {
-			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tiposeguridad), HttpStatus.OK);
+			return new ResponseEntity<MTipoSeguridad>(tipoSeguridadService.guardar(tipoSeguridad), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<MTipoSeguridad>(HttpStatus.BAD_REQUEST);
 		}
