@@ -346,6 +346,8 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			 }
 			 
 		 }
+		 StreamSupport.stream(listarplazos.spliterator(), false).collect(Collectors.toList());
+		 listarplazos.removeIf(plazo -> !plazo.isActivo());
 		return listarplazos;
 
 	}
@@ -370,7 +372,9 @@ public class PlazoDistribucionService implements IPlazoDistribucionService {
 			 }
 			 
 		 }
-		return listarplazos;
+		 StreamSupport.stream(listarplazos.spliterator(), false).collect(Collectors.toList());
+		 listarplazos.removeIf(plazo -> !plazo.isActivo());
+		 return listarplazos;
 	}
 
 	@Override
