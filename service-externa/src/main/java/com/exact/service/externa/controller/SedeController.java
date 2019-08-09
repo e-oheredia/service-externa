@@ -31,7 +31,7 @@ public class SedeController {
 	
 	@GetMapping("/sedesdespacho")
 	public ResponseEntity<Iterable<Map<String, Object>>> listarSedesDespacho() throws IOException, JSONException{
-		return new ResponseEntity<>(sedeService.listarSedesDespacho(), HttpStatus.OK);
+			return new ResponseEntity<>(sedeService.listarSedesDespacho(), HttpStatus.OK);
 	}
 	
 }
