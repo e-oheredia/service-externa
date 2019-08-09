@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +40,6 @@ import com.exact.service.externa.utils.CommonUtils;
 public class DocumentoController {
 	
 	
-	private static final Log Logger = LogFactory.getLog(DocumentoController.class);
 	
 	private static final String IDUSUARIO = "idUsuario";
 	private static final String FECHAIMCOMPLETA = "VALOR DE FECHAS INCOMPLETAS";
@@ -315,8 +311,7 @@ public class DocumentoController {
 	@GetMapping("/documentosvolumen")
 	public ResponseEntity<String> listarDocumentosVolumen(@RequestParam(name="fechaini", required=false) String fechaini, @RequestParam(name="fechafin",required=false) String fechafin, @RequestParam Long estado  ) throws IOException, JSONException, ParseException, URISyntaxException 
 	{ 
-		Logger.info("FECHA INI : "+ fechaini);
-		Logger.info("FECHA FIN : "+ fechafin);
+		
 		
 		if(fechaini=="" || fechafin=="") 
 		{

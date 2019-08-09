@@ -563,17 +563,17 @@ public class DocumentoService implements IDocumentoService {
 			throws IOException, Exception {
 		
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
-//		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		//List<Long> distritosIds = new ArrayList();
+		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentos) {
-			//distritosIds.add(documento.getDistritoId());
+			distritosIds.add(documento.getDistritoId());
 			buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
-		//distritosIds=distritosIds.stream().distinct().collect(Collectors.toList());
+		distritosIds=distritosIds.stream().distinct().collect(Collectors.toList());
 		buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
 		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
@@ -584,26 +584,26 @@ public class DocumentoService implements IDocumentoService {
 		
 		for (Documento documento : documentos) {
 			
-			documento.getEnvio().setBuzon(buzones.get(0));
+			//documento.getEnvio().setBuzon(buzones.get(0));
 			
 			int i = 0; 
 			while(i < distritos.size()) {
-				//Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-				if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
+				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				if (documento.getDistritoId().longValue() == distritoId) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
 				i++;
 			}
 			
-//			int j = 0; 
-//			while(j < buzones.size()) {
-//				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
-//					documento.getEnvio().setBuzon(buzones.get(j));
-//					break;
-//				}
-//				j++;
-//			}
+			int j = 0; 
+			while(j < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(j));
+					break;
+				}
+				j++;
+			}
 			
 			int k = 0; 
 			while(k < sedes.size()) {
