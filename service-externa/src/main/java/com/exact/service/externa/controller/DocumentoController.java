@@ -63,8 +63,9 @@ public class DocumentoController {
 	
 
 	@GetMapping("/custodiados")
-	public ResponseEntity<String> listarDocumentosCustodiados() throws IOException, JSONException{
-		
+	public ResponseEntity<String> listarDocumentosCustodiados(Authentication authentication) throws IOException, JSONException{
+		@SuppressWarnings("unchecked")
+		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		CommonUtils cu = new CommonUtils();
 		Map<String, String> filter = new HashMap<>();
 		filter.put("envioFilter", "documentos");
@@ -72,7 +73,7 @@ public class DocumentoController {
 		filter.put("guiaFilter", "documentosGuia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		///////////////////////////////////////////////////////////
-		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(),filter);
+		String dtoMapAsString = cu.filterListaObjetoJson(documentoService.listarDocumentosPorEstado(datosUsuario),filter);
 		return new ResponseEntity<>(dtoMapAsString, HttpStatus.OK);
 	
 	}

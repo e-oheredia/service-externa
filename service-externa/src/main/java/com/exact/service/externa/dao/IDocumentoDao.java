@@ -34,6 +34,12 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	public Iterable<Documento> listarDocumentosPorEstado(Long estadoDocumentoId);
 	
 	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
+			+ "sd.estadoDocumento.id = ?1) and d.envio.sedeId=?2 ")
+	public Iterable<Documento> listarDocumentosPorEstado2(Long estadoDocumentoId,Long sedeid);
+	
+	
 	@Query("FROM Documento d WHERE d.envio.buzonId=?3 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
 			+ "WHERE cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date) AND sd.estadoDocumento.id=1)")
 	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon);
