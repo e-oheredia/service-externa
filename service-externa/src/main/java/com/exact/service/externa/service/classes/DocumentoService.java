@@ -28,6 +28,7 @@ import java.util.stream.StreamSupport;
 
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,8 @@ import com.exact.service.externa.service.interfaces.IGuiaService;
 
 @Service
 public class DocumentoService implements IDocumentoService {
+
+	private static final String PERFIL = "perfil";
 
 	
 	@Autowired
@@ -127,12 +130,18 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosPorEstado(String matricula) throws ClientProtocolException, IOException, JSONException{
+
+	public Iterable<Documento> listarDocumentosPorEstado(Map<String, Object> usuario) throws ClientProtocolException, IOException, JSONException{
 		
-		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
-				
-		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO,Long.valueOf(sede.get("id").toString()));
-//		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
+		Iterable<Documento> documentosCustodiados = null;
+		Map<String,Object> sede  = sedeEdao.findSedeByMatricula(usuario.get("matricula").toString());
+		
+		if(usuario.get(PERFIL).equals("SUPERVISOR")) {
+			 documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
+		}else {
+			documentosCustodiados = documentoDao.listarDocumentosPorEstado2(CUSTODIADO,Long.valueOf(sede.get("id").toString()));
+		}
+	
 		
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
@@ -854,10 +863,6 @@ public class DocumentoService implements IDocumentoService {
 				}	
 				i++;
 			}
-			
-			
-			
-			
 		}
 		return documentolst;
 	}

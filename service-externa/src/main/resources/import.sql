@@ -1,13 +1,5 @@
 USE [db_externa_core]
 GO
-SET IDENTITY_INSERT [dbo].[estado_guia] ON 
-
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (1, N'CREADO')
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (2, N'ENVIADO')
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (3, N'DESCARGADO')
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4, N'COMPLETA')
-INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (5, N'CERRADO')
-SET IDENTITY_INSERT [dbo].[estado_guia] OFF
 SET IDENTITY_INSERT [dbo].[tipo_plazo_distribucion] ON 
 
 INSERT [dbo].[tipo_plazo_distribucion] ([tipo_plazo_distribucion_id], [nombre]) VALUES (1, N'REGULAR')
@@ -25,16 +17,11 @@ INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], 
 INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (7, 1, N'DIRECTORIO', 2, 3)
 INSERT [dbo].[plazo_distribucion] ([plazo_distribucion_id], [activo], [nombre], [tiempo_envio], [tipo_plazo_distribucion_id]) VALUES (8, 1, N'ESTÁNDAR PROVINCIA', 120, 1)
 SET IDENTITY_INSERT [dbo].[plazo_distribucion] OFF
-SET IDENTITY_INSERT [dbo].[proveedor] ON 
+SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
 
-INSERT [dbo].[proveedor] ([proveedor_id], [activo], [nombre]) VALUES (1, 1, N'DOCFLOW')
-INSERT [dbo].[proveedor] ([proveedor_id], [activo], [nombre]) VALUES (2, 1, N'URBANO')
-SET IDENTITY_INSERT [dbo].[proveedor] OFF
-SET IDENTITY_INSERT [dbo].[tipo_guia] ON 
-
-INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (1, N' GUIA REGULAR')
-INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (2, N' GUIA BLOQUE')
-SET IDENTITY_INSERT [dbo].[tipo_guia] OFF
+INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (1, N'ENVIO REGULAR')
+INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (2, N'ENVIO BLOQUE')
+SET IDENTITY_INSERT [dbo].[tipo_envio] OFF
 SET IDENTITY_INSERT [dbo].[tipo_seguridad] ON 
 
 INSERT [dbo].[tipo_seguridad] ([tipo_seguridad_id], [activo], [nombre]) VALUES (1, 1, N'SIN GPS')
@@ -45,21 +32,29 @@ SET IDENTITY_INSERT [dbo].[tipo_servicio] ON
 INSERT [dbo].[tipo_servicio] ([tipo_servicio_id], [activo], [nombre]) VALUES (1, 1, N'DISTRIBUCIÓN')
 SET IDENTITY_INSERT [dbo].[tipo_servicio] OFF
 
+SET IDENTITY_INSERT [dbo].[proveedor] ON 
 
-SET IDENTITY_INSERT [dbo].[tipo_envio] ON 
+INSERT [dbo].[proveedor] ([proveedor_id], [activo], [nombre]) VALUES (1, 1, N'DOCFLOW')
+INSERT [dbo].[proveedor] ([proveedor_id], [activo], [nombre]) VALUES (2, 1, N'URBANO')
+SET IDENTITY_INSERT [dbo].[proveedor] OFF
+SET IDENTITY_INSERT [dbo].[tipo_guia] ON 
 
-INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (1, N'ENVIO REGULAR')
-INSERT [dbo].[tipo_envio] ([tipo_envio_id], [nombre]) VALUES (2, N'ENVIO BLOQUE')
-SET IDENTITY_INSERT [dbo].[tipo_envio] OFF
+INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (1, N' GUIA REGULAR')
+INSERT [dbo].[tipo_guia] ([tipo_guia_id], [nombre]) VALUES (2, N' GUIA BLOQUE')
+SET IDENTITY_INSERT [dbo].[tipo_guia] OFF
 
+SET IDENTITY_INSERT [dbo].[tipo_devolucion] ON 
 
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (1, N'CARGO')
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (2, N'REZAGO')
+INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (3, N'DENUNCIA')
+SET IDENTITY_INSERT [dbo].[tipo_devolucion] OFF
 SET IDENTITY_INSERT [dbo].[tipo_estado_documento] ON 
 
 INSERT [dbo].[tipo_estado_documento] ([tipo_estado_documento_id], [nombre]) VALUES (1, N'ESTADOS UTD')
 INSERT [dbo].[tipo_estado_documento] ([tipo_estado_documento_id], [nombre]) VALUES (2, N'RESULTADOS PROVEEDOR')
 SET IDENTITY_INSERT [dbo].[tipo_estado_documento] OFF
 SET IDENTITY_INSERT [dbo].[estado_documento] ON 
-
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (1, N'CREADO', 1)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (2, N'CUSTODIADO', 1)
 INSERT [dbo].[estado_documento] ([estado_documento_id], [nombre], [tipo_estado_documento_id]) VALUES (3, N'PENDIENTE DE ENTREGA', 1)
@@ -88,7 +83,7 @@ INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (13, N'RECHAZADO', 5)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (14, N'NO PERMITE ENTREGA', 5)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (15, N'FALLECIDO', 5)
-INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (16, N'EXTRAVIADO / ROBADO', 6)
+INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (16, N'EXTRAVIADO O ROBADO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (17, N'FALTANTE', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (18, N'ANULADO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (19, N'DEVUELTO', 6)
@@ -100,40 +95,6 @@ INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (25, N'SIN RECOJO', 6)
 INSERT [dbo].[motivo_estado] ([motivo_estado_id], [nombre], [estado_documento_id]) VALUES (26, N'RETENIDO', 6)
 SET IDENTITY_INSERT [dbo].[motivo_estado] OFF
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 2)
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (2, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (3, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (9, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 4)
-INSERT [dbo].[area_plazo_distribucion] ([area_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (13, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 4)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (5, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (6, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (7, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 1)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (8, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 6)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (9, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 4)
-INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [fecha_asociacion], [ruta_autorizacion], [plazo_distribucion_id]) VALUES (10, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2), N'6.pdf', 4)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (1, 1)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (2, 1)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (3, 2)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (4, 2)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (5, 1)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (6, 1)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (7, 1)
-INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id]) VALUES (8, 2)
-INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
-INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 2)
-INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
-SET IDENTITY_INSERT [dbo].[tipo_devolucion] ON 
-
-INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (1, N'CARGO')
-INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (2, N'REZAGO')
-INSERT [dbo].[tipo_devolucion] ([tipo_devolucion_id], [nombre]) VALUES (3, N'DENUNCIA')
-SET IDENTITY_INSERT [dbo].[tipo_devolucion] OFF
-INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (4, 1)
-INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 1)
-INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 2)
---INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 2)
-INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 3)
 SET IDENTITY_INSERT [dbo].[estado_autorizado] ON 
 
 INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (1, N'PENDIENTE')
@@ -142,6 +103,71 @@ INSERT [dbo].[estado_autorizado] ([estado_autorizado_id], [nombre]) VALUES (3, N
 SET IDENTITY_INSERT [dbo].[estado_autorizado] OFF
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (2, 1)
 INSERT [dbo].[estado_documento_permitido] ([estado_documento_id], [estado_documento_permitido_id]) VALUES (3, 2)
+INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (4, 1)
+INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 1)
+INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (5, 2)
+INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 2)
+INSERT [dbo].[resultado_tipo_devolucion] ([estado_documento_id], [tipo_devolucion_id]) VALUES (6, 3)
+SET IDENTITY_INSERT [dbo].[estado_guia] ON 
+
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (1, N'CREADO')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (2, N'ENVIADO')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (3, N'DESCARGADO')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (4, N'COMPLETA')
+INSERT [dbo].[estado_guia] ([estado_guia_id], [nombre]) VALUES (5, N'CERRADO')
+SET IDENTITY_INSERT [dbo].[estado_guia] OFF
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (1,  N'6.pdf', 2,CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (2,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (3,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (4,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (9,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[area_plazo_distribucion] ([area_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (13,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (5,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (6,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (7,  N'6.pdf', 1, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (8,  N'6.pdf', 6, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (9,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+INSERT [dbo].[buzon_plazo_distribucion] ([buzon_id], [ruta_autorizacion], [plazo_distribucion_id],[fecha_asociacion]) VALUES (10,  N'6.pdf', 4, CAST(N'2019-06-26T17:34:11.8166667' AS DateTime2))
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (1, 1, NULL, 96)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (2, 1, NULL, 72)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (3, 1, NULL, 48)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (4, 1, NULL, 24)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (5, 1, NULL, 4)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (6, 1, NULL, 2)
+--INSERT [dbo].[region_plazo_distribucion] ([plazo_distribucion_id], [region_id], [region], [tiempo_envio]) VALUES (7, 1, NULL, 2)
+--INSERT [dbo].[buzon_tipo_seguridad] ([buzon_id], [tipo_seguridad_id]) VALUES (1, 1)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 1)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 2)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (1, 3)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (2, 4)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (2, 5)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (3, 1)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (4, 1)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (5, 6)
+INSERT [dbo].[ambito_plazo_distribucion] ([ambito_id], [plazo_distribucion_id]) VALUES (5, 7)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 2)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (1, 1)
+INSERT [dbo].[ambito_proveedor] ([ambito_id], [proveedor_id]) VALUES (2, 1)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 1)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 2)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 5)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 6)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 7)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 3)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
+INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 8)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 1)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 3)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (1, 4)
+--INSERT [dbo].[region_plazo_distribucion] ([region_id], [plazo_distribucion_id]) VALUES (2, 4)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 1)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 2)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 3)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (1, 4)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 1)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 2)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 3)
+--INSERT [dbo].[proveedor_plazo_distribucion] ([proveedor_id], [plazo_distribucion_id]) VALUES (2, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (2, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (3, 4)
@@ -343,7 +369,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (197, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (198, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (199, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (200, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (201, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (202, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (203, 4)
@@ -444,7 +470,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (297, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (298, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (299, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (300, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (301, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (302, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (303, 4)
@@ -545,7 +571,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (397, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (398, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (399, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (400, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (401, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (402, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (403, 4)
@@ -646,7 +672,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (497, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (498, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (499, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (500, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (501, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (502, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (503, 4)
@@ -747,7 +773,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (597, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (598, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (599, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (600, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (601, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (602, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (603, 4)
@@ -848,7 +874,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (697, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (698, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (699, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (700, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (701, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (702, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (703, 4)
@@ -949,7 +975,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (797, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (798, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (799, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (800, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (801, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (802, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (803, 4)
@@ -1050,7 +1076,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (897, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (898, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (899, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (900, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (901, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (902, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (903, 4)
@@ -1151,7 +1177,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (997, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (998, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (999, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1000, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1001, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1002, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1003, 4)
@@ -1252,7 +1278,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1097, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1098, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1099, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1100, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1101, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1102, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1103, 4)
@@ -1353,7 +1379,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1197, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1198, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1199, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1200, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1201, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1202, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1203, 4)
@@ -1454,7 +1480,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1297, 5)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1298, 5)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1299, 5)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1300, 5)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1301, 5)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1302, 5)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1303, 5)
@@ -1555,7 +1581,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1397, 1)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1398, 1)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1399, 1)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1400, 1)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1401, 1)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1402, 1)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1403, 1)
@@ -1656,7 +1682,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1497, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1498, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1499, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1500, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1501, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1502, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1503, 4)
@@ -1757,7 +1783,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1597, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1598, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1599, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1600, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1601, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1602, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1603, 4)
@@ -1858,7 +1884,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1697, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1698, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1699, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1700, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1701, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1702, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1703, 4)
@@ -1959,7 +1985,7 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1797, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1798, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1799, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1800, 4)
-GO
+
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1801, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1802, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1803, 4)
@@ -2027,4 +2053,3 @@ INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1864, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1865, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1866, 4)
 INSERT [dbo].[ambito_distrito] ([distrito_id], [ambito_id]) VALUES (1867, 4)
-

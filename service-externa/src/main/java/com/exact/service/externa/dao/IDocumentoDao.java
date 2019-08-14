@@ -33,8 +33,14 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "sd.estadoDocumento.id = ?1) AND d.envio.sedeId=?2")
-	public Iterable<Documento> listarDocumentosPorEstado(Long estadoDocumentoId, Long sedeId);
+			+ "sd.estadoDocumento.id = ?1)")
+	public Iterable<Documento> listarDocumentosPorEstado(Long estadoDocumentoId);
+	
+	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
+			+ "sd.estadoDocumento.id = ?1) and d.envio.sedeId=?2 ")
+	public Iterable<Documento> listarDocumentosPorEstado2(Long estadoDocumentoId,Long sedeid);
 	
 	
 	@Query("FROM Documento d WHERE d.envio.buzonId=?3 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
@@ -85,7 +91,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 
 	@Query("FROM Documento d WHERE   d.envio.sedeId=?1 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR (sd.estadoDocumento.id =6 AND sd.motivoEstado.id=16) OR sd.estadoDocumento.id =9))   ")
+			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR (sd.estadoDocumento.id =6 AND sd.motivoEstado.id=16) OR sd.estadoDocumento.id =9)) AND d.envio.tipoEnvio.id=1  ")
 	public Iterable<Documento> listarDocumentosParaRecepcionar(Long sedeId);
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd"
