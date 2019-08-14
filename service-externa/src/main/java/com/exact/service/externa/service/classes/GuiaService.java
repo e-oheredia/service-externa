@@ -11,6 +11,7 @@ import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_ACTIVA;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_NORMAL;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;
@@ -47,6 +48,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IDocumentoGuiaDao;
+import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IEstadoDocumentoDao;
 import com.exact.service.externa.dao.IGuiaDao;
 import com.exact.service.externa.dao.ISeguimientoDocumentoDao;
@@ -60,6 +62,7 @@ import com.exact.service.externa.edao.interfaces.ITipoDocumentoEdao;
 import com.exact.service.externa.entity.RegionPlazoDistribucion;
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.DocumentoGuia;
+import com.exact.service.externa.entity.Envio;
 import com.exact.service.externa.entity.EnvioMasivo;
 import com.exact.service.externa.entity.EstadoDocumento;
 import com.exact.service.externa.entity.EstadoGuia;
@@ -126,6 +129,9 @@ public class GuiaService implements IGuiaService{
 	
 	@Autowired
 	IDocumentoReporteService documentoreporteservice;
+	
+	@Autowired
+	IEnvioDao envioDao;
 	
 	private static final Log Logger = LogFactory.getLog(GuiaService.class);
 
@@ -375,10 +381,13 @@ public class GuiaService implements IGuiaService{
 				break;
 			}
 		}
-		
 		if (!esCreado) {
 			return 2;
-		}	
+		}
+		if(guiaSeleccionada.getTipoGuia().getId()==GUIA_BLOQUE) {
+			Envio envio = envioDao.findEnviobyGuiaId(guiaSeleccionada.getId());
+			documentoDao.deleteDocumentosByenvioId(envio.getId());
+		}
 		documentoGuiaDao.eliminarPorGuiaId(guiaSeleccionada.getId());
 		guiaDao.delete(guiaSeleccionada);
 		
