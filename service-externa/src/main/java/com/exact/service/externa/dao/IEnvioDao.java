@@ -36,4 +36,7 @@ public interface IEnvioDao extends CrudRepository<Envio, Long> {
 			+ "WHERE sd.estadoDocumento.id=1 AND cast(sd.fecha as date) BETWEEN cast(?1 as date) AND cast(?2 as date)))")
 	public Iterable<Envio> listarEnviosInconsistencias(Date fechaIni, Date fechaFin);
 	
+	@Query("FROM Envio e WHERE e IN (SELECT d.envio FROM Documento d WHERE d IN (SELECT dg.documento FROM DocumentoGuia dg WHERE dg.guia.id=?1)) ")
+	public Envio findEnviobyGuiaId(Long guiaId);
+	
 }

@@ -130,6 +130,7 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
+
 	public Iterable<Documento> listarDocumentosPorEstado(Map<String, Object> usuario) throws ClientProtocolException, IOException, JSONException{
 		
 		Iterable<Documento> documentosCustodiados = null;
@@ -140,8 +141,7 @@ public class DocumentoService implements IDocumentoService {
 		}else {
 			documentosCustodiados = documentoDao.listarDocumentosPorEstado2(CUSTODIADO,Long.valueOf(sede.get("id").toString()));
 		}
-		
-//		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
+	
 		
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();

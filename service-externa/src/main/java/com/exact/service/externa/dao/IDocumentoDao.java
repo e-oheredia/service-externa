@@ -4,15 +4,18 @@ package com.exact.service.externa.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.TipoDevolucion;
 
 
 @Repository
+@Transactional(readOnly = true)
 public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	@Query(value="SELECT TOP 1 documento_autogenerado FROM documento ORDER BY documento_id DESC", nativeQuery=true)
@@ -116,5 +119,8 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 	+ "WHERE sd.motivoEstado.id=16) AND d.id=?1")
 	boolean findDocumentoConDenuncias(Long documentosId);
-
+	
+	@Transactional
+	@Modifying
+	public void deleteDocumentosByenvioId(Long envioId);
 }
