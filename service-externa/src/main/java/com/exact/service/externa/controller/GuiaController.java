@@ -42,7 +42,6 @@ public class GuiaController {
 	public ResponseEntity<String> listarGuiasCreados(Authentication authentication) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
-		
 		Iterable<Guia> guiasCreadas = guiaService.listarGuiasCreadas(datosUsuario.get("matricula").toString());
 		CommonUtils cu = new CommonUtils();	    
 		Map<String, String> filter = new HashMap<>();
@@ -51,9 +50,7 @@ public class GuiaController {
 		filter.put("documentosGuiaFilter", "guia");
 		filter.put("estadoDocumentoFilter", "estadosDocumentoPermitidos");
 		filter.put("GuiaFilter", "documentosGuia");				
-		
 		String dtoMapAsString = cu.filterListaObjetoJson(guiasCreadas,filter);
-		
 	    return new ResponseEntity<String>(dtoMapAsString, HttpStatus.OK);
 	}
 	
@@ -79,10 +76,17 @@ public class GuiaController {
 	public ResponseEntity<?> crearGuia(@RequestBody Guia guia, Authentication authentication) throws IOException, JSONException{
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();	
-		Guia nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
+		Map<String, Object> respuesta = new HashMap<>();
+		Guia nuevaGuia = new Guia();
+		try {
+			nuevaGuia = guiaService.crearGuiaRegular(guia, Long.valueOf(datosUsuario.get("idUsuario").toString()), datosUsuario.get("matricula").toString());
+		}catch(Exception e){
+			respuesta.put("mensaje", "El Número de la guía ya existe");	
+			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
+		}
+		
 		if (nuevaGuia == null) {
-			Map<String, Object> respuesta = new HashMap<>();
-			respuesta.put("mensaje", "No existen documentos custodiados para la Guia");	
+			respuesta.put("mensaje", "No existen documentos custodiados para la Guía");	
 			return new ResponseEntity<Map<String, Object>>(respuesta, HttpStatus.BAD_REQUEST);
 		}
 		
@@ -146,7 +150,7 @@ public class GuiaController {
 				status=HttpStatus.OK;
 				break;
 		case 2:	
-			rpta ="ELEMENTOS RETIRADOS SATISFACTORIAMENTE";
+			rpta ="Documentos retirados";
 				status=HttpStatus.OK;
 				break;
 		case 3:
@@ -214,7 +218,13 @@ public class GuiaController {
 		HttpStatus status = HttpStatus.OK;
 		guia.setId(guiaId);
 		
-		valor = guiaService.modificarGuia(guia);
+		try {
+			valor = guiaService.modificarGuia(guia);
+		}catch(Exception e) {
+			respuesta.put("mensaje", "EL NÚMERO DE LA GUÍA YA EXISTE");	
+			return new ResponseEntity<>(respuesta,HttpStatus.BAD_REQUEST);
+		}
+		
 		
 		switch(valor) {
 		case 0: 

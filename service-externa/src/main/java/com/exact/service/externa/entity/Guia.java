@@ -36,7 +36,8 @@ public class Guia implements Serializable{
 	@Column(name="guia_id")
 	private Long id;
 	
-	@Column(name="numero_guia")
+	
+	@Column(name="numero_guia",nullable=false, unique=true)
 	private String numeroGuia;
 	
 	@ManyToOne(fetch=FetchType.EAGER)

@@ -28,6 +28,7 @@ import java.util.stream.StreamSupport;
 
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,8 @@ import com.exact.service.externa.service.interfaces.IGuiaService;
 
 @Service
 public class DocumentoService implements IDocumentoService {
+
+	private static final String PERFIL = "perfil";
 
 	
 	@Autowired
@@ -127,11 +130,18 @@ public class DocumentoService implements IDocumentoService {
 	}
 
 	@Override
-	public Iterable<Documento> listarDocumentosPorEstado() throws ClientProtocolException, IOException, JSONException{
 
-				
-		Iterable<Documento> documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
-//		List<Documento> documentosCustodiadosList = StreamSupport.stream(documentosCustodiados.spliterator(), false).collect(Collectors.toList());		
+	public Iterable<Documento> listarDocumentosPorEstado(Map<String, Object> usuario) throws ClientProtocolException, IOException, JSONException{
+		
+		Iterable<Documento> documentosCustodiados = null;
+		Map<String,Object> sede  = sedeEdao.findSedeByMatricula(usuario.get("matricula").toString());
+		
+		if(usuario.get(PERFIL).equals("SUPERVISOR")) {
+			 documentosCustodiados = documentoDao.listarDocumentosPorEstado(CUSTODIADO);
+		}else {
+			documentosCustodiados = documentoDao.listarDocumentosPorEstado2(CUSTODIADO,Long.valueOf(sede.get("id").toString()));
+		}
+	
 		
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
@@ -307,6 +317,8 @@ public class DocumentoService implements IDocumentoService {
 		
 		List<Long> guiaids = new ArrayList();
 		
+		
+		
 		for(Documento documento : documentosExcelList) {
 			autogeneradoList.add(documento.getDocumentoAutogenerado());
 		}
@@ -336,8 +348,13 @@ public class DocumentoService implements IDocumentoService {
 			}
 			
 			Documento documentoBD = d.get();
-			
+			Date fechaenvio = new Date();
 			SeguimientoDocumento seguimientoDocumentoBDUltimo = documentoBD.getUltimoSeguimientoDocumento(); 
+			for(SeguimientoDocumento sg : documentoBD.getSeguimientosDocumento()) {
+				if(sg.getEstadoDocumento().getId() ==3) {
+					fechaenvio=sg.getFecha();
+				}
+			}
 			
 			
 			if (seguimientoDocumentoBDUltimo.getEstadoDocumento().getId() != PENDIENTE_ENTREGA && 
@@ -370,8 +387,16 @@ public class DocumentoService implements IDocumentoService {
 				seguimientoDocumentoExcel.setLinkImagen("");
 			}
 			
-			if (seguimientoDocumentoBDUltimo.getFecha().compareTo(seguimientoDocumentoExcel.getFecha())>=0) {
-				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ÚLTIMO ESTADO");
+			Date dateactual = new Date();
+			
+			if (seguimientoDocumentoExcel.getFecha().compareTo(dateactual) > 0) {
+				map.put(6, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MENOR A LA FECHA Y HORA A LA FECHA ACTUAL");
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				return map;
+			}
+			
+			if(fechaenvio.compareTo(seguimientoDocumentoExcel.getFecha()) > 0) {
+				map.put(8, "LA FECHA Y HORA DEL DOCUMENTO " + documento.getDocumentoAutogenerado() + " DEBE SER MAYOR A LA FECHA Y HORA DEL ENVÍO");
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return map;
 			}
@@ -422,7 +447,7 @@ public class DocumentoService implements IDocumentoService {
 			guiadao.save(guia);
 		}
 		
-		map.put(1, "SE CARGARON LOS RESULTADOS SATISFACTORIAMENTE");
+		map.put(1, "Se registraron los resultados");
 		return map;
 	}
 
@@ -548,17 +573,17 @@ public class DocumentoService implements IDocumentoService {
 			throws IOException, Exception {
 		
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
-//		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		//List<Long> distritosIds = new ArrayList();
+		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+		List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentos) {
-			//distritosIds.add(documento.getDistritoId());
+			distritosIds.add(documento.getDistritoId());
 			buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
-		//distritosIds=distritosIds.stream().distinct().collect(Collectors.toList());
+		distritosIds=distritosIds.stream().distinct().collect(Collectors.toList());
 		buzonIds=buzonIds.stream().distinct().collect(Collectors.toList());
 		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
@@ -569,26 +594,26 @@ public class DocumentoService implements IDocumentoService {
 		
 		for (Documento documento : documentos) {
 			
-			documento.getEnvio().setBuzon(buzones.get(0));
+			//documento.getEnvio().setBuzon(buzones.get(0));
 			
 			int i = 0; 
 			while(i < distritos.size()) {
-				//Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
-				if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(i).get("id").toString())) {
+				Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
+				if (documento.getDistritoId().longValue() == distritoId) {
 					documento.setDistrito(distritos.get(i));
 					break;
 				}
 				i++;
 			}
 			
-//			int j = 0; 
-//			while(j < buzones.size()) {
-//				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
-//					documento.getEnvio().setBuzon(buzones.get(j));
-//					break;
-//				}
-//				j++;
-//			}
+			int j = 0; 
+			while(j < buzones.size()) {
+				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(j).get("id").toString())) {
+					documento.getEnvio().setBuzon(buzones.get(j));
+					break;
+				}
+				j++;
+			}
 			
 			int k = 0; 
 			while(k < sedes.size()) {
@@ -819,17 +844,17 @@ public class DocumentoService implements IDocumentoService {
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
 		
 		Iterable<Documento> documentosBD = documentoDao.listarDocumentosParaRecepcionar(Long.valueOf(sede.get("id").toString()));
+		List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		
-		//List<Documento> documentolst = StreamSupport.stream(documentosBD.spliterator(), false).collect(Collectors.toList());
 		List<Long> buzonIds = new ArrayList();
 		
-		for (Documento documento : documentosBD) {
+		for (Documento documento : documentolst) {
 			buzonIds.add(documento.getEnvio().getBuzonId());
 		}
 		
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		
-		for (Documento documento : documentosBD) {
+		for (Documento documento : documentolst) {
 			int i = 0; 
 			while(i < buzones.size()) {
 				if (documento.getEnvio().getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
@@ -838,9 +863,8 @@ public class DocumentoService implements IDocumentoService {
 				}	
 				i++;
 			}
-			
 		}
-		return documentosBD;
+		return documentolst;
 	}
 
 	@Override
@@ -891,7 +915,19 @@ public class DocumentoService implements IDocumentoService {
 	public Iterable<Documento> listarDocumentosPorEnvioId(Long envioId, String matricula)
 			throws ClientProtocolException, IOException, JSONException {
 		Map<String, Object> sede = sedeEdao.findSedeByMatricula(matricula);
-		return documentoDao.findDocumentosByEnvioId(envioId, Long.valueOf(sede.get("id").toString()));
+		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+		Iterable<Documento> documentos = documentoDao.findDocumentosByEnvioId(envioId, Long.valueOf(sede.get("id").toString()));
+		for (Documento documento : documentos ) {
+			int h = 0;
+			while (h < distritos.size()) {
+				if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+					documento.setDistrito(distritos.get(h));
+					break;
+				}
+				h++;
+			}
+		}
+		return documentos;
 	}
 
 

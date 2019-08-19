@@ -4,15 +4,18 @@ package com.exact.service.externa.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exact.service.externa.entity.Documento;
 import com.exact.service.externa.entity.TipoDevolucion;
 
 
 @Repository
+@Transactional(readOnly = true)
 public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	
 	@Query(value="SELECT TOP 1 documento_autogenerado FROM documento ORDER BY documento_id DESC", nativeQuery=true)
@@ -32,6 +35,12 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
 			+ "sd.estadoDocumento.id = ?1)")
 	public Iterable<Documento> listarDocumentosPorEstado(Long estadoDocumentoId);
+	
+	
+	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
+			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
+			+ "sd.estadoDocumento.id = ?1) and d.envio.sedeId=?2 ")
+	public Iterable<Documento> listarDocumentosPorEstado2(Long estadoDocumentoId,Long sedeid);
 	
 	
 	@Query("FROM Documento d WHERE d.envio.buzonId=?3 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd "
@@ -82,7 +91,7 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 
 	@Query("FROM Documento d WHERE   d.envio.sedeId=?1 AND d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 			+ "WHERE sd.id = (SELECT MAX(sd2.id) FROM SeguimientoDocumento sd2 WHERE sd2.documento.id = d.id) AND " 
-			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR sd.estadoDocumento.id =6 OR sd.estadoDocumento.id =9))   ")
+			+ "(sd.estadoDocumento.id =4 OR sd.estadoDocumento.id =5 OR (sd.estadoDocumento.id =6 AND sd.motivoEstado.id=16) OR sd.estadoDocumento.id =9)) AND d.envio.tipoEnvio.id=1  ")
 	public Iterable<Documento> listarDocumentosParaRecepcionar(Long sedeId);
 	
 	@Query("FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd"
@@ -110,5 +119,8 @@ public interface IDocumentoDao extends CrudRepository<Documento, Long> {
 	@Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM Documento d WHERE d IN (SELECT sd.documento FROM SeguimientoDocumento sd " 
 	+ "WHERE sd.motivoEstado.id=16) AND d.id=?1")
 	boolean findDocumentoConDenuncias(Long documentosId);
-
+	
+	@Transactional
+	@Modifying
+	public void deleteDocumentosByenvioId(Long envioId);
 }

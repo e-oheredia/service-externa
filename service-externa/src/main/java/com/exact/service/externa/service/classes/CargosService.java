@@ -97,24 +97,87 @@ public class CargosService implements ICargosService {
 					if(documento==null) {
 						return null;
 					}
-					SeguimientoDocumento sd = documento.getUltimoSeguimientoDocumento();
+					SeguimientoDocumento sd = documento.getSeguimientoDocumentoByEstadoId(documentoreporte.getEstadoDocumento());
 					if (proveedor.getId() == documentoreporte.getProveedorId()) {
+											
+						/*
 						if (documentoreporte.getEstadoCargo() == PENDIENTE) {
 							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
 							List<TipoDevolucion> tiposdefectolst = StreamSupport
 									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
 							if (tiposdefectolst.contains(tipoDevolucion)) {
-								cantProveedorPendiente++;
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+									cantProveedorPendiente++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
 							}
+							
+							
+							
 						} else {
 							Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
 							List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport
 									.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
 							if (tiposdevolucionDocumentolst.contains(tipoDevolucion)) {
-								cantProveedorDevuelto++;
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+										cantProveedorDevuelto++;
+									}
+								}else {
+									cantProveedorDevuelto++;
+								}
 							}
+						}*/
+						
+						if (documentoreporte.getEstadoCargo() == PENDIENTE) {
+							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+							List<TipoDevolucion> tiposdefectolst = StreamSupport
+									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
+							
+							
+							if (tiposdefectolst.contains(tipoDevolucion)) {
+								if(tipoDevolucion.getId()==DENUNCIA) {
+									if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+									cantProveedorPendiente++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
+							}
+								
+						} else {
+							
+							Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+							List<TipoDevolucion> tiposdefectolst = StreamSupport
+									.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());
+							Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
+							List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport
+									.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
+							if (tiposdefectolst.contains(tipoDevolucion)) {
+								
+								if(tiposdevolucionDocumentolst.contains(tipoDevolucion)) {
+									if(tipoDevolucion.getId()==DENUNCIA) {
+										if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+											cantProveedorDevuelto++;
+										}
+									}else {
+										cantProveedorDevuelto++;
+									}
+								}else {
+									cantProveedorPendiente++;
+								}
+							}
+
+							
+							
 						}
+						
 					}
+					
+					
 				}
 				cantidadPendienteDevuelto.put("pendiente", cantProveedorPendiente);
 				cantidadPendienteDevuelto.put("devuelto", cantProveedorDevuelto);
@@ -166,107 +229,117 @@ public class CargosService implements ICargosService {
 
 	@Override
 	public Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> controlCargos(String fechaIni, String fechaFin,
-			Long tipoDevolucionId) throws IOException, JSONException, NumberFormatException, ParseException {
-		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
-		SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
-		SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
-		Date dateI = null;
-		Date dateF = null;
-		try {
-			dateI = dtdia.parse(fechaIni);
-			dateF = dtdia.parse(fechaFin);
-		} catch (Exception e) {
-			return null;
-		}
-		Iterable<DocumentoReporte> documentos = null;
-		if (tipoDevolucionId == CARGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
-		} else if (tipoDevolucionId == REZAGO) {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
-		} else {
-			documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
-		}
-		List<String> listademeses = new ArrayList<>();
-		List<Date> meses = getListaEntreFechas2(dateI,dateF);
-		for(Date mess : meses) {
-			listademeses.add(dt.format(mess)); 
-		}
-		List<DocumentoReporte> drs = new ArrayList<>();
-		
-		List<DocumentoReporte> reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		if(reportes.size()==0) {
-			return null;
-
-		}
-		//List<Long> documentoids = new ArrayList<>();
-		
-		
-
-		
-		if(DENUNCIA==tipoDevolucionId) {
-			for(DocumentoReporte documento : reportes) {
-				if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
-					drs.add(documento);
-				}
+			Long tipoDevolucionId) throws IOException, JSONException, NumberFormatException, ParseException {SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM");
+			SimpleDateFormat dtdia = new SimpleDateFormat("yyyy-MM-dd");		
+			SimpleDateFormat dtmeses = new SimpleDateFormat("MM");
+			Date dateI = null;
+			Date dateF = null;
+			try {
+				dateI = dtdia.parse(fechaIni);
+				dateF = dtdia.parse(fechaFin);
+			} catch (Exception e) {
+				return null;
 			}
+			Iterable<DocumentoReporte> documentos = null;
+			if (tipoDevolucionId == CARGO) {
+				documentos = documentoReporteDao.findDocumentosByEstadoDevolucion(dateI, dateF, ENTREGADO, REZAGADO);
+			} else if (tipoDevolucionId == REZAGO) {
+				documentos = documentoReporteDao.findDocumentosByEstadoDevolucion2(dateI, dateF, REZAGADO);
+			} else {
+				documentos = documentoReporteDao.findDocumentosByEstadoDevolucionDenuncia(dateI, dateF, NO_DISTRIBUIBLE);
+			}
+			List<String> listademeses = new ArrayList<>();
+			List<Date> meses = getListaEntreFechas2(dateI,dateF);
+			for(Date mess : meses) {
+				listademeses.add(dt.format(mess)); 
+			}
+			List<DocumentoReporte> drs = new ArrayList<>();
 			
-			if(drs.size()==0) {
+			List<DocumentoReporte> reportes = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+			if(reportes.size()==0) {
 				return null;
 
 			}
-		}else {
-			drs= StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
-		}
-
-		
-		/*
-		for(DocumentoReporte documentor : reportes) {
-			for(Long id : documentoids) {
-				if(id == documentor.getId()) {
-					dr.add(documentor);
-				}
-			}
-		}
-		
-		
-
-		*/
-		
-		Iterable<Proveedor> proveedores = proveedorDao.findAll();
-		Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> cantidades = new HashMap<>();
-		
-		for (Proveedor proveedor : proveedores) {
-			Map<Integer, Map<Integer, Map<String, Integer>>> keyMeses = new HashMap<>();
-			int i=0;
-			for(String mesaño : listademeses) {
-				int cantidadPendiente = 0;
-				int cantidadDevuelto = 0;
-				Map<Integer, Map<String, Integer>> mesesCantidad = new HashMap<>();
-				Map<String, Integer> cantDevueltoPendiendte = new HashMap<>();
-				for (DocumentoReporte documentoreporte : drs) {
-					if(proveedor.getId()==documentoreporte.getProveedorId()) {
-						if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
-							 
-							 if(documentoreporte.getEstadoCargo()==PENDIENTE) {
-									cantidadPendiente++;
-								}else {
-									cantidadDevuelto++;
-								}
+			
+			if(DENUNCIA==tipoDevolucionId) {
+				for(DocumentoReporte documento : reportes) {
+					if(documentoDao.findDocumentoConDenuncias(documento.getDocumentoId())) {
+						drs.add(documento);
 					}
 				}
-			}
-				i++;
-				cantDevueltoPendiendte.put("devuelto", cantidadDevuelto);
-				cantDevueltoPendiendte.put("pendiente", cantidadPendiente);
-				mesesCantidad.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantDevueltoPendiendte);
-				keyMeses.put(i, mesesCantidad);
-			}
-			cantidades.put(proveedor.getId(), keyMeses);
-		}
+				
+				if(drs.size()==0) {
+					return null;
 
-		return cantidades;
+				}
+			}else {
+				drs= StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
+			}
 
-	}
+			Iterable<Proveedor> proveedores = proveedorDao.findAll();
+			Map<Long, Map<Integer, Map<Integer, Map<String, Integer>>>> cantidades = new HashMap<>();
+			
+			for (Proveedor proveedor : proveedores) {
+				Map<Integer, Map<Integer, Map<String, Integer>>> keyMeses = new HashMap<>();
+				int i=0;
+				for(String mesaño : listademeses) {
+					int cantidadPendiente = 0;
+					int cantidadDevuelto = 0;
+					Map<Integer, Map<String, Integer>> mesesCantidad = new HashMap<>();
+					Map<String, Integer> cantDevueltoPendiendte = new HashMap<>();
+					for (DocumentoReporte documentoreporte : drs) {
+						if(proveedor.getId()==documentoreporte.getProveedorId()) {
+							if(dt.format(documentoreporte.getFecha()).equals(mesaño)){
+								
+								Documento documento = documentoDao.findById(documentoreporte.getDocumentoId()).orElse(null);
+								if(documento==null) {
+									return null;
+								}
+								SeguimientoDocumento sd = documento.getSeguimientoDocumentoByEstadoId(documentoreporte.getEstadoDocumento());
+								List<Long> tiposDevolucionIds = new ArrayList<>();
+								 if(documentoreporte.getEstadoCargo()==PENDIENTE) {
+									 	cantidadPendiente++;
+									}else {
+										Iterable<TipoDevolucion> tiposdefecto = sd.getEstadoDocumento().getTiposDevolucion();
+										List<TipoDevolucion> tiposdefectolst = StreamSupport.stream(tiposdefecto.spliterator(), false).collect(Collectors.toList());	 
+										for(int m=0;m<tiposdefectolst.size();m++) {
+											tiposDevolucionIds.add(tiposdefectolst.get(m).getId());
+										}
+										Iterable<TipoDevolucion> tiposdevolucionDocumento = documento.getTiposDevolucion();
+										List<TipoDevolucion> tiposdevolucionDocumentolst = StreamSupport.stream(tiposdevolucionDocumento.spliterator(), false).collect(Collectors.toList());
+										List<Long> tiposDevolucionDevueltosIds = new ArrayList<>();
+										for(int n=0;n<tiposdevolucionDocumentolst.size();n++) {
+											tiposDevolucionDevueltosIds.add(tiposdevolucionDocumentolst.get(n).getId());
+										}
+										if(tiposDevolucionIds.contains(tipoDevolucionId)) {
+											if(tiposDevolucionDevueltosIds.contains(tipoDevolucionId)) {
+												if(tipoDevolucionId==DENUNCIA) {
+													if(documentoDao.findDocumentoConDenuncias(documentoreporte.getDocumentoId())) {
+														cantidadDevuelto++;
+													}
+												}else {
+													cantidadDevuelto++;
+												}
+											}
+											else {
+												cantidadPendiente++;
+											}
+										}
+									}
+						}
+					}
+				}
+					i++;
+					cantDevueltoPendiendte.put("devuelto", cantidadDevuelto);
+					cantDevueltoPendiendte.put("pendiente", cantidadPendiente);
+					mesesCantidad.put( Integer.parseInt(dtmeses.format(dt.parse(mesaño))), cantDevueltoPendiendte);
+					keyMeses.put(i, mesesCantidad);
+				}
+				cantidades.put(proveedor.getId(), keyMeses);
+			}
+
+			return cantidades;
+			}
 	
 	public List<Date> getListaEntreFechas2(Date fechaInicio, Date fechaFin) {
 

@@ -45,7 +45,6 @@ public class EnvioMasivoController {
 	//@Secured("ROLE_CREADOR_DOCUMENTO")
 	@PostMapping(consumes = "multipart/form-data")
 	public ResponseEntity<String> registrarEnvioMasivo(@RequestParam("envioMasivo") String envioMasivoJsonString, @RequestParam(required=false) MultipartFile file,Authentication authentication,HttpServletRequest req ) throws IOException, JSONException, MessagingException{
-		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> datosUsuario = (Map<String, Object>) authentication.getPrincipal();
 		ObjectMapper mapper = new ObjectMapper();

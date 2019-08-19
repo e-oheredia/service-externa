@@ -155,9 +155,11 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			String rutaAutorizacion = nuevoEnvioId.toString() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
 			envioMasivo.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion, file.getContentType(), file.getInputStream());
+			//
 			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
 				return null;
 			}
+			//
 			Long tipoPlazo = envioMasivo.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
 			if(tipoPlazo==EXPRESS){
 				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(EXPRESS, header);
@@ -195,38 +197,41 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 		Map<String,Object> sede  = sedeDao.findSedeByMatricula(matricula);
 		Iterable<EnvioMasivo> enviosCreados = envioMasivoDao.findByUltimoEstadoId(CREADO,Long.valueOf(sede.get("id").toString()));
 		List<EnvioMasivo> enviosCreadosList = StreamSupport.stream(enviosCreados.spliterator(), false).collect(Collectors.toList());
-//		List<Long> distritoIds = new ArrayList<Long>();
-//		List<Long> distritoIdslst = new ArrayList<Long>();
+		List<Long> distritoIds = new ArrayList<Long>();
+		List<Long> distritoIdslst = new ArrayList<Long>();
 		if (!enviosCreadosList.isEmpty()) {
-//			enviosCreadosList.stream().forEach(envioCreado -> {
-//				envioCreado.getDocumentos().stream().forEach(documento -> {
-//					distritoIds.add(documento.getDistritoId());
-//				});
-//			});
-			//distritoIdslst = distritoIds.stream().distinct().collect(Collectors.toList());
-//			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+			
+			enviosCreadosList.stream().forEach(envioCreado -> {
+				envioCreado.getDocumentos().stream().forEach(documento -> {
+					distritoIds.add(documento.getDistritoId());
+				});
+			});
+			distritoIdslst = distritoIds.stream().distinct().collect(Collectors.toList());
+			//List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarAll();
+			List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritoIdslst);
+
 			List<Long> buzonIds = enviosCreadosList.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 			List<Long> tipoDocumentoIds = enviosCreadosList.stream().map(Envio::getTipoClasificacionId).collect(Collectors.toList());
 			List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 			List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
 			for (Envio envio: enviosCreadosList) {
 				envio.setCantidadDocumentos(envio.getDocumentos().size());
-//				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
-//					descryptarseguimiento(sg);
-//				}
+				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+				descryptarseguimiento(sg);
+				}
 				
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());	
 				envio.setBuzon(buzones.get(0));
-//				for (Documento documento : envio.getDocumentos()) {
-//					int h = 0;
-//					while (h < distritos.size()) {
-//						if (documento.getDistritoId().longValue() == Long.valueOf(distritos.get(h).get("id").toString())) {
-//							documento.setDistrito(distritos.get(h));
-//							break;
-//						}
-//						h++;
-//					}
-//				}
+				for (Documento documento : envio.getDocumentos()) {
+					int h = 0;
+					while (h < distritos.size()) {
+						if (documento.getDistritoId() == Long.valueOf(distritos.get(h).get("id").toString())) {
+							documento.setDistrito(distritos.get(h));
+							break;
+						}
+						h++;
+					}
+				}
 //				int i = 0; 
 //				while(i < buzones.size()) {
 //					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
