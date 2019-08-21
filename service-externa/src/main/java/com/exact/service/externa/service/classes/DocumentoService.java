@@ -569,10 +569,10 @@ public class DocumentoService implements IDocumentoService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin)
-			throws IOException, Exception {
+	public Iterable<Documento> listarReporteUTD(Date fechaIni, Date fechaFin) throws IOException, Exception {
 		
 		Iterable<Documento> documentos = documentoDao.listarReporteUTD(fechaIni, fechaFin);
+		
 		List<Documento> documentosUTD = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> buzonIds = new ArrayList();
@@ -591,6 +591,13 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tipoDocumentos = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+		
+		for (Documento documento : documentos) {
+			DocumentoGuia documentoguia = documentoGuiadao.findByDocumentoId(documento.getId());
+			documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());
+		}
+		
+		
 		
 		for (Documento documento : documentos) {
 			
@@ -658,7 +665,8 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
-		
+		DocumentoGuia documentoguia = documentoGuiadao.findByDocumentoId(documento.getId());
+		documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
 			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
@@ -815,14 +823,17 @@ public class DocumentoService implements IDocumentoService {
 		if(!documentoBD.isPresent()) {
 			return null;
 		}
+		
 		Documento documento = documentoBD.get();
 		documento.setCodigoDevolucion(codigoDev);
 		EstadoDocumento estadoDocumento = new EstadoDocumento();
 		estadoDocumento.setId(CERRADO);
 		List<SeguimientoDocumento> seguimientosDocumentolst = new ArrayList<SeguimientoDocumento>(documento.getSeguimientosDocumento());
+		SeguimientoDocumento sdMax = Collections.max(seguimientosDocumentolst, Comparator.comparingLong(s -> s.getId()));
 		SeguimientoDocumento sdocumento = new SeguimientoDocumento();
 		sdocumento.setUsuarioId(idUsuario);
 		sdocumento.setEstadoDocumento(estadoDocumento);
+		sdocumento.setLinkImagen(sdMax.getLinkImagen());
 		sdocumento.setDocumento(documento);
 		seguimientosDocumentolst.add(sdocumento);
 		seguimientoDocumentodao.saveAll(seguimientosDocumentolst);

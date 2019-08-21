@@ -90,6 +90,9 @@ public class EnvioService implements IEnvioService {
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
 	
+	@Value("${ruta.link}")
+	String rutaLink;
+	
 	@Value("${mail.subject}")
 	String mailSubject;
 	
@@ -149,9 +152,12 @@ public class EnvioService implements IEnvioService {
 			String nombre = envio.getBuzon().get("nombre").toString();
 			@SuppressWarnings("unchecked")
 			Map<String,Object> area = (Map<String, Object>) envio.getBuzon().get("area");
-			String texto="Se ha creado un envio con autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre+" de la "
-					+ "sede " +envio.getSede().get("nombre")+ " y area " +area.get("nombre")+ " con tipo de servicio "+ envio.getPlazoDistribucion().getNombre();
+			
+			String texto="Se ha creado un envio con autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre +" de la "
+					+ "sede " +envio.getSede().get("nombre")+ " y area " +area.get("nombre")+ " con tipo de servicio "+ envio.getPlazoDistribucion().getNombre() + ". Ingrese a: "
+					+ this.rutaLink;
 			mailDao.enviarMensaje(correos, mailSubject, texto);
+			
 		}
 		if (file != null) {
 			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
@@ -177,7 +183,8 @@ public class EnvioService implements IEnvioService {
 			if(correos!=null) {
 				Documento documentoCreado = envio.getDocumentos().iterator().next();
 				String nombre = envio.getBuzon().get("nombre").toString();
-				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre;
+				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre  + ". Ingrese a: "
+						+ this.rutaLink;
 				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
 			encryptarseguimiento(seguimientoAutorizado);

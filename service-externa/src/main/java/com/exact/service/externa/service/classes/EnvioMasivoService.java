@@ -90,6 +90,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
 	
+	@Value("${ruta.link}")
+	String rutaLink;
+	
 	@Value("${mail.subject}")
 	String mailSubject;
 	
@@ -168,7 +171,8 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 			}
 			if(correos!=null) {
 				String nombre = envioMasivo.getBuzon().get("nombre").toString();
-				String texto="Se ha creado un envio masivo de documentos con autogenerado "+ envioMasivo.getMasivoAutogenerado() +" del usuario "+nombre;
+				String texto="Se ha creado un envio masivo de documentos con autogenerado "+ envioMasivo.getMasivoAutogenerado() +" del usuario "+nombre   + ". Ingrese a: "
+						+ this.rutaLink;
 				mailDao.enviarMensaje(correos, mailSubject, texto);
 			}
 			seguimientoAutorizado.setEnvio(envioMasivo);
