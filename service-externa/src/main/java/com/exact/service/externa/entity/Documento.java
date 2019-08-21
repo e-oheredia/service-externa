@@ -52,6 +52,18 @@ public class Documento implements Serializable {
 	private String referencia;
 	private String telefono;
 	private boolean recepcionado;
+	
+	@Transient
+	private String numeroGuia;
+
+	public String getNumeroGuia() {
+		return numeroGuia;
+	}
+
+
+	public void setNumeroGuia(String numeroGuia) {
+		this.numeroGuia = numeroGuia;
+	}
 
 	@Column(name = "nro_documento")
 	private String nroDocumento;
