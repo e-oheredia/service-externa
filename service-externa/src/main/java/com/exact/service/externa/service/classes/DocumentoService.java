@@ -184,20 +184,21 @@ public class DocumentoService implements IDocumentoService {
 	public Iterable<Documento> listarReporteBCP(Date fechaIni, Date fechaFin, Long idbuzon) throws IOException, Exception
 	{
 		Iterable<Documento> documentos = documentoDao.listarReporteBCP(fechaIni, fechaFin,idbuzon);
+		
 		if(documentos==null) {
 			return null;
 		}
+		
 		List<Documento> documentosUbcp = StreamSupport.stream(documentos.spliterator(), false).collect(Collectors.toList());
 		List<Long> distritosIds = new ArrayList();
 		List<Long> distritosIdslst = new ArrayList();
-		//List<Long> buzonIds = new ArrayList();
 		List<Long> tipoDocumentoIds = new ArrayList();
 		
 		for (Documento documento : documentosUbcp) {
 			distritosIds.add(documento.getDistritoId());
-			//buzonIds.add(documento.getEnvio().getBuzonId());
 			tipoDocumentoIds.add(documento.getEnvio().getTipoClasificacionId());
 		}
+		
 		distritosIdslst=distritosIds.stream().distinct().collect(Collectors.toList());
 		tipoDocumentoIds=tipoDocumentoIds.stream().distinct().collect(Collectors.toList());
 		List<Map<String, Object>> distritos = (List<Map<String, Object>>) distritoEdao.listarByIds(distritosIdslst);
@@ -205,6 +206,14 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> sedes = (List<Map<String, Object>>) sedeEdao.listarSedesDespacho();
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarByIds(tipoDocumentoIds);
+		
+		for (Documento documento : documentos) {
+			DocumentoGuia documentoguia = documentoGuiadao.findByDocumentoId(documento.getId());
+			if (documentoguia != null) {
+				documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());	
+			}				
+		}
+		
 		List<Integer> tamanoslist = new ArrayList<>();
 		tamanoslist.add(distritos.size());
 		tamanoslist.add(sedes.size());
@@ -594,7 +603,9 @@ public class DocumentoService implements IDocumentoService {
 		
 		for (Documento documento : documentos) {
 			DocumentoGuia documentoguia = documentoGuiadao.findByDocumentoId(documento.getId());
-			documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());
+			if (documentoguia != null) {
+				documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());	
+			}				
 		}
 		
 		
@@ -666,7 +677,11 @@ public class DocumentoService implements IDocumentoService {
 		List<Map<String, Object>> productosBD = (List<Map<String, Object>>) productoEdao.listarAll();
 		List<Map<String, Object>> tiposDocumento = (List<Map<String, Object>>) tipoDocumentoEdao.listarAll();
 		DocumentoGuia documentoguia = documentoGuiadao.findByDocumentoId(documento.getId());
-		documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());
+
+		if (documentoguia != null) {
+			documento.setNumeroGuia(documentoguia.getGuia().getNumeroGuia());	
+		}
+
 		documento.getEnvio().setBuzon(buzones);
 		for(int i=0;i < distritos.size();i++) {	
 			Long distritoId= Long.valueOf(distritos.get(i).get("id").toString());
