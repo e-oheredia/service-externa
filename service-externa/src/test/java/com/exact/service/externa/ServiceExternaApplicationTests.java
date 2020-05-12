@@ -1,4 +1,4 @@
-package com.exact.service.distribucion;
+package com.exact.service.externa;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ServicePlazodistribucionApplicationTests {
+public class ServiceExternaApplicationTests {
 
 	@Test
 	public void contextLoads() {

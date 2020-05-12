@@ -173,7 +173,11 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				String nombre = envioMasivo.getBuzon().get("nombre").toString();
 				String texto="Se ha creado un envio masivo de documentos con autogenerado "+ envioMasivo.getMasivoAutogenerado() +" del usuario "+nombre   + ". Ingrese a: "
 						+ this.rutaLink;
-				mailDao.enviarMensaje(correos, mailSubject, texto);
+				try {
+					mailDao.enviarMensaje(correos, mailSubject, texto);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			seguimientoAutorizado.setEnvio(envioMasivo);
 			encryptarseguimiento(seguimientoAutorizado);
@@ -225,7 +229,16 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 				}
 				
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());	
-				envio.setBuzon(buzones.get(0));
+				
+				int i = 0;
+				while (i < buzones.size()) {
+					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
+						envio.setBuzon(buzones.get(i));
+						break;
+					}
+					i++;
+				}
+				
 				for (Documento documento : envio.getDocumentos()) {
 					int h = 0;
 					while (h < distritos.size()) {
@@ -236,14 +249,9 @@ public class EnvioMasivoService implements IEnvioMasivoService {
 						h++;
 					}
 				}
-//				int i = 0; 
-//				while(i < buzones.size()) {
-//					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
-//						envio.setBuzon(buzones.get(i));
-//						break;
-//					}
-//					i++;
-//				}
+				
+				
+
 				int j = 0;
 				while(j < tiposDocumento.size()) {
 					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {

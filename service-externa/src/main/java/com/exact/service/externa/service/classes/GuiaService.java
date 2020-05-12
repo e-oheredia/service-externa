@@ -11,7 +11,6 @@ import static com.exact.service.externa.enumerator.EstadoTipoGuia.GUIA_REGULAR;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.ESPECIAL;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.EXPRESS;
 import static com.exact.service.externa.enumerator.TipoPlazoDistribucionEnum.REGULAR;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_ACTIVA;
 import static com.exact.service.externa.enumerator.TipoConsultaGuia.GUIA_NORMAL;
 import static com.exact.service.externa.enumerator.EstadoDocumentoEnum.RECEPCIONADO;

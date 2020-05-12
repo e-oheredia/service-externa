@@ -32,7 +32,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import com.exact.service.externa.dao.IDocumentoDao;
 import com.exact.service.externa.dao.IEnvioDao;
 import com.exact.service.externa.dao.IInconsistenciaDao;
@@ -57,7 +56,6 @@ import com.exact.service.externa.service.interfaces.IEnvioService;
 import com.exact.service.externa.utils.Encryption;
 import com.exact.service.externa.utils.IAutogeneradoUtils;
 
-
 @Service
 public class EnvioService implements IEnvioService {
 
@@ -81,7 +79,7 @@ public class EnvioService implements IEnvioService {
 
 	@Autowired
 	IEnvioDao envioDao;
-	
+
 	@Autowired
 	ISedeEdao sedeDao;
 
@@ -89,38 +87,38 @@ public class EnvioService implements IEnvioService {
 
 	@Value("${storage.autorizaciones}")
 	String storageAutorizaciones;
-	
+
 	@Value("${ruta.link}")
 	String rutaLink;
-	
+
 	@Value("${mail.subject}")
 	String mailSubject;
-	
+
 	@Value("${mail.text}")
 	String mailText;
-	
+
 	@Autowired
 	IServiceMailEdao mailDao;
-	
+
 	@Autowired
 	IGestionUsuariosEdao gestionUsuarioEdao;
-	
+
 	@Autowired
 	IProductoEdao productoEdao;
-	
+
 	@Autowired
 	IPlazoDistribucionDao plazoDistribucionDao;
-	
+
 	@Autowired
 	IInconsistenciaDao inconsistenciaDao;
 
 	@Autowired
 	Encryption encryption;
-	
-	
+
 	@Override
 	@Transactional
-	public Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file, String header) throws IOException, ParseException, MessagingException, JSONException {
+	public synchronized Envio registrarEnvio(Envio envio, Long idUsuario, MultipartFile file, String header)
+			throws IOException, ParseException, MessagingException, JSONException {
 
 		String autogeneradoAnterior = documentoDao.getMaxDocumentoAutogenerado();
 		String ruta = "autorizaciones";
@@ -128,8 +126,8 @@ public class EnvioService implements IEnvioService {
 
 		for (Documento documento : envio.getDocumentos()) {
 			String autogeneradoNuevo = autogeneradoUtils.generateDocumentoAutogenerado(autogeneradoAnterior);
-			documento.setContactoDestino( documento.getContactoDestino().toUpperCase());
-			documento.setRazonSocialDestino( documento.getRazonSocialDestino().toUpperCase());
+			documento.setContactoDestino(documento.getContactoDestino().toUpperCase());
+			documento.setRazonSocialDestino(documento.getRazonSocialDestino().toUpperCase());
 			documento.setDireccion(documento.getDireccion().toUpperCase());
 			documento.setReferencia(documento.getReferencia().toUpperCase());
 			documento.setDocumentoAutogenerado(autogeneradoNuevo);
@@ -146,18 +144,23 @@ public class EnvioService implements IEnvioService {
 		TipoEnvio tipoEnvio = new TipoEnvio();
 		tipoEnvio.setId(ENVIO_REGULAR);
 		envio.setTipoEnvio(tipoEnvio);
-		if(envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId()==EXPRESS && file==null) {
+		if (envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId() == EXPRESS && file == null) {
 			correos = gestionUsuarioEdao.obtenerCorreoUTD(header);
 			Documento documentoCreado = envio.getDocumentos().iterator().next();
 			String nombre = envio.getBuzon().get("nombre").toString();
 			@SuppressWarnings("unchecked")
-			Map<String,Object> area = (Map<String, Object>) envio.getBuzon().get("area");
-			
-			String texto="Se ha creado un envio con autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre +" de la "
-					+ "sede " +envio.getSede().get("nombre")+ " y area " +area.get("nombre")+ " con tipo de servicio "+ envio.getPlazoDistribucion().getNombre() + ". Ingrese a: "
-					+ this.rutaLink;
-			mailDao.enviarMensaje(correos, mailSubject, texto);
-			
+			Map<String, Object> area = (Map<String, Object>) envio.getBuzon().get("area");
+
+			String texto = "Se ha creado un envio con autogenerado " + documentoCreado.getDocumentoAutogenerado()
+					+ " del usuario " + nombre + " de la " + "sede " + envio.getSede().get("nombre") + " y area "
+					+ area.get("nombre") + " con tipo de servicio " + envio.getPlazoDistribucion().getNombre()
+					+ ". Ingrese a: " + this.rutaLink;
+			try {
+				mailDao.enviarMensaje(correos, mailSubject, texto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 		if (file != null) {
 			EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
@@ -171,21 +174,26 @@ public class EnvioService implements IEnvioService {
 			envio.setRutaAutorizacion(rutaAutorizacion);
 			MockMultipartFile multipartFile = new MockMultipartFile(rutaAutorizacion, rutaAutorizacion,
 					file.getContentType(), file.getInputStream());
-			if (handleFileEdao.upload(multipartFile,ruta) != 1) {
+			if (handleFileEdao.upload(multipartFile, ruta) != 1) {
 				return null;
 			}
 			Long tipoPlazo = envio.getPlazoDistribucion().getTipoPlazoDistribucion().getId();
-			if(tipoPlazo==EXPRESS){
+			if (tipoPlazo == EXPRESS) {
 				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(EXPRESS, header);
-			}else if(tipoPlazo==REGULAR || tipoPlazo==ESPECIAL) {
+			} else if (tipoPlazo == REGULAR || tipoPlazo == ESPECIAL) {
 				correos = gestionUsuarioEdao.obtenerCorreoAutorizador(REGULAR, header);
 			}
-			if(correos!=null) {
+			if (correos != null) {
 				Documento documentoCreado = envio.getDocumentos().iterator().next();
 				String nombre = envio.getBuzon().get("nombre").toString();
-				String texto="Se ha creado un envio de documento por autorizar con Autogenerado "+ documentoCreado.getDocumentoAutogenerado() +" del usuario "+ nombre  + ". Ingrese a: "
+				String texto = "Se ha creado un envio de documento por autorizar con Autogenerado "
+						+ documentoCreado.getDocumentoAutogenerado() + " del usuario " + nombre + ". Ingrese a: "
 						+ this.rutaLink;
-				mailDao.enviarMensaje(correos, mailSubject, texto);
+				try {
+					mailDao.enviarMensaje(correos, mailSubject, texto);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			encryptarseguimiento(seguimientoAutorizado);
 			seguimientoAutorizado.setEnvio(envio);
@@ -217,11 +225,11 @@ public class EnvioService implements IEnvioService {
 					.listarByIds(tipoDocumentoIds);
 			for (Envio envio : enviosNoAutorizadosActivos) {
 				envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
-				
-				for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+
+				for (SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
 					descryptarseguimiento(sg);
 				}
-				
+
 				int i = 0;
 				while (i < buzones.size()) {
 					if (envio.getBuzonId() == Long.valueOf(buzones.get(i).get("id").toString())) {
@@ -288,16 +296,15 @@ public class EnvioService implements IEnvioService {
 					}
 				}
 
-				envio.setBuzon(buzones.get(0));
+				int i = 0;
+				while (i < buzones.size()) {
+					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
+						envio.setBuzon(buzones.get(i));
+						break;
+					}
+					i++;
+				}
 				
-//				int i = 0;
-//				while (i < buzones.size()) {
-//					if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
-//						envio.setBuzon(buzones.get(i));
-//						break;
-//					}
-//					i++;
-//				}
 				int j = 0;
 				while (j < tiposDocumento.size()) {
 					if (envio.getTipoClasificacionId().longValue() == Long.valueOf(tiposDocumento.get(j).get("id").toString())) {
@@ -322,20 +329,22 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header,String nombreUsuario) throws ParseException, IOException, JSONException {
+	public Envio autorizarEnvio(Long idEnvio, Long idUsuario, String header, String nombreUsuario)
+			throws ParseException, IOException, JSONException {
 
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
 		}
-		//String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header);
+		// String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario,
+		// header);
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
 		estadoAutorizado.setId(APROBADA);
 		seguimientoAutorizado.setEstadoAutorizado(estadoAutorizado);
 		seguimientoAutorizado.setUsuarioId(idUsuario);
-		//ACA VA EL METODO DE ENCRYPTAR NOMBREUSUARIO
+		// ACA VA EL METODO DE ENCRYPTAR NOMBREUSUARIO
 		seguimientoAutorizado.setNombreUsuario(nombreUsuario);
 		encryptarseguimiento(seguimientoAutorizado);
 		envio.getDocumentos().stream().forEach(documento -> {
@@ -352,7 +361,8 @@ public class EnvioService implements IEnvioService {
 	}
 
 	@Override
-	public Envio denegarEnvio(Long idEnvio, Long idUsuario, String header) throws ParseException, IOException, JSONException{
+	public Envio denegarEnvio(Long idEnvio, Long idUsuario, String header)
+			throws ParseException, IOException, JSONException {
 		Envio envio = envioDao.findById(idEnvio).orElse(null);
 		if (envio == null) {
 			return null;
@@ -381,32 +391,33 @@ public class EnvioService implements IEnvioService {
 
 	@Override
 	public Iterable<Envio> listarEnviosAutorizacion(String fechaIni, String fechaFin) throws IOException, Exception {
-		
+
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-		Date dateI= null;
-		Date dateF= null;
+		Date dateI = null;
+		Date dateF = null;
 		try {
 			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin); 
+			dateF = dt.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}
 		Iterable<Envio> envioAutorizaciones = null;
-		List<Envio> lstenvioAutorizaciones=null;
-		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
-			envioAutorizaciones = envioDao.listarEnviosAutorizacion(dateI,dateF);
-			lstenvioAutorizaciones = StreamSupport.stream(envioAutorizaciones.spliterator(),false).collect(Collectors.toList());
-		}else {
+		List<Envio> lstenvioAutorizaciones = null;
+		if (dateF.compareTo(dateI) > 0 || dateF.equals(dateI)) {
+			envioAutorizaciones = envioDao.listarEnviosAutorizacion(dateI, dateF);
+			lstenvioAutorizaciones = StreamSupport.stream(envioAutorizaciones.spliterator(), false)
+					.collect(Collectors.toList());
+		} else {
 			return null;
 		}
-		if(lstenvioAutorizaciones.isEmpty()) {
+		if (lstenvioAutorizaciones.isEmpty()) {
 			return null;
 		}
 		List<Long> buzonIds = lstenvioAutorizaciones.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 		List<Map<String, Object>> productos = (List<Map<String, Object>>) productoEdao.listarAll();
-		for(Envio envio: lstenvioAutorizaciones) {
-			for( SeguimientoAutorizado sa : envio.getSeguimientosAutorizado()) {
+		for (Envio envio : lstenvioAutorizaciones) {
+			for (SeguimientoAutorizado sa : envio.getSeguimientosAutorizado()) {
 				descryptarseguimiento(sa);
 			}
 			envio.setRutaAutorizacion(this.storageAutorizaciones + envio.getRutaAutorizacion());
@@ -428,33 +439,32 @@ public class EnvioService implements IEnvioService {
 			}
 
 		}
-		
-		
+
 		return lstenvioAutorizaciones;
 	}
 
 	@Override
 	@Transactional
-	public Envio modificaPlazo(Long idEnvio, PlazoDistribucion plazo, Long idUsuario, String header) throws ParseException, IOException, JSONException {
+	public Envio modificaPlazo(Long idEnvio, PlazoDistribucion plazo, Long idUsuario, String header)
+			throws ParseException, IOException, JSONException {
 		Envio envioBD = envioDao.findEnvioConAutorizacion(idEnvio);
-		if(envioBD == null) {
+		if (envioBD == null) {
 			return null;
 		}
-		if(envioBD.getPlazoDistribucion().getId()==plazo.getId()) {
+		if (envioBD.getPlazoDistribucion().getId() == plazo.getId()) {
 			return null;
 		}
 		envioBD.setPlazoDistribucion(plazo);
 		List<PlazoDistribucion> plazos = (List<PlazoDistribucion>) plazoDistribucionDao.findAll();
-		for(int i=0;i<plazos.size();i++) {
-			if(envioBD.getPlazoDistribucion().getId().longValue()==plazos.get(i).getId().longValue()) {
+		for (int i = 0; i < plazos.size(); i++) {
+			if (envioBD.getPlazoDistribucion().getId().longValue() == plazos.get(i).getId().longValue()) {
 				envioBD.setPlazoDistribucion(plazos.get(i));
 				break;
 			}
 		}
-		
-	
-		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header); 	//============================================================
-		
+
+		String nombreUsuario = gestionUsuarioEdao.obtenerNombreUsuario(idUsuario, header); // ============================================================
+
 		EstadoAutorizado estadoAutorizado = new EstadoAutorizado();
 		List<SeguimientoAutorizado> lstseguimientoAutorizado = new ArrayList<SeguimientoAutorizado>();
 		SeguimientoAutorizado seguimientoAutorizado = new SeguimientoAutorizado();
@@ -467,45 +477,46 @@ public class EnvioService implements IEnvioService {
 		lstseguimientoAutorizado.add(seguimientoAutorizado);
 		Set<SeguimientoAutorizado> sa = new HashSet<SeguimientoAutorizado>(lstseguimientoAutorizado);
 		envioBD.setSeguimientosAutorizado(sa);
-		
+
 		return envioDao.save(envioBD);
-		
+
 	}
 
 	@Override
 	public Iterable<Envio> listarEnviosInconsistencias(String fechaIni, String fechaFin) throws IOException, Exception {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-		Date dateI= null;
-		Date dateF= null;
+		Date dateI = null;
+		Date dateF = null;
 		try {
 			dateI = dt.parse(fechaIni);
-			dateF = dt.parse(fechaFin); 
+			dateF = dt.parse(fechaFin);
 		} catch (Exception e) {
 			return null;
 		}
-		Iterable<Envio> enviosInconsistencias =null;
+		Iterable<Envio> enviosInconsistencias = null;
 		List<Envio> enviosInconsistenciaslst = null;
-		if(dateF.compareTo(dateI)>0 || dateF.equals(dateI)) {
+		if (dateF.compareTo(dateI) > 0 || dateF.equals(dateI)) {
 			enviosInconsistencias = envioDao.listarEnviosInconsistencias(dateI, dateF);
-			enviosInconsistenciaslst = StreamSupport.stream(enviosInconsistencias.spliterator(),false).collect(Collectors.toList());
-			if(enviosInconsistenciaslst.isEmpty()) {
+			enviosInconsistenciaslst = StreamSupport.stream(enviosInconsistencias.spliterator(), false)
+					.collect(Collectors.toList());
+			if (enviosInconsistenciaslst.isEmpty()) {
 				return null;
 			}
-		}else {
+		} else {
 			return null;
 		}
-		
+
 		List<Long> buzonIds = enviosInconsistenciaslst.stream().map(Envio::getBuzonId).collect(Collectors.toList());
 		List<Map<String, Object>> buzones = (List<Map<String, Object>>) buzonEdao.listarByIds(buzonIds);
 
-		for(Envio envio : enviosInconsistenciaslst) {
-			
+		for (Envio envio : enviosInconsistenciaslst) {
+
 			int i = 0;
-			
-			for(SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
-			descryptarseguimiento(sg);
+
+			for (SeguimientoAutorizado sg : envio.getSeguimientosAutorizado()) {
+				descryptarseguimiento(sg);
 			}
-			
+
 			while (i < buzones.size()) {
 				if (envio.getBuzonId().longValue() == Long.valueOf(buzones.get(i).get("id").toString())) {
 					envio.setBuzon(buzones.get(i));
@@ -514,17 +525,17 @@ public class EnvioService implements IEnvioService {
 				i++;
 			}
 		}
-		
+
 		return enviosInconsistenciaslst;
 	}
-	
-	
-	public void descryptarseguimiento(SeguimientoAutorizado  seguimiento) throws UnsupportedEncodingException, IOException {
-		seguimiento.setNombreUsuario(encryption.decrypt( seguimiento.getNombreUsuarioencryptado()));
+
+	public void descryptarseguimiento(SeguimientoAutorizado seguimiento)
+			throws UnsupportedEncodingException, IOException {
+		seguimiento.setNombreUsuario(encryption.decrypt(seguimiento.getNombreUsuarioencryptado()));
 	}
-	
-	public void encryptarseguimiento(SeguimientoAutorizado  seguimiento) throws IOException {
+
+	public void encryptarseguimiento(SeguimientoAutorizado seguimiento) throws IOException {
 		seguimiento.setNombreUsuarioencryptado(encryption.encrypt(seguimiento.getNombreUsuario()));
-	}	
+	}
 
 }
